@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Hankc';
+    font-style: normal;
+    font-weight: 400;
+    src: url('//fastly.jsdelivr.net/korean-webfonts/1/corps/hani/Hankc/Hankc.woff2') format('woff2'), url('//fastly.jsdelivr.net/korean-webfonts/1/corps/hani/Hankc/Hankc.woff') format('woff');
+  }
+  
+  .hankc * {
+   font-family: 'Hankc', serif;
+  }
+
+  body{
+    font-family: 'Hankc';
+  }
