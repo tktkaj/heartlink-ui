@@ -114,15 +114,18 @@ const GenderRadioBox = styled.div`
 
 const SignUp = () => {
 
-  const [id, setId] = useState('');
+  // 입력값 상태관리, 이메일은 axios사용시 합쳐서 사용할 것
+  const [loginId, setLoginId] = useState('');
   const [name, setName] = useState('');
   const [emailPreffix, setEmailPreffix] = useState('');
   const [emailSuffix, setEmailSuffix] = useState('');
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [passwordChk, setPasswordChk] = useState('');
-  const [birth, setBirth] = useState('');
+  const [phone, setPhone] = useState('');
   const [gender, setGender] = useState('');
+
+  // 경고 및 검증 문구 관련 상태관리
   const [passwordError, setPasswordError] = useState('');
   const [idError, setIdError] = useState('');
   const [errorColor, setErrorColor] = useState('red');
@@ -174,7 +177,7 @@ const SignUp = () => {
 
   // 입력창 빈칸 check하는 함수
   const checkForm = () => {
-    if (!id || !name || !emailPreffix || !emailSuffix || !nickname || !password || !passwordChk || !birth || !gender) {
+    if (!loginId || !name || !emailPreffix || !emailSuffix || !nickname || !password || !passwordChk || !phone || !gender) {
       toast.error('필수 항목이 비어 있습니다. 확인해 주세요.');
       return;
     }
@@ -182,14 +185,12 @@ const SignUp = () => {
 
   // id길이 체크
   const checkIdLength = () =>{
-
-    if(id.length < 4){
+    if(loginId.length < 4){
       setIdErrorColor('red');
       setIdError('5~15자 이내의 아이디만 가능합니다.');
     }
     else{
-      setIdErrorColor('green');
-      setIdError('사용가능한 아이디입니다.');
+      setIdError('');
     }
   }
 
@@ -199,12 +200,13 @@ const SignUp = () => {
                 position="top-center"
                 limit={1}
                 closeButton={true}
+                autoClose={1500}
                 hideProgressBar
             />
       <SignUpTitle>회원정보 입력</SignUpTitle>
       <SignUpForm>
         <SignUpLabel><RequiredMark>*</RequiredMark>아이디<div style={{ color: idErrorColor, fontSize: '0.6rem', display:'inline-block', paddingLeft: '150px'}}>{idError}</div></SignUpLabel>
-        <SignUpInput type="text" minLength={5} maxLength={15} value={id} onChange={(e) => {setId(e.target.value);checkIdLength(e.target.value)}} placeholder="5~15자 이내의 아이디를 입력해주세요" required/>
+        <SignUpInput type="text" minLength={5} maxLength={15} value={loginId} onChange={(e) => {setLoginId(e.target.value); checkIdLength(e.target.value)}} placeholder="5~15자 이내의 아이디를 입력해주세요" required/>
         <SignUpLabel><RequiredMark>*</RequiredMark>이메일</SignUpLabel>
         <div style={{display:'flex', gap:'9px', alignItems: 'center'}}>
           <SignUpInput type="text" value={emailPreffix} style={{width:'100px'}} onChange={(e) => setEmailPreffix(e.target.value)} required/>
@@ -232,7 +234,7 @@ const SignUp = () => {
         </div>
         <SignUpLabel><RequiredMark>*</RequiredMark>휴대폰 번호</SignUpLabel>
         <div style={{display:'flex', gap:'9px', alignItems: 'center'}}>
-        <SignUpInput type="text" value={birth} style={{width: '270px'}} onChange={(e) => setBirth(e.target.value)} />
+        <SignUpInput type="text" value={phone} style={{width: '270px'}} onChange={(e) => setPhone(e.target.value)} />
           <div style={{paddingBottom:'8px'}}>
           <button type='button' style={{width: '80px', backgroundColor: '#706EF4', padding: '9px 5px', borderRadius:'5px',  color: 'white', fontSize: '0.9rem'}}>인증하기</button>
           </div>
@@ -246,16 +248,16 @@ const SignUp = () => {
         <SignUpLabel><RequiredMark>*</RequiredMark>성별</SignUpLabel>
           <div style={{display: 'flex'}}>
             <div>
-            <GenderInput type="radio" name="gender" value="male" checked={gender === 'male'} onChange={() => setGender('male')} />
+            <GenderInput type="radio" name="gender" value="M" checked={gender === 'M'} onChange={() => setGender('M')} />
             </div>
             <GenderSpan style={{marginRight: '10px'}}>남성</GenderSpan>
             <div>
-            <GenderInput type="radio" name="gender" value="female" checked={gender === 'female'} onChange={() => setGender('female')} />
+            <GenderInput type="radio" name="gender" value="F" checked={gender === 'F'} onChange={() => setGender('F')} />
             </div>
             <GenderSpan>여성</GenderSpan>
           </div>
         </GenderRadioBox>
-        <SignUpButton onClick={(e) => {e.preventDefault(); checkForm(); handlePassword();checkIdLength();}}>회원가입</SignUpButton>
+        <SignUpButton onClick={(e) => {e.preventDefault(); checkForm(); handlePassword();}}>회원가입</SignUpButton>
       </SignUpForm>
     </SignUpBox>
   )
