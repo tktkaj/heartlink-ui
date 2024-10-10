@@ -123,7 +123,9 @@ const SignUp = () => {
   const [birth, setBirth] = useState('');
   const [gender, setGender] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [idError, setIdError] = useState('');
   const [errorColor, setErrorColor] = useState('red');
+  const [idErrorColor, setIdErrorColor] = useState('red');
 
 
   // email select에서 option대로 suffixinput 변경해주는 함수
@@ -140,7 +142,7 @@ const SignUp = () => {
   const handlePassword = (e) => {
 
     if(e){
-      const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{7,16}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{8,16}$/;
 
       if (!passwordRegex.test(e)) {
         setErrorColor('red');
@@ -176,6 +178,19 @@ const SignUp = () => {
     }
   }
 
+  // id길이 체크
+  const checkIdLength = () =>{
+
+    if(id.length < 4){
+      setIdErrorColor('red');
+      setIdError('5~15자 이내의 아이디만 가능합니다.');
+    }
+    else{
+      setIdErrorColor('green');
+      setIdError('사용가능한 아이디입니다.');
+    }
+  }
+
   return (
     <SignUpBox>
       <ToastContainer
@@ -186,8 +201,8 @@ const SignUp = () => {
             />
       <SignUpTitle>회원정보 입력</SignUpTitle>
       <SignUpForm>
-        <SignUpLabel><RequiredMark>*</RequiredMark>아이디</SignUpLabel>
-        <SignUpInput type="text" minLength={5} maxLength={15} value={id} onChange={(e) => setId(e.target.value)} placeholder="5~15자 이내의 아이디를 입력해주세요" required/>
+        <SignUpLabel><RequiredMark>*</RequiredMark>아이디<div style={{ color: idErrorColor, fontSize: '0.6rem', display:'inline-block', paddingLeft: '150px'}}>{idError}</div></SignUpLabel>
+        <SignUpInput type="text" minLength={5} maxLength={15} value={id} onChange={(e) => {setId(e.target.value);checkIdLength(e.target.value)}} placeholder="5~15자 이내의 아이디를 입력해주세요" required/>
         <SignUpLabel><RequiredMark>*</RequiredMark>이메일</SignUpLabel>
         <div style={{display:'flex', gap:'9px', alignItems: 'center'}}>
           <SignUpInput type="text" value={emailPreffix} style={{width:'100px'}} onChange={(e) => setEmailPreffix(e.target.value)} required/>
@@ -207,9 +222,8 @@ const SignUp = () => {
         <SignUpInput type="text" value={name} minLength={5} maxLength={15} onChange={(e) => setName(e.target.value)} />
         <SignUpLabel><RequiredMark>*</RequiredMark>닉네임</SignUpLabel>
         <SignUpInput type="text" value={nickname} placeholder="1~10자 이내의 닉네임을 입력해주세요" onChange={(e) => setNickname(e.target.value)} />
-        <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호</SignUpLabel>
+        <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호<div style={{ color: errorColor, fontSize: '0.6rem', display: 'inline-block'}}>{passwordError}</div></SignUpLabel>
         {/* 정규식 검증 통과 못할 시 에러나오는 곳 */}
-        <div style={{ color: errorColor, fontSize: '0.6rem', marginTop: '5px'}}>{passwordError}</div>
         <SignUpInput type="password" value={password} placeholder="8~16자 이내의 특수문자, 영문, 숫자를 포함시켜주세요" onChange={(e) => {setPassword(e.target.value);handlePassword(e.target.value)}} />   
         <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호 확인</SignUpLabel>
         <SignUpInput type="password" value={passwordChk} onChange={(e) => {setPasswordChk(e.target.value);handlePasswordChk(e.target.value)}}/>
@@ -228,7 +242,7 @@ const SignUp = () => {
             <GenderSpan>여성</GenderSpan>
           </div>
         </GenderRadioBox>
-        <SignUpButton onClick={(e) => {e.preventDefault(); checkForm(); handlePassword();}}>회원가입</SignUpButton>
+        <SignUpButton onClick={(e) => {e.preventDefault(); checkForm(); handlePassword();checkIdLength();}}>회원가입</SignUpButton>
       </SignUpForm>
     </SignUpBox>
   )
