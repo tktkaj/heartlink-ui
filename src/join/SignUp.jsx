@@ -246,11 +246,11 @@ const SignUp = () => {
         <SignUpLabel><RequiredMark>*</RequiredMark>성별</SignUpLabel>
           <div style={{display: 'flex'}}>
             <div>
-            <GenderInput type="radio" name="gender" value="male" checked={gender === 'male'} onChange={() => setGender('male')} />
+            <GenderInput type="radio" name="gender" value="M" checked={gender === 'M'} onChange={() => setGender('M')} />
             </div>
             <GenderSpan style={{marginRight: '10px'}}>남성</GenderSpan>
             <div>
-            <GenderInput type="radio" name="gender" value="female" checked={gender === 'female'} onChange={() => setGender('female')} />
+            <GenderInput type="radio" name="gender" value="F" checked={gender === 'F'} onChange={() => setGender('F')} />
             </div>
             <GenderSpan>여성</GenderSpan>
           </div>
