@@ -123,6 +123,8 @@ const SignUp = () => {
   const [birth, setBirth] = useState('');
   const [gender, setGender] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [errorColor, setErrorColor] = useState('red');
+
 
   // email select에서 option대로 suffixinput 변경해주는 함수
   const handleEmailSuffixChange = (e) => {
@@ -136,17 +138,34 @@ const SignUp = () => {
 
   // 비밀번호 정규화 확인하는 함수
   const handlePassword = (e) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{8,16}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError('비밀번호는 8~16자 이내로, 영문, 숫자, 특수문자를 포함해야 합니다.');
-      console.log(password);
-      return;
+
+    if(e){
+      const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{7,16}$/;
+
+      if (!passwordRegex.test(e)) {
+        setErrorColor('red');
+        setPasswordError('8~16자 사이의 영문, 숫자, 특수문자가 포함된 비밀번호만 사용 가능합니다.');
+        return;
+      }
+  
+      setPasswordError('사용 가능합니다.');
+      setErrorColor('green');
     }
-    if (password !== passwordChk) {
-      setPasswordError('비밀번호가 일치하지 않습니다.');
-      return;
+
+  }
+  const handlePasswordChk = (e) => {
+
+    if(e){
+      if (password !== e) {
+        setErrorColor('red');
+        setPasswordError('비밀번호가 일치하지 않습니다.');
+        console.log(passwordChk);
+        return;
+      }
+      setPasswordError('비밀번호가 일치합니다');
+      setErrorColor('green');
     }
-    setPasswordError('');
+
   }
 
   // 입력창 빈칸 check하는 함수
@@ -168,7 +187,7 @@ const SignUp = () => {
       <SignUpTitle>회원정보 입력</SignUpTitle>
       <SignUpForm>
         <SignUpLabel><RequiredMark>*</RequiredMark>아이디</SignUpLabel>
-        <SignUpInput type="text" value={id} onChange={(e) => setId(e.target.value)} placeholder="5~15자 이내의 아이디를 입력해주세요" required/>
+        <SignUpInput type="text" minLength={5} maxLength={15} value={id} onChange={(e) => setId(e.target.value)} placeholder="5~15자 이내의 아이디를 입력해주세요" required/>
         <SignUpLabel><RequiredMark>*</RequiredMark>이메일</SignUpLabel>
         <div style={{display:'flex', gap:'9px', alignItems: 'center'}}>
           <SignUpInput type="text" value={emailPreffix} style={{width:'100px'}} onChange={(e) => setEmailPreffix(e.target.value)} required/>
@@ -185,15 +204,15 @@ const SignUp = () => {
           </SignUpSelect>
         </div>
         <SignUpLabel><RequiredMark>*</RequiredMark>이름</SignUpLabel>
-        <SignUpInput type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <SignUpInput type="text" value={name} minLength={5} maxLength={15} onChange={(e) => setName(e.target.value)} />
         <SignUpLabel><RequiredMark>*</RequiredMark>닉네임</SignUpLabel>
         <SignUpInput type="text" value={nickname} placeholder="1~10자 이내의 닉네임을 입력해주세요" onChange={(e) => setNickname(e.target.value)} />
         <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호</SignUpLabel>
         {/* 정규식 검증 통과 못할 시 에러나오는 곳 */}
-        <div style={{ color: 'red', fontSize: '0.6rem', marginTop: '5px'}}>{passwordError}</div>
-        <SignUpInput type="password" value={password} placeholder="8~16자 이내의 특수문자, 영문, 숫자를 포함시켜주세요" onChange={(e) => setPassword(e.target.value)} />   
+        <div style={{ color: errorColor, fontSize: '0.6rem', marginTop: '5px'}}>{passwordError}</div>
+        <SignUpInput type="password" value={password} placeholder="8~16자 이내의 특수문자, 영문, 숫자를 포함시켜주세요" onChange={(e) => {setPassword(e.target.value);handlePassword(e.target.value)}} />   
         <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호 확인</SignUpLabel>
-        <SignUpInput type="password" value={passwordChk} onChange={(e) => setPasswordChk(e.target.value)} />
+        <SignUpInput type="password" value={passwordChk} onChange={(e) => {setPasswordChk(e.target.value);handlePasswordChk(e.target.value)}}/>
         <SignUpLabel><RequiredMark>*</RequiredMark>생년월일</SignUpLabel>
         <SignUpInput type="text" value={birth} onChange={(e) => setBirth(e.target.value)} />
         <GenderRadioBox style={{marginTop:'10px'}}>
