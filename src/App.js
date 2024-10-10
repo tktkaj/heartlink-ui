@@ -1,15 +1,16 @@
-
+import "./App.css"
 import SideMenu from "./layout/SideMenu";
-import "./App.css"
-
-
-import "./App.css"
-
+import SignUp from './join/SignUp'
+import Login from './login/Login'
+import Condition from './join/Condition'
 
 function App() {
   return (
     <div className="App">
-      <SideMenu />
+
+      {/* <SignUp /> */}
+      <Login/>
+      {/* <Condition></Condition> */}
     </div>
   );
 }

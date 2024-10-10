@@ -4,7 +4,7 @@ import { toast, ToastContainer} from 'react-toastify';
 
 const SignUpBox = styled.form`
   width: 1100px;
-  height: 800px;
+  height: 700px;
   border-radius: 20px;
   border: 2px solid #f0f0f0;
   margin: auto;
@@ -16,6 +16,7 @@ const SignUpBox = styled.form`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
 `
 
 const SignUpTitle = styled.div`
@@ -137,12 +138,12 @@ const SignUp = () => {
       setEmailSuffix('');
     }
   }
-
+  
   // 비밀번호 정규화 확인하는 함수
   const handlePassword = (e) => {
 
     if(e){
-      const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{8,16}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{7,16}$/;
 
       if (!passwordRegex.test(e)) {
         setErrorColor('red');
@@ -155,6 +156,7 @@ const SignUp = () => {
     }
 
   }
+
   const handlePasswordChk = (e) => {
 
     if(e){
@@ -218,17 +220,28 @@ const SignUp = () => {
             <option value="daum.net">daum.net</option>
           </SignUpSelect>
         </div>
+        <div style={{display: 'flex', gap:'10px'}}>
+          <div style={{display: 'flex', flexDirection:'column'}}>
         <SignUpLabel><RequiredMark>*</RequiredMark>이름</SignUpLabel>
-        <SignUpInput type="text" value={name} minLength={5} maxLength={15} onChange={(e) => setName(e.target.value)} />
+        <SignUpInput type="text" value={name} style={{width: '175px'}} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div style={{display: 'flex', flexDirection:'column'}}>
         <SignUpLabel><RequiredMark>*</RequiredMark>닉네임</SignUpLabel>
-        <SignUpInput type="text" value={nickname} placeholder="1~10자 이내의 닉네임을 입력해주세요" onChange={(e) => setNickname(e.target.value)} />
+        <SignUpInput type="text" value={nickname} style={{width: '175px'}} placeholder="1~10자 이내의 닉네임" maxLength={10}  onChange={(e) => setNickname(e.target.value)} />
+        </div>
+        </div>
+        <SignUpLabel><RequiredMark>*</RequiredMark>휴대폰 번호</SignUpLabel>
+        <div style={{display:'flex', gap:'9px', alignItems: 'center'}}>
+        <SignUpInput type="text" value={birth} style={{width: '270px'}} onChange={(e) => setBirth(e.target.value)} />
+          <div style={{paddingBottom:'8px'}}>
+          <button type='button' style={{width: '80px', backgroundColor: '#706EF4', padding: '9px 5px', borderRadius:'5px',  color: 'white', fontSize: '0.9rem'}}>인증하기</button>
+          </div>
+        </div>
         <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호<div style={{ color: errorColor, fontSize: '0.6rem', display: 'inline-block'}}>{passwordError}</div></SignUpLabel>
         {/* 정규식 검증 통과 못할 시 에러나오는 곳 */}
         <SignUpInput type="password" value={password} placeholder="8~16자 이내의 특수문자, 영문, 숫자를 포함시켜주세요" onChange={(e) => {setPassword(e.target.value);handlePassword(e.target.value)}} />   
         <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호 확인</SignUpLabel>
         <SignUpInput type="password" value={passwordChk} onChange={(e) => {setPasswordChk(e.target.value);handlePasswordChk(e.target.value)}}/>
-        <SignUpLabel><RequiredMark>*</RequiredMark>생년월일</SignUpLabel>
-        <SignUpInput type="text" value={birth} onChange={(e) => setBirth(e.target.value)} />
         <GenderRadioBox style={{marginTop:'10px'}}>
         <SignUpLabel><RequiredMark>*</RequiredMark>성별</SignUpLabel>
           <div style={{display: 'flex'}}>
