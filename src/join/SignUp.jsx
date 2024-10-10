@@ -200,6 +200,7 @@ const SignUp = () => {
                 position="top-center"
                 limit={1}
                 closeButton={true}
+                autoClose={1500}
                 hideProgressBar
             />
       <SignUpTitle>회원정보 입력</SignUpTitle>
