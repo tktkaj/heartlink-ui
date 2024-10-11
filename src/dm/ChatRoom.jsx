@@ -68,8 +68,8 @@ const ChatHeader = styled.div`
     border-bottom: 1px solid #ddd;
     img {
     display: block;
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
   }
 `
@@ -79,9 +79,10 @@ const ChatContent = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    padding: 10px;
+    padding: 5px 15px;
     border-radius: 20px;
-    background-color: #706EF4;
+    margin-bottom: 10px;
+    background-color: rgba(112, 110, 244, 0.49);
 `
 
 const CloseButton = styled.button`
@@ -90,6 +91,13 @@ const CloseButton = styled.button`
     font-size: 1rem;
     color: #706EF4;
     cursor: pointer;
+`
+
+const LastMessageTime = styled.div`
+    align-self: center;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #333;
 `
 
 export default function ChatRoom() {
@@ -107,14 +115,14 @@ export default function ChatRoom() {
             <ChatHeader>
                 <div style={{display: 'flex'}}>
                 <img src={profileImg}></img>
-                <div style={{fontSize: '1.7rem', marginLeft:'10px'}}>Hyuna</div>
+                <div style={{fontSize: '1.7rem', marginLeft:'10px',display: 'flex', alignItems: 'center'}}>Hyuna</div>
                 </div>
                 <CloseButton>차단</CloseButton>
             </ChatHeader>
-            <div style={{padding:'50px'}}>
+            <LastMessageTime>2024년 10월 3일 (목)</LastMessageTime>
+            <div style={{paddingLeft:'70px', paddingTop:'40px'}}>
             <ChatContent>
-                hello
-                <DmItem><img src={Logo}></img></DmItem>
+                점심 뭐먹지??
             </ChatContent>
             </div>
         </ChatBox>
