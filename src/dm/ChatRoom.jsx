@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import Logo from '../image/logo/logo2.png'
+import profileImg from '../image/testimg/와구리.png'
+
 
 const DmListBox = styled.div`
     display: flex;
@@ -11,7 +13,7 @@ const DmListBox = styled.div`
     width: 300px;
     padding: 30px;
     border-right: 1px solid #ddd;
-    background-color: #f5f5f5;
+    background-color: #F8F8FA;
 `
 
 const DmListHeader = styled.div`
@@ -50,23 +52,24 @@ const ChatBox = styled.div`
     align-items: flex-start;
     justify-content: space-between;
     height: 100%;
-    width: calc(100% - 300px);
-    padding: 30px;
+    width: 1000px;
+    /* width: calc(100% - 500px); */
     background-color: #fff;
 `
 
 const ChatHeader = styled.div`
+    padding: 10px 0 10px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: bold;
+    gap:700px;
+    font-size: 1.5rem;
     color: #333;
+    border-bottom: 1px solid #ddd;
     img {
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
   }
 `
@@ -79,6 +82,14 @@ const ChatContent = styled.div`
     padding: 10px;
     border-radius: 20px;
     background-color: #706EF4;
+`
+
+const CloseButton = styled.button`
+    padding: 2px 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #706EF4;
+    cursor: pointer;
 `
 
 export default function ChatRoom() {
@@ -94,12 +105,18 @@ export default function ChatRoom() {
         </DmListBox>
         <ChatBox>
             <ChatHeader>
-                 Hyuna
+                <div style={{display: 'flex'}}>
+                <img src={profileImg}></img>
+                <div style={{fontSize: '1.7rem', marginLeft:'10px'}}>Hyuna</div>
+                </div>
+                <CloseButton>차단</CloseButton>
             </ChatHeader>
+            <div style={{padding:'50px'}}>
             <ChatContent>
                 hello
                 <DmItem><img src={Logo}></img></DmItem>
             </ChatContent>
+            </div>
         </ChatBox>
     </div>
   )
