@@ -1,9 +1,10 @@
 import styled from 'styled-components';
+import { CgMenuGridR } from "react-icons/cg";
+import { IoHeart } from "react-icons/io5";
+import { IoBookmark } from "react-icons/io5";
 
 let Content = styled.div`
     width: 1020px;
-    display: flex;
-    justify-content: center;
     background-color: #F8F8FA;
 `
 let Header = styled.div`
@@ -13,6 +14,7 @@ let Header = styled.div`
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid lightgray;
+    margin: 0px auto;
 `
 
 let Main_Profile = styled.div`
@@ -33,8 +35,8 @@ let Sub_Profile = styled.div`
     background-image: url(${props => props.background});
     background-size: cover;
     background-position: center;
-    left: 183px;
-    top: 150px;
+    left: 182px;
+    top: 149px;
     z-index: 4;
 `
 let Outline_Profile = styled.div`
@@ -70,7 +72,22 @@ let Follow = styled.ul`
     display: flex;
 `
 let Follow_li = styled.li`
-    
+`
+let Menu_Wrap = styled.div`
+    width: 830px;
+    height: 40px;
+    display:flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: auto;
+`
+let Menu = styled.div`
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 20px;
 `
 
 function MyPage() {
@@ -106,8 +123,12 @@ function MyPage() {
                             </Follow_li>
                         </Follow>
                     </Follow_Wrap>
-
             </Header>
+            <Menu_Wrap>
+                <Menu><CgMenuGridR style={{ width: '100%', height: '100%' }}/></Menu>
+                <Menu><IoHeart style={{ width: '100%', height: '100%' }}/></Menu>
+                <Menu><IoBookmark style={{ width: '100%', height: '100%' }}/></Menu>
+            </Menu_Wrap>
         </Content>
     );
     
