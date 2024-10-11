@@ -14,34 +14,48 @@ const Sidebar = styled.div`
     width: 300px;
     height: 100vh;
     padding-top: 30px;
-    border-right: rgba(128, 128, 128, 0.3) 1px solid;
+    border-right: rgba(160, 160, 160, 0.2) 2px solid;
+    background-color: #ffffff;
 `
 
 const Logostyle = styled.div`
     width: 170px;
     margin-left: 28px;
     padding-bottom: 30px;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 `
 const Ulstyle = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 120px;
+    gap: 80px;
     justify-content: space-between;
 `
 
 const Liststyle = styled.div`
     display: flex;
-    height: 65px;
-    font-size: 18px;
-    gap: 11px;
+    height: 68px;
+    font-size: 17px;
+    gap: 13px;
     align-items: center;
     justify-content: flex-start;
     margin-left:40px;
 `
 
-const profileThum = styled.div`
-    width: 30px;
-    height: 30px;
+const ProfileThum = styled.div`
+    width: 28px;
+    height: 28px;
+    overflow: hidden; 
+    border-radius: 50%; 
+    border: 1px solid #6b6b6b;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 `
 
 export default function SideMenu() {
@@ -64,17 +78,17 @@ export default function SideMenu() {
                             <Liststyle><FaRegBell className='icon' />알림</Liststyle>
                             <Liststyle><AiOutlineMessage className='icon' />메시지</Liststyle>
                             <Liststyle>
-                                <profileThum>
+                                <ProfileThum>
                                     <img src={profilethum} alt="" />
-                                </profileThum>
-                                moong_52
+                                </ProfileThum>
+                                <p style={{ fontFamily: 'SokchoBadaBatang' }}>moong_52</p>
                             </Liststyle>
                         </div>
                         <div>
                             <Liststyle><IoSettingsOutline className='icon' />설정</Liststyle>
                         </div>
                     </Ulstyle>
-                </div>
+                </div >
             </Sidebar >
         </>
     )
