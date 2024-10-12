@@ -106,6 +106,8 @@ let Post = styled.div`
 let Post_Link = styled.a`
     width: 100%;
     height: 100%;
+    display: block;
+    z-index: 1;  
 `
 
 function MyPage() {
@@ -169,7 +171,7 @@ function MyPage() {
                     <Post_Link></Post_Link>
                 </Post>
                 <Post  background={postImage}>
-                    <Post_Link href=''></Post_Link>
+                    <Post_Link href='www.naver.com'></Post_Link>
                 </Post>
             </Post_List>
         </Content>
