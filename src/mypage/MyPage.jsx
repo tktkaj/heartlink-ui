@@ -3,6 +3,7 @@ import { CgMenuGridR } from "react-icons/cg";
 import { IoHeart } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
 
+
 let Content = styled.div`
     width: 1020px;
     background-color: #F8F8FA;
@@ -79,7 +80,7 @@ let Menu_Wrap = styled.div`
     display:flex;
     align-items: center;
     justify-content: flex-end;
-    margin: auto;
+    margin: 10px auto 10px;
 `
 let Menu = styled.div`
     width: 30px;
@@ -89,10 +90,28 @@ let Menu = styled.div`
     align-items: center;
     margin-left: 20px;
 `
+let Post_List = styled.div`
+    width: 830px;
+    display:flex;
+    justify-content: space-between;
+    margin: 0px auto 30px;
+`
+let Post = styled.div`
+    width: 255px;
+    height: 235px;
+    background-image: url(${props => props.background});
+    background-size: cover;
+    background-position: center;
+`
+let Post_Link = styled.a`
+    width: 100%;
+    height: 100%;
+`
 
 function MyPage() {
     const mainProfileImage = require('./image/sponge.jpg');
     const subProfileImage = require('./image/bono.jpg');
+    const postImage = require('./image/ping.jpg');
 
     return(
         <Content>
@@ -104,7 +123,7 @@ function MyPage() {
                     <Word_Wrap>
                         <Nickname_Wrap>
                             <Nickname>김김이</Nickname>
-                            <Nickname style={{ paddingLeft: '15px' }}>asdfasf122</Nickname>
+                            <Nickname style={{ paddingLeft: '15px'}}>asdfasf122</Nickname>
                         </Nickname_Wrap>
                         <Status_Message_Wrap>
                             <Status_Message>동해물과 백두산이 마르고 닳도록 하늘님이 보우하사</Status_Message>
@@ -129,6 +148,30 @@ function MyPage() {
                 <Menu><IoHeart style={{ width: '100%', height: '100%' }}/></Menu>
                 <Menu><IoBookmark style={{ width: '100%', height: '100%' }}/></Menu>
             </Menu_Wrap>
+
+            <Post_List>
+                <Post  background={postImage}>
+                    <Post_Link></Post_Link>
+                </Post>
+                <Post  background={postImage}>
+                    <Post_Link></Post_Link>
+                </Post>
+                <Post  background={postImage}>
+                    <Post_Link></Post_Link>
+                </Post>
+            </Post_List>
+
+            <Post_List>
+                <Post  background={postImage}>
+                    <Post_Link></Post_Link>
+                </Post>
+                <Post  background={postImage}>
+                    <Post_Link></Post_Link>
+                </Post>
+                <Post  background={postImage}>
+                    <Post_Link href=''></Post_Link>
+                </Post>
+            </Post_List>
         </Content>
     );
     
