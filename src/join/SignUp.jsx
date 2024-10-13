@@ -131,7 +131,8 @@ const SignUp = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordCheckError, setPasswordCheckError] = useState('');
   const [idError, setIdError] = useState('');
-  const [errorColor, setErrorColor] = useState('red');
+  const [passwordColor, setPasswordColor] = useState('red');
+  const [passCheckColor, setPassCheckColor] = useState('red');
   const [idErrorColor, setIdErrorColor] = useState('red');
 
 
@@ -152,13 +153,14 @@ const SignUp = () => {
       const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{7,16}$/;
 
       if (!passwordRegex.test(e)) {
-        setErrorColor('red');
+        setPasswordColor('red');
         setPasswordError('8~16자 사이와 영문, 숫자, 특수문자가 포함되야 합니다.');
         return;
       }
   
       setPasswordError('사용 가능합니다.');
-      setErrorColor('green');
+      setPasswordColor('green');
+
     }
 
   }
@@ -167,13 +169,12 @@ const SignUp = () => {
 
     if(e){
       if (password !== e) {
-        setErrorColor('red');
+        setPassCheckColor('red');
         setPasswordCheckError('비밀번호가 일치하지 않습니다.');
-        console.log(passwordChk);
         return;
       }
       setPasswordCheckError('비밀번호가 일치합니다.');
-      setErrorColor('green');
+      setPassCheckColor('green');
     }
 
   }
@@ -201,6 +202,10 @@ const SignUp = () => {
   // 회원가입 axios
   const handleLogin = async () => {
     
+    if(password!==passwordChk){
+      toast.error('비밀번호와 비빌번호확인이 다릅니다. 확인해 주세요.');
+      return;
+    }
     const data = {
       loginId: loginId,
       name: name,
@@ -276,10 +281,10 @@ const SignUp = () => {
           <button type='button' style={{width: '80px', backgroundColor: '#706EF4', padding: '9px 5px', borderRadius:'5px',  color: 'white', fontSize: '0.9rem'}}>인증하기</button>
           </div>
         </div>
-        <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호<div style={{ color: errorColor, fontSize: '0.6rem', display: 'inline-block', display: 'flex', justifyContent: 'end', width:'303px'}}>{passwordError}</div></SignUpLabel>
+        <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호<div style={{ color: passwordColor, fontSize: '0.6rem', display: 'inline-block', display: 'flex', justifyContent: 'end', width:'303px'}}>{passwordError}</div></SignUpLabel>
         {/* 정규식 검증 통과 못할 시 에러나오는 곳 */}
-        <SignUpInput type="password" value={password} placeholder="8~16자 이내의 특수문자, 영문, 숫자를 포함시켜주세요" onChange={(e) => {setPassword(e.target.value);handlePassword(e.target.value)}} />   
-        <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호 확인<div style={{ color: errorColor, fontSize: '0.6rem', display: 'inline-block', display: 'flex', justifyContent: 'end', width:'275px'}}>{passwordCheckError}</div></SignUpLabel>
+        <SignUpInput type="password" value={password} placeholder="8~16자 이내의 특수문자, 영문, 숫자를 포함시켜주세요" onChange={(e) => {setPassword(e.target.value);handlePassword(e.target.value);}} />   
+        <SignUpLabel><RequiredMark>*</RequiredMark>비밀번호 확인<div style={{ color: passCheckColor, fontSize: '0.6rem', display: 'inline-block', display: 'flex', justifyContent: 'end', width:'275px'}}>{passwordCheckError}</div></SignUpLabel>
         <SignUpInput type="password" value={passwordChk} onChange={(e) => {setPasswordChk(e.target.value);handlePasswordChk(e.target.value)}}/>
         <GenderRadioBox style={{marginTop:'10px'}}>
         <SignUpLabel><RequiredMark>*</RequiredMark>성별</SignUpLabel>
