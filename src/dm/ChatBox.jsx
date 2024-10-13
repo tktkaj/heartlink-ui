@@ -30,7 +30,6 @@ const ChatHeader = styled.div`
 `;
 
 const ChatContent = styled.div`
-  padding: 10px;
   padding-left: 60px;
   padding-right: 20px;
   overflow-y: scroll;
@@ -52,10 +51,9 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox() {
+export default function ChatBox({message, handleInputChange}) {
 
   // 테스트용
-  const message = '혹시 내일 청년다방 옥수수 먹을 의향 있는 사람?'
 
   return (
     <ChatBoxContainer>
@@ -64,12 +62,12 @@ export default function ChatBox() {
           <img src={profileImg} alt="프로필" />
           <span style={{ marginLeft: '10px', fontSize: '1.7rem' }}>Hyuna</span>
         </div>
-        <button style={{ padding: '2px 10px', borderRadius: '5px', fontSize: '1rem', color: '#706EF4', cursor: 'pointer' }}>차단</button>
+        <button style={{ padding: '2px 10px', borderRadius: '5px', fontSize: '1.2rem', color: '#706EF4', cursor: 'pointer' }}>차단</button>
       </ChatHeader>
-      <div style={{ alignSelf: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '0.8rem', color: '#333' }}>
-        2024년 10월 23일
-      </div>
       <ChatContent>
+        <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
+          2024년 10월 23일
+        </div>
           <MessageBubble message={message}>
           </MessageBubble>
       </ChatContent>
@@ -77,6 +75,7 @@ export default function ChatBox() {
         <MessageInput
           type="text"
           placeholder="메시지를 입력하세요"
+          onChange={handleInputChange}
         />
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
           <MdInsertPhoto />

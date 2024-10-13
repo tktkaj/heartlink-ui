@@ -14,10 +14,13 @@ const Message = styled.div`
   position: relative;
 `;
 
+const TimeCheckBox = styled.div`
+  font-size: 0.9rem;
+  display: flex;
+  align-items: end;
+`
+
 export default function MessageBubble({ message }) {
-  const a1 = 1;
-  const a2 = 2;
-  const a3 = 3;
 
   return (
     <>
@@ -28,14 +31,16 @@ export default function MessageBubble({ message }) {
       </div>
       <div style={{ display: 'flex', justifyContent: 'end' }}>
         <Message style={{ borderRadius: '10px 5px 5px 10px' }}>
-          {message}
+          맛있는거 고르고싶은디..
         </Message>
       </div>
       <div style={{ display: 'flex', justifyContent: 'end' }}>
+        <TimeCheckBox style={{marginRight: '10px'}}>오전 12:50</TimeCheckBox>
         <Message style={{ borderRadius: '10px 5px 10px 10px' }}>
           좀 어렵군..
         </Message>
       </div>
+
       <div style={{ display: 'flex', justifyContent: 'start' }}>
         <Message isMine={true} style={{ borderRadius: '10px 10px 10px 5px' }}>
           어떤걸로 먹을까??
@@ -43,18 +48,19 @@ export default function MessageBubble({ message }) {
       </div>
       <div style={{ display: 'flex', justifyContent: 'start' }}>
         <Message isMine={true} style={{ borderRadius: '5px 10px 10px 5px' }}>
-          나는 그 소시지 먹고싶어!
+          나는 그 청다 먹고싶어!
         </Message>
       </div>
       <div style={{ display: 'flex', justifyContent: 'start' }}>
         <Message isMine={true} style={{ borderRadius: '5px 10px 10px 10px' }}>
-          당장 시키자ㅏㅏ!!!
+          당장 시키자ㅏㅏ!!!ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ
         </Message>
       </div>
       <div style={{ display: 'flex', justifyContent: 'start' }}>
         <Message isMine={true} style={{ borderRadius: '10px 10px 10px 10px', padding: '0', backgroundColor: '#FFFFFF' }}>
-          <img src={TestImg} style={{maxWidth:'90%', maxHeight:'90%', borderRadius: '10px'}}></img>
+          <img src={TestImg} style={{maxWidth:'300px', maxHeight:'100%', borderRadius: '10px'}}></img>
         </Message>
+        <TimeCheckBox style={{marginLeft: '10px'}}>오전 12:52</TimeCheckBox>
       </div>
     </>
   );
