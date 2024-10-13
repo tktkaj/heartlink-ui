@@ -149,7 +149,10 @@ const SignUp = () => {
   // 비밀번호 정규화 확인하는 함수
   const handlePassword = (e) => {
 
-    if (e) {
+    if (e.length === 0) {
+      setPasswordError('');
+    }
+    else {
       const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*(_|[^\w])).{7,16}$/;
 
       if (!passwordRegex.test(e)) {
@@ -162,12 +165,17 @@ const SignUp = () => {
       setPasswordColor('green');
 
     }
+   
 
   }
 
   const handlePasswordChk = (e) => {
 
-    if (e) {
+    if (e.length === 0) {
+      setPasswordCheckError('');
+    }
+    else {
+
       if (password !== e) {
         setPassCheckColor('red');
         setPasswordCheckError('비밀번호가 일치하지 않습니다.');
@@ -176,7 +184,6 @@ const SignUp = () => {
       setPasswordCheckError('비밀번호가 일치합니다.');
       setPassCheckColor('green');
     }
-
   }
 
   // 입력창 빈칸 check하는 함수
@@ -189,8 +196,13 @@ const SignUp = () => {
   }
 
   // id길이 체크
-  const checkIdLength = () => {
-    if (loginId.length < 4) {
+  const checkIdLength = (e) => {
+    let str = e;
+
+    if (str.length === 0) {
+      setIdError('');
+    }
+    else if (str.length < 5) {
       setIdErrorColor('red');
       setIdError('5~15자 이내의 아이디만 가능합니다.');
     }
@@ -269,7 +281,7 @@ const SignUp = () => {
         <SignUpInput type="text" minLength={5} maxLength={15} value={loginId} onChange={(e) => { setLoginId(e.target.value); checkIdLength(e.target.value) }} placeholder="5~15자 이내의 아이디를 입력해주세요" required />
         <SignUpLabel><RequiredMark>*</RequiredMark>이메일</SignUpLabel>
         <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-          <SignUpInput type="text" value={emailPreffix}style={{ width: '100px' }} onChange={(e) => setEmailPreffix(e.target.value)} required />
+          <SignUpInput type="text" value={emailPreffix} style={{ width: '100px' }} onChange={(e) => setEmailPreffix(e.target.value)} required />
           <div style={{ paddingBottom: '5px' }}>@</div>
           <SignUpInput type="text" value={emailSuffix} maxLength={12} style={{ width: '100px' }} onChange={(e) => setEmailSuffix(e.target.value)} required />
           <SignUpSelect type="text" style={{ width: '120px' }} onChange={handleEmailSuffixChange}>
@@ -308,7 +320,7 @@ const SignUp = () => {
           <SignUpLabel><RequiredMark>*</RequiredMark>성별</SignUpLabel>
           <div style={{ display: 'flex' }}>
             <div>
-              <GenderInput type="radio" name="gender" value="M" checked={gender === 'M'} onChange={() => setGender('M')} defaultChecked />
+              <GenderInput type="radio" name="gender" value="M" checked={gender === 'M'} onChange={() => setGender('M')} />
             </div>
             <GenderSpan style={{ marginRight: '10px' }}>남성</GenderSpan>
             <div>
