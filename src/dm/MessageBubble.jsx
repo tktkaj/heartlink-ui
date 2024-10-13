@@ -35,7 +35,10 @@ export default function MessageBubble({ message }) {
         </Message>
       </div>
       <div style={{ display: 'flex', justifyContent: 'end' }}>
-        <TimeCheckBox style={{marginRight: '10px'}}>오전 12:50</TimeCheckBox>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
+          <div style={{display: 'flex', justifyContent: 'end', fontSize: '0.9rem' , color: '#706EF4'}}>읽음</div>
+          <TimeCheckBox>오전 12:50</TimeCheckBox>
+        </div>
         <Message style={{ borderRadius: '10px 5px 10px 10px' }}>
           좀 어렵군..
         </Message>
@@ -58,9 +61,12 @@ export default function MessageBubble({ message }) {
       </div>
       <div style={{ display: 'flex', justifyContent: 'start' }}>
         <Message isMine={true} style={{ borderRadius: '10px 10px 10px 10px', padding: '0', backgroundColor: '#FFFFFF' }}>
-          <img src={TestImg} style={{maxWidth:'300px', maxHeight:'100%', borderRadius: '10px'}}></img>
+          <img src={TestImg} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }}></img>
         </Message>
-        <TimeCheckBox style={{marginLeft: '10px'}}>오전 12:52</TimeCheckBox>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <div style={{fontSize: '0.9rem', color: '#706EF4'}}>읽음</div>
+          <TimeCheckBox>오전 12:52</TimeCheckBox>
+        </div>
       </div>
     </>
   );
