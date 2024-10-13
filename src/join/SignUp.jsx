@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { toast, ToastContainer} from 'react-toastify';
+import axios from 'axios'
 
 const SignUpBox = styled.form`
   width: 1100px;
@@ -181,6 +182,7 @@ const SignUp = () => {
       toast.error('필수 항목이 비어 있습니다. 확인해 주세요.');
       return;
     }
+    handleLogin();
   }
 
   // id길이 체크
@@ -193,6 +195,39 @@ const SignUp = () => {
       setIdError('');
     }
   }
+
+  // 회원가입 axios
+  const handleLogin = async () => {
+    
+    const data = {
+      loginId: loginId,
+      name: name,
+      email: emailPreffix + '@' + emailSuffix,
+      nickname: nickname,
+      password: password,
+      phone: phone,
+      gender: gender
+    };
+
+    try {
+      const response = await axios.post('https://virtserver.swaggerhub.com/HEEMAN109/HeartLink/1.0.0/user/join', data);
+      if(response.status===201){
+        console.log(data);
+        console.log(response.status);
+        alert('join successful');
+      }
+      else if(response.status===400){
+        alert('join denied');
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response:', error.response.data); 
+        alert('join failed: ' + error.response.data);
+      } else {
+        console.error('Error message:', error.message);
+      }
+    }
+  };
 
   return (
     <SignUpBox>
