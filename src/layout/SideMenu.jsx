@@ -31,7 +31,7 @@ const Logostyle = styled.div`
 const Ulstyle = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 80px;
+    height: 80vh;
     justify-content: space-between;
 `
 
@@ -43,6 +43,10 @@ const Liststyle = styled.div`
     align-items: center;
     justify-content: flex-start;
     margin-left:40px;
+    .icon {
+        width: 25px;
+        height: 25px;
+    }   
 `
 
 const ProfileThum = styled.div`
@@ -58,7 +62,7 @@ const ProfileThum = styled.div`
     }
 `
 
-export default function SideMenu() {
+export default function SideMenu({onSettingClick}) {
 
     return (
         <>
@@ -85,7 +89,7 @@ export default function SideMenu() {
                             </Liststyle>
                         </div>
                         <div>
-                            <Liststyle><IoSettingsOutline className='icon' />설정</Liststyle>
+                            <Liststyle onClick={onSettingClick}><IoSettingsOutline className='icon' />설정</Liststyle>
                         </div>
                     </Ulstyle>
                 </div >
