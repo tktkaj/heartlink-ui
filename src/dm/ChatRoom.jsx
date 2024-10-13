@@ -4,18 +4,32 @@ import { useState } from 'react';
 
 export default function ChatRoom() {
 
-  const [message, setMessage] = useState('');
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState({
+    0: []
+  });
+
 
   const handleInputChange = (e) => {
-    setMessage(e.target.value);
-    console.log(message);
+    setInput(e.target.value);
+  }
+
+  const sendMessage = () => {
+    if (input.trim() !== '') {
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        [0]: [...prevMessages[0], { text: input, isMine: true }],
+      }));
+      setInput('');
+    }
+
   }
 
 
   return (
     <div style={{ display: 'flex' }}>
       <DmListBox />
-      <ChatBox message={message} handleInputChange = {handleInputChange}/>
+      <ChatBox input={input} handleInputChange = {handleInputChange} sendMessage={sendMessage}/>
     </div>
   );
 }

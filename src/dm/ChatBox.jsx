@@ -30,7 +30,6 @@ const ChatHeader = styled.div`
 `;
 
 const ChatContent = styled.div`
-  padding-left: 60px;
   padding-right: 20px;
   overflow-y: scroll;
   flex-grow: 1;
@@ -51,7 +50,7 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox({message, handleInputChange}) {
+export default function ChatBox({input, handleInputChange, sendMessage}) {
 
   // 테스트용
 
@@ -68,7 +67,7 @@ export default function ChatBox({message, handleInputChange}) {
         <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
           2024년 10월 23일
         </div>
-          <MessageBubble message={message}>
+          <MessageBubble message={input}>
           </MessageBubble>
       </ChatContent>
       <MessageInputContainer>
@@ -81,7 +80,7 @@ export default function ChatBox({message, handleInputChange}) {
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
           <MdInsertPhoto />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '1.7rem', marginLeft: '15px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '1.7rem', marginLeft: '15px' }} onClick={sendMessage}>
           <FaPaperPlane />
         </div>
       </MessageInputContainer>
