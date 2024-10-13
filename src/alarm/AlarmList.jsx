@@ -2,8 +2,8 @@ import React from 'react'
 
 export default function AlarmList() {
   return (
-    <div style={{width: '380px', backgroundColor: '#F8F8FA'}}>
-        <div>목록창헤드</div>
+    <div style={{width: '380px', backgroundColor: '#F8F8FA', paddingLeft:'30px'}}>
+        <div style={{fontSize: '2rem', paddingTop: '40px', paddingBottom: '40px'}}>알림</div>
         <div style={{display: 'flex'}}>
             <div>
                 프사
