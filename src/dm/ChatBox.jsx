@@ -76,6 +76,7 @@ export default function ChatBox({message, handleInputChange}) {
           type="text"
           placeholder="메시지를 입력하세요"
           onChange={handleInputChange}
+          maxLength={1000}
         />
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
           <MdInsertPhoto />
