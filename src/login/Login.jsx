@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import kakaoLogo from '../image/sns/free-icon-kakao-talk-4494622.png'
 import naverLogo from '../image/sns/pngwing.com.png'
 import googleLogo from '../image/sns/google_logo_icon_147282.png'
 import MainLogo from '../image/logo/logo2.png'
+import axios from 'axios'
 
 
 const LoginBox = styled.div`
@@ -24,7 +25,7 @@ const LoginBox = styled.div`
   box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px, rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px, rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px, rgba(42, 51, 70, 0.04) 0px 6px 6px -3px, rgba(14, 63, 126, 0.04) 0px 12px 12px -6px, rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
 `
 
-const LoginBoxRight = styled.div`
+const LoginBoxRight = styled.form`
   width: 45%;
   height: 100%;
   display: flex;
@@ -123,8 +124,9 @@ const LoginTitleAndIntroContainer = styled.div`
 `
 
 const SignUpAndFindIdContainer = styled.div`
+  width: 290px;
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   margin-top: 5px;
 `
 
@@ -147,6 +149,49 @@ const FindIdButton = styled.button`
 const logs = {kakaoLogo, googleLogo, naverLogo};
 
 export default function Login() {
+
+  const [loginId, setLoginId] = useState('');
+  const [password, setPassword] = useState('');
+  const hello = '1';
+  const data = {
+    loginId: loginId,
+    password: password,
+  };
+
+  const handleLoginIdChange = (e) => {
+
+    if(e){
+      setLoginId(e);
+    }
+  }
+
+  const handlePasswordChange = (e) => {
+
+    if(e){
+      setPassword(e);
+    }
+  }
+
+  const handleLogin = async () =>{
+    try {
+      const response = await axios.post('https://15071f57-00d2-45c8-9dc1-b0ea0ea22657.mock.pstmn.io/login', data);
+      if (response.status === 200) {
+        console.log(response.status);
+        alert('login successful');
+      }
+      else if (response.status === 400) {
+        alert('jwt authentication error');
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        alert('join failed: ' + error.response.data);
+      } else {
+        console.error('Error message:', error.message);
+      }
+    }
+  }  
+
   return (
     <LoginBox>  
       <LoginBoxRight>
@@ -156,13 +201,13 @@ export default function Login() {
           </LoginTitle>
           <LoginIntro><p style={{display:'inline-block',color: '#f1767a '}}>사랑하는 사람</p>과의 소중한 순간을 함께 기록하세요.</LoginIntro>
         </LoginTitleAndIntroContainer>
-        <IdLabel>아이디</IdLabel><Input type="text" placeholder="ID" />
-        <PassLabel>비밀번호</PassLabel><Input type="password" placeholder="비밀번호" />
+        <IdLabel>아이디</IdLabel><Input type="text" placeholder="ID" onChange={(e)=>{handleLoginIdChange(e.target.value)}} />
+        <PassLabel>비밀번호</PassLabel><Input type="password" placeholder="비밀번호" onChange={(e)=>{handlePasswordChange(e.target.value)}} />
         <SignUpAndFindIdContainer>
           <SignUpButton style={{marginRight:'4px'}}>회원가입 |</SignUpButton>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
-        <LoginButton>LOGIN</LoginButton>
+        <LoginButton onClick={(e) => { e.preventDefault(); handleLogin();}}>LOGIN</LoginButton>
         <div style={{ display: 'flex', gap: "15px"}}>
           <OAuthButton><img src={logs.kakaoLogo} alt="카카오 로그인" /></OAuthButton>
           <OAuthButton><img src={logs.naverLogo} alt="네이버 로그인" /></OAuthButton>

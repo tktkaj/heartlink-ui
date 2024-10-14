@@ -192,7 +192,7 @@ const SignUp = () => {
       toast.error('필수 항목이 비어 있습니다. 확인해 주세요.');
       return;
     }
-    handleLogin();
+    handleJoin();
   }
 
   // id길이 체크
@@ -214,7 +214,7 @@ const SignUp = () => {
 
 
   // 회원가입 axios
-  const handleLogin = async () => {
+  const handleJoin = async () => {
 
 
     // 아이디 길이 확인
