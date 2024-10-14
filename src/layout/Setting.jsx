@@ -16,7 +16,7 @@ const SettingBox = styled.div`
     align-items: center;
     position: fixed;
     left: 30px;
-    bottom: 90px;
+    bottom: 75px;
 `
 
 const SettingList = styled.div`
@@ -37,19 +37,19 @@ export default function Setting() {
             <SettingBox>
                 <ul>
                     <SettingList>
-                        <FaHeartBroken className='settingIcon'/>
+                        <FaHeartBroken className='settingIcon' />
                         <p>커플 해제</p>
                     </SettingList>
                     <SettingList>
-                        <HiMiniEyeSlash className='settingIcon'/>
+                        <HiMiniEyeSlash className='settingIcon' />
                         <p>차단유저 관리</p>
                     </SettingList>
                     <SettingList>
-                        <RiLockPasswordFill className='settingIcon'/>
+                        <RiLockPasswordFill className='settingIcon' />
                         <p>비밀번호 변경</p>
                     </SettingList>
                     <SettingList>
-                        <IoLogOut className='settingIcon'/>
+                        <IoLogOut className='settingIcon' />
                         <p>로그아웃</p>
                     </SettingList>
                 </ul>

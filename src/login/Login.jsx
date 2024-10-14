@@ -144,33 +144,33 @@ const FindIdButton = styled.button`
   font-size: 0.8rem;
 `
 
-const logs = {kakaoLogo, googleLogo, naverLogo};
+const logs = { kakaoLogo, googleLogo, naverLogo };
 
 export default function Login() {
   return (
-    <LoginBox>  
+    <LoginBox>
       <LoginBoxRight>
         <LoginTitleAndIntroContainer>
           <LoginTitle>
-              LOGIN
+            LOGIN
           </LoginTitle>
-          <LoginIntro><p style={{display:'inline-block',color: '#f1767a '}}>사랑하는 사람</p>과의 소중한 순간을 함께 기록하세요.</LoginIntro>
+          <LoginIntro><p style={{ display: 'inline-block', color: '#f1767a ' }}>사랑하는 사람</p>과의 소중한 순간을 함께 기록하세요.</LoginIntro>
         </LoginTitleAndIntroContainer>
         <IdLabel>아이디</IdLabel><Input type="text" placeholder="ID" />
         <PassLabel>비밀번호</PassLabel><Input type="password" placeholder="비밀번호" />
         <SignUpAndFindIdContainer>
-          <SignUpButton style={{marginRight:'4px'}}>회원가입 |</SignUpButton>
+          <SignUpButton style={{ marginRight: '4px' }}>회원가입 |</SignUpButton>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
         <LoginButton>LOGIN</LoginButton>
-        <div style={{ display: 'flex', gap: "15px"}}>
+        <div style={{ display: 'flex', gap: "15px" }}>
           <OAuthButton><img src={logs.kakaoLogo} alt="카카오 로그인" /></OAuthButton>
           <OAuthButton><img src={logs.naverLogo} alt="네이버 로그인" /></OAuthButton>
           <OAuthButton><img src={logs.googleLogo} alt="구글 로그인" /></OAuthButton>
         </div>
       </LoginBoxRight>
       <LoginBanner>
-        <img src={MainLogo} style={{width: '200px', height: '100px'}}/>
+        <img src={MainLogo} style={{ width: '200px', height: '100px' }} />
       </LoginBanner>
     </LoginBox>
   )

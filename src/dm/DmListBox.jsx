@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import profileImg from '../image/testimg/와구리.png';
+import profileImg from '../image/testimg/와구리.png';
 import { FaPlusCircle } from "react-icons/fa";
 
 const DmListBoxContainer = styled.div`
@@ -64,17 +64,17 @@ export default function DmListBox() {
       <DmListHeader>
         <UserNameLabel>moong_52</UserNameLabel>
         <IconButton>
-          <FaPlusCircle/>
+          <FaPlusCircle />
         </IconButton>
       </DmListHeader>
-        <DmItem>
-          <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
-          <div>Hyuna</div>
-        </DmItem>
-        <DmItem>
-          <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
-          <div>tktkaj</div>
-        </DmItem>
+      <DmItem>
+        <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
+        <div>Hyuna</div>
+      </DmItem>
+      <DmItem>
+        <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
+        <div>tktkaj</div>
+      </DmItem>
     </DmListBoxContainer>
   );
 }

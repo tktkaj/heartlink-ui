@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import SideMenu from '../layout/SideMenu'
 import styled from 'styled-components'
 import Feed from './Feed'
-import profilethum from '../images/test.png';
+import profilethum from '../image/sidebar/test.png';
 import Upload from '../layout/Upload';
 import Setting from '../layout/Setting';
 
 const MainContainer = styled.div`
+
     background-color: #F8F8FA;
     display: flex;
 `
@@ -47,7 +48,7 @@ const BasicAlarm = styled.div`
 `
 
 const LoveAlarm = styled.div`
-    width: 15vw;
+    width: 20vw;
     height: 6vh;
     background-color: #ffebeb;
     border: rgba(160, 160, 160, 0.2) 1px solid;
@@ -66,18 +67,19 @@ export default function MainPage() {
         setShowSetting(prev => !prev);
     };
 
+
     return (
         <MainContainer>
             <SideMenu onSettingClick={handleSettingClick} />
             <Feed />
-            <div style={{display:'flex', flexDirection:'column',marginLeft: '80px', gap:'10px'}}>
+            <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '80px', gap: '10px' }}>
                 <LoveStatus>
                     <ProfileThum>
                         <img src={profilethum} alt="" />
                     </ProfileThum>
                     <div>
                         <p style={{ fontFamily: 'SokchoBadaBatang' }}>shinshinjeonghun</p>
-                        <p style={{ fontSize:'14px' }}>접속중</p>
+                        <p style={{ fontSize: '14px' }}>접속중</p>
                     </div>
                 </LoveStatus>
                 <BasicAlarm>
@@ -88,7 +90,7 @@ export default function MainPage() {
                 </LoveAlarm>
             </div>
             <Upload />
-            {showSetting && <Setting />} 
+            {showSetting && <Setting />}
         </MainContainer>
     )
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import profilethum from '../images/test.png';
-import feedImage from '../images/yy.jpg';
+import profilethum from '../image/sidebar/test.png';
+import feedImage from '../image/feed/yy.jpg';
 import { GoKebabHorizontal } from "react-icons/go";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { FaComment } from "react-icons/fa";
@@ -108,11 +108,11 @@ export default function Feed() {
                         </ProfilePhoto>
                         <p style={{ fontSize: '21px' }}>moong_52</p>
                         <h3>&</h3>
-                        <p style={{ fontSize: '15px', color:'gray', marginBottom:'-5px' }}>shinshinjeonghun</p>
-                    </ProfileTxt>                    
-                    <div style={{ display: 'flex', gap: '15px'}}>
-                        <button type="submit" style={{backgroundColor:'#706EF4', width:'70px', height:'30px',paddingTop:'3px'}}
-                        class="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm">팔로우</button>
+                        <p style={{ fontSize: '15px', color: 'gray', marginBottom: '-5px' }}>shinshinjeonghun</p>
+                    </ProfileTxt>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <button type="submit" style={{ backgroundColor: '#706EF4', width: '70px', height: '30px', paddingTop: '3px' }}
+                            class="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm">팔로우</button>
                         <GoKebabHorizontal style={{ width: '30px', height: '30px' }} />
                     </div>
                 </FeedProfile>
@@ -120,12 +120,12 @@ export default function Feed() {
                     <img src={feedImage} alt="피드사진" />
                 </FeedImages>
                 <FeedIcons>
-                    <div style={{display:'flex', gap:'13px'}}>
+                    <div style={{ display: 'flex', gap: '13px' }}>
                         <IoIosHeartEmpty className='feedIcon' />
                         <FaComment className='feedIcon' />
                         <IoMdShare className='feedIcon' />
                     </div>
-                <FaRegBookmark className='feedIcon' />
+                    <FaRegBookmark className='feedIcon' />
                 </FeedIcons>
                 <FeedInfo>
                     <p>1시간전</p>
@@ -135,7 +135,7 @@ export default function Feed() {
                 <FeedContend>
                     <p>오늘 날씨가 좋아요...</p>
                     <div>
-                        <p style={{fontSize:'15px',color:'gray'}}>더보기</p>
+                        <p style={{ fontSize: '15px', color: 'gray' }}>더보기</p>
                     </div>
                 </FeedContend>
 

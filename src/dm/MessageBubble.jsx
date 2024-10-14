@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import TestImg from '../images/test.png';
+import TestImg from '../image/sidebar/test.png'
 
 
 const Message = styled.div`
@@ -52,7 +52,7 @@ export default function MessageBubble({ message }) {
           어떤걸로 먹을까??
         </Message>
       </div> */}
-      
+
       <div style={{ display: 'flex', justifyContent: 'end' }}>
         <Message style={{ borderRadius: '10px 10px 5px 10px' }}>
           흐..
@@ -67,7 +67,7 @@ export default function MessageBubble({ message }) {
 
       <div style={{ display: 'flex', justifyContent: 'end' }}>
         <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-          <div style={{display: 'flex', justifyContent: 'end', fontSize: '0.9rem' , color: '#706EF4'}}>읽음</div>
+          <div style={{ display: 'flex', justifyContent: 'end', fontSize: '0.9rem', color: '#706EF4' }}>읽음</div>
           <TimeCheckBox>오전 12:50</TimeCheckBox>
         </div>
         <Message style={{ borderRadius: '10px 5px 10px 10px' }}>
@@ -76,33 +76,33 @@ export default function MessageBubble({ message }) {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'start' }}>
-      <SpaceImage/>
+        <SpaceImage />
         <Message isMine={true} style={{ borderRadius: '10px 10px 10px 5px' }}>
           어떤걸로 먹을까??
         </Message>
       </div>
-      
+
       <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <SpaceImage/>
+        <SpaceImage />
         <Message isMine={true} style={{ borderRadius: '5px 10px 10px 5px' }}>
           나는 그 청다 먹고싶어!
         </Message>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <SpaceImage/>
+        <SpaceImage />
         <Message isMine={true} style={{ borderRadius: '5px 10px 10px 10px' }}>
           당장 시키자ㅏㅏ!!!ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ
         </Message>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'start' }}>
-      <ProfileImage src={TestImg}/>
+        <ProfileImage src={TestImg} />
         <Message isMine={true} style={{ borderRadius: '10px 10px 10px 10px', padding: '0', backgroundColor: '#FFFFFF' }}>
           <img src={TestImg} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }}></img>
         </Message>
         <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-          <div style={{fontSize: '0.9rem', color: '#706EF4'}}>읽음</div>
+          <div style={{ fontSize: '0.9rem', color: '#706EF4' }}>읽음</div>
           <TimeCheckBox>오전 12:52</TimeCheckBox>
         </div>
       </div>
