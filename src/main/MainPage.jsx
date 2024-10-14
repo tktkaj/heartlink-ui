@@ -6,13 +6,27 @@ import profilethum from '../image/sidebar/test.png';
 import Upload from '../layout/Upload';
 import Setting from '../layout/Setting';
 
+const Container = styled.div`
+    width: 80vw;
+    height: 100vh;
+    overflow-y: auto;
+
+    /* 스크롤바 숨기기 */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding-bottom: 20vh;
+`
+
 const MainContainer = styled.div`
 
     background-color: #F8F8FA;
     display: flex;
 `
 const LoveStatus = styled.div`
-    width: 15vw;
+    width: 19vw;
     height: 12vh;
     background-color: white;
     border: rgba(160, 160, 160, 0.2) 1px solid;
@@ -36,7 +50,7 @@ const ProfileThum = styled.div`
 `
 
 const BasicAlarm = styled.div`
-    width: 15vw;
+    width: 19vw;
     height: 6vh;
     background-color: white;
     border: rgba(160, 160, 160, 0.2) 1px solid;
@@ -48,7 +62,7 @@ const BasicAlarm = styled.div`
 `
 
 const LoveAlarm = styled.div`
-    width: 20vw;
+    width: 19vw;
     height: 6vh;
     background-color: #ffebeb;
     border: rgba(160, 160, 160, 0.2) 1px solid;
@@ -71,24 +85,26 @@ export default function MainPage() {
     return (
         <MainContainer>
             <SideMenu onSettingClick={handleSettingClick} />
-            <Feed />
-            <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '80px', gap: '10px' }}>
-                <LoveStatus>
-                    <ProfileThum>
-                        <img src={profilethum} alt="" />
-                    </ProfileThum>
-                    <div>
-                        <p style={{ fontFamily: 'SokchoBadaBatang' }}>shinshinjeonghun</p>
-                        <p style={{ fontSize: '14px' }}>접속중</p>
-                    </div>
-                </LoveStatus>
-                <BasicAlarm>
-                    <p>neung._. 님이 좋아요를 눌렀습니다.</p>
-                </BasicAlarm>
-                <LoveAlarm>
-                    <p>신닭가슴살님과 링크매치 성공💕 </p>
-                </LoveAlarm>
-            </div>
+            <Container>
+                <Feed />
+                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '80px', gap: '10px' }}>
+                    <LoveStatus>
+                        <ProfileThum>
+                            <img src={profilethum} alt="" />
+                        </ProfileThum>
+                        <div>
+                            <p style={{ fontFamily: 'SokchoBadaBatang' }}>shinshinjeonghun</p>
+                            <p style={{ fontSize: '14px' }}>접속중</p>
+                        </div>
+                    </LoveStatus>
+                    <BasicAlarm>
+                        <p>neung._. 님이 좋아요를 눌렀습니다.</p>
+                    </BasicAlarm>
+                    <LoveAlarm>
+                        <p>신닭가슴살님과 링크매치 성공💕 </p>
+                    </LoveAlarm>
+                </div>
+            </Container>
             <Upload />
             {showSetting && <Setting />}
         </MainContainer>
