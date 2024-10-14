@@ -2,11 +2,21 @@ import styled from 'styled-components';
 import { CgMenuGridR } from "react-icons/cg";
 import { IoHeart } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
+import SideMenu from '../layout/SideMenu';
 
 
 let Content = styled.div`
-    width: 1020px;
+    width: 80vw;
     background-color: #F8F8FA;
+    height: 100vh;
+    overflow-y: auto;
+
+    /* 스크롤바 숨기기 */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 `
 let Header = styled.div`
     width : 830px;
@@ -15,7 +25,7 @@ let Header = styled.div`
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid lightgray;
-    margin: 0px auto;
+    margin-left: 13vw;
 `
 
 let Main_Profile = styled.div`
@@ -76,11 +86,11 @@ let Follow_li = styled.li`
 `
 let Menu_Wrap = styled.div`
     width: 830px;
-    height: 40px;
+    height: 65px;
     display:flex;
     align-items: center;
     justify-content: flex-end;
-    margin: 10px auto 10px;
+    margin-left: 13vw;
 `
 let Menu = styled.div`
     width: 30px;
@@ -93,12 +103,14 @@ let Menu = styled.div`
 let Post_List = styled.div`
     width: 830px;
     display:flex;
-    justify-content: space-between;
-    margin: 0px auto 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-left: 13vw;
+    padding-bottom: 10vh;
 `
 let Post = styled.div`
-    width: 255px;
-    height: 235px;
+    width: 266px;
+    height: 245px;
     background-image: url(${props => props.background});
     background-size: cover;
     background-position: center;
@@ -111,13 +123,16 @@ let Post_Link = styled.a`
 `
 
 function MyPage() {
-    const mainProfileImage = require('./image/sponge.jpg');
-    const subProfileImage = require('./image/bono.jpg');
-    const postImage = require('./image/ping.jpg');
+    const mainProfileImage = require('../image/mypage/sponge.jpg');
+    const subProfileImage = require('../image/mypage/bono.jpg');
+    const postImage = require('../image/mypage/ping.jpg');
 
-    return(
-        <Content>
-            <Header>
+    return (
+        <div style={{ display: 'flex' }}>
+            <SideMenu />
+            <Content>
+
+                <Header>
                     <Main_Profile background={mainProfileImage}></Main_Profile>
                     <Sub_Profile background={subProfileImage}></Sub_Profile>
                     <Outline_Profile></Outline_Profile>
@@ -125,7 +140,7 @@ function MyPage() {
                     <Word_Wrap>
                         <Nickname_Wrap>
                             <Nickname>김김이</Nickname>
-                            <Nickname style={{ paddingLeft: '15px'}}>asdfasf122</Nickname>
+                            <Nickname style={{ paddingLeft: '15px' }}>asdfasf122</Nickname>
                         </Nickname_Wrap>
                         <Status_Message_Wrap>
                             <Status_Message>동해물과 백두산이 마르고 닳도록 하늘님이 보우하사</Status_Message>
@@ -144,39 +159,38 @@ function MyPage() {
                             </Follow_li>
                         </Follow>
                     </Follow_Wrap>
-            </Header>
-            <Menu_Wrap>
-                <Menu><CgMenuGridR style={{ width: '100%', height: '100%' }}/></Menu>
-                <Menu><IoHeart style={{ width: '100%', height: '100%' }}/></Menu>
-                <Menu><IoBookmark style={{ width: '100%', height: '100%' }}/></Menu>
-            </Menu_Wrap>
+                </Header>
+                <Menu_Wrap>
+                    <Menu><CgMenuGridR style={{ width: '100%', height: '100%' }} /></Menu>
+                    <Menu><IoHeart style={{ width: '100%', height: '100%' }} /></Menu>
+                    <Menu><IoBookmark style={{ width: '100%', height: '100%' }} /></Menu>
+                </Menu_Wrap>
 
-            <Post_List>
-                <Post  background={postImage}>
-                    <Post_Link></Post_Link>
-                </Post>
-                <Post  background={postImage}>
-                    <Post_Link></Post_Link>
-                </Post>
-                <Post  background={postImage}>
-                    <Post_Link></Post_Link>
-                </Post>
-            </Post_List>
+                <Post_List>
+                    <Post background={postImage}>
+                        <Post_Link></Post_Link>
+                    </Post>
+                    <Post background={postImage}>
+                        <Post_Link></Post_Link>
+                    </Post>
+                    <Post background={postImage}>
+                        <Post_Link></Post_Link>
+                    </Post>
+                    <Post background={postImage}>
+                        <Post_Link></Post_Link>
+                    </Post>
+                    <Post background={postImage}>
+                        <Post_Link></Post_Link>
+                    </Post>
+                    <Post background={postImage}>
+                        <Post_Link></Post_Link>
+                    </Post>
+                </Post_List>
 
-            <Post_List>
-                <Post  background={postImage}>
-                    <Post_Link></Post_Link>
-                </Post>
-                <Post  background={postImage}>
-                    <Post_Link></Post_Link>
-                </Post>
-                <Post  background={postImage}>
-                    <Post_Link href='www.naver.com'></Post_Link>
-                </Post>
-            </Post_List>
-        </Content>
+            </Content>
+        </div>
     );
-    
+
 }
 
 export default MyPage;

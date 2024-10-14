@@ -1,5 +1,5 @@
 import React from 'react'
-import ProfileImg from '../images/test.png'
+import ProfileImg from '../image/sidebar/test.png'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -69,38 +69,38 @@ const DeclineButton = styled.button`
 `;
 
 export default function AlarmList() {
-    return (
-        <Container>
+  return (
+    <Container>
 
-            <Title>알림</Title>
+      <Title>알림</Title>
 
-            <AlarmItem>
-                <ProfileImage src={ProfileImg} />
-                <AlarmTextContainer>
-                    <AlarmText>dduddo님이 회원님의 게시물을 좋아합니다.</AlarmText>
-                    <AlarmTime>방금 전</AlarmTime>
-                </AlarmTextContainer>
-            </AlarmItem>
+      <AlarmItem>
+        <ProfileImage src={ProfileImg} />
+        <AlarmTextContainer>
+          <AlarmText>dduddo님이 회원님의 게시물을 좋아합니다.</AlarmText>
+          <AlarmTime>방금 전</AlarmTime>
+        </AlarmTextContainer>
+      </AlarmItem>
 
-            <AlarmItem>
-                <ProfileImage src={ProfileImg} />
-                <AlarmTextContainer>
-                    <AlarmText>Yebook님이 회원님의 게시물에 댓글을 남겼습니다.</AlarmText>
-                    <AlarmTime>방금 전</AlarmTime>
-                </AlarmTextContainer>
-            </AlarmItem>
+      <AlarmItem>
+        <ProfileImage src={ProfileImg} />
+        <AlarmTextContainer>
+          <AlarmText>Yebook님이 회원님의 게시물에 댓글을 남겼습니다.</AlarmText>
+          <AlarmTime>방금 전</AlarmTime>
+        </AlarmTextContainer>
+      </AlarmItem>
 
-            <AlarmItem>
-                <ProfileImage src={ProfileImg} />
-                <AlarmTextContainer>
-                    <AlarmText>tktkaj님이 팔로우 요청하셨습니다.</AlarmText>
-                    <ButtonContainer>
-                        <AcceptButton>수락</AcceptButton>
-                        <DeclineButton>거절</DeclineButton>
-                    </ButtonContainer>
-                </AlarmTextContainer>
-            </AlarmItem>
+      <AlarmItem>
+        <ProfileImage src={ProfileImg} />
+        <AlarmTextContainer>
+          <AlarmText>tktkaj님이 팔로우 요청하셨습니다.</AlarmText>
+          <ButtonContainer>
+            <AcceptButton>수락</AcceptButton>
+            <DeclineButton>거절</DeclineButton>
+          </ButtonContainer>
+        </AlarmTextContainer>
+      </AlarmItem>
 
-        </Container>
-    )
+    </Container>
+  )
 }

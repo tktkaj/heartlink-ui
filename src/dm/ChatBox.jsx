@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FaPaperPlane } from "react-icons/fa";
 import { MdInsertPhoto } from "react-icons/md";
 import MessageBubble from './MessageBubble';
-import profileImg from '../image/testimg/와구리.png';
+import profileImg from '../image/testimg/와구리.png';
 
 const ChatBoxContainer = styled.div`
   display: flex;
@@ -50,7 +50,7 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox({input, handleInputChange, sendMessage}) {
+export default function ChatBox({ input, handleInputChange, sendMessage }) {
 
   // 테스트용
 
@@ -67,8 +67,8 @@ export default function ChatBox({input, handleInputChange, sendMessage}) {
         <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
           2024년 10월 23일
         </div>
-          <MessageBubble message={input}>
-          </MessageBubble>
+        <MessageBubble message={input}>
+        </MessageBubble>
       </ChatContent>
       <MessageInputContainer>
         <MessageInput

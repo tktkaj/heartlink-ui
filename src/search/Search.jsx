@@ -1,12 +1,23 @@
 import styled from 'styled-components';
+import SideMenu from '../layout/SideMenu';
 
 let Content = styled.div`
-    width: 1020px;
+    width: 80vw;
     background-color: #F8F8FA;
+    display: flex;
+    height: 100vh;
+    overflow-y: auto;
+
+    /* 스크롤바 숨기기 */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 `
 let Content_Wrap = styled.div`
     width: 770px;
-    margin: 0px auto;
+    margin-left:13vw
 `
 let Search_Result_Wrap = styled.div`
     width: 100%;
@@ -41,55 +52,57 @@ let Post_Link = styled.a`
 `
 
 function Search() {
-    const postImage = require('./image/ping.jpg');
+    const postImage = require('../image/search/ping.jpg');
 
-    return(
-        <Content>
-            <Content_Wrap>
-                <Search_Result_Wrap>
-                    <Search_Result>&풍경사진</Search_Result>
-                </Search_Result_Wrap>
+    return (
+        <div style={{ display: 'flex' }}>
+            <SideMenu />
+            <Content>
+                <Content_Wrap>
+                    <Search_Result_Wrap>
+                        <Search_Result>&풍경사진</Search_Result>
+                    </Search_Result_Wrap>
 
-                <Post_Wrap>
-                    <Post_List>
-                        <Post  background={postImage}>
-                            <Post_Link></Post_Link>
-                        </Post>
-                        <Post  background={postImage}>
-                            <Post_Link></Post_Link>
-                        </Post>
-                        <Post  background={postImage}>
-                            <Post_Link href=''></Post_Link>
-                        </Post>
-                    </Post_List>
+                    <Post_Wrap>
+                        <Post_List>
+                            <Post background={postImage}>
+                                <Post_Link></Post_Link>
+                            </Post>
+                            <Post background={postImage}>
+                                <Post_Link></Post_Link>
+                            </Post>
+                            <Post background={postImage}>
+                                <Post_Link href=''></Post_Link>
+                            </Post>
+                        </Post_List>
 
-                    <Post_List>
-                        <Post  background={postImage}>
-                            <Post_Link></Post_Link>
-                        </Post>
-                        <Post  background={postImage}>
-                            <Post_Link></Post_Link>
-                        </Post>
-                        <Post  background={postImage}>
-                            <Post_Link href=''></Post_Link>
-                        </Post>
-                    </Post_List>
+                        <Post_List>
+                            <Post background={postImage}>
+                                <Post_Link></Post_Link>
+                            </Post>
+                            <Post background={postImage}>
+                                <Post_Link></Post_Link>
+                            </Post>
+                            <Post background={postImage}>
+                                <Post_Link href=''></Post_Link>
+                            </Post>
+                        </Post_List>
 
-                    <Post_List>
-                        <Post  background={postImage}>
-                            <Post_Link></Post_Link>
-                        </Post>
-                        <Post  background={postImage}>
-                            <Post_Link></Post_Link>
-                        </Post>
-                        <Post  background={postImage}>
-                            <Post_Link href=''></Post_Link>
-                        </Post>
-                    </Post_List>
-                </Post_Wrap>
-            </Content_Wrap>       
-        </Content>
-
+                        <Post_List>
+                            <Post background={postImage}>
+                                <Post_Link></Post_Link>
+                            </Post>
+                            <Post background={postImage}>
+                                <Post_Link></Post_Link>
+                            </Post>
+                            <Post background={postImage}>
+                                <Post_Link href=''></Post_Link>
+                            </Post>
+                        </Post_List>
+                    </Post_Wrap>
+                </Content_Wrap>
+            </Content>
+        </div>
     );
 
 }
