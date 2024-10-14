@@ -226,7 +226,7 @@ const SignUp = () => {
     // 아이디 영문 확인
     const idRegex =  /^[a-zA-Z0-9]*$/;
     if(!idRegex.test(loginId)){
-      toast.error('아이디는 영문만 가능합니다.');
+      toast.error('아이디는 영문 및 숫자만 가능합니다.');
       return;
     }
 
@@ -316,7 +316,7 @@ const SignUp = () => {
         <div style={{ display: 'flex', gap: '10px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <SignUpLabel><RequiredMark>*</RequiredMark>이름</SignUpLabel>
-            <SignUpInput type="text" value={name} style={{ width: '175px' }} minLength={2} placeholder="한글만 입력해주세요." onChange={(e) => setName(e.target.value)} />
+            <SignUpInput type="text" value={name} style={{ width: '175px' }} minLength={2} maxLength={20} placeholder="한글만 입력해주세요." onChange={(e) => setName(e.target.value)} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <SignUpLabel><RequiredMark>*</RequiredMark>닉네임</SignUpLabel>
