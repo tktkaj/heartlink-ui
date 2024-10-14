@@ -224,6 +224,12 @@ const SignUp = () => {
       return;
     }
 
+    const idRegex = /^[a-z]$/
+    if(!idRegex.test(loginId)){
+      toast.error('아이디는 영문만 가능합니다.');
+      return;
+    }
+
     // 한국 이름 확인
     const nameRegex = /^[가-힣]+$/
     if (!nameRegex.test(name)) {
@@ -329,7 +335,7 @@ const SignUp = () => {
             <GenderSpan>여성</GenderSpan>
           </div>
         </GenderRadioBox>
-        <SignUpButton onClick={(e) => { e.preventDefault(); handlePassword(); checkForm(); }}>회원가입</SignUpButton>
+        <SignUpButton onClick={(e) => { e.preventDefault();checkForm();}}>회원가입</SignUpButton>
       </SignUpForm>
     </SignUpBox>
   )
