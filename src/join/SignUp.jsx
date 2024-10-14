@@ -218,13 +218,13 @@ const SignUp = () => {
 
 
     // 아이디 길이 확인
-
     if (loginId.length < 5) {
       toast.error('아이디는 5자~15자로 입력해주세요.');
       return;
     }
 
-    const idRegex = /^[a-z]$/
+    // 아이디 영문 확인
+    const idRegex =  /^[a-zA-Z0-9]*$/;
     if(!idRegex.test(loginId)){
       toast.error('아이디는 영문만 가능합니다.');
       return;
@@ -237,8 +237,21 @@ const SignUp = () => {
       return;
     }
 
+    // 이메일 검증
+    const eamilRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+$/;
+    if(!eamilRegex.test(emailPreffix + '@' + emailSuffix.substring(0,emailSuffix.length-4))){
+      toast.error('이메일을 확인해주세요.');
+      return;
+    }
+
+    // 비밀번호, 비밀번호 확인 일치 여부
     if (password !== passwordChk) {
       toast.error('비밀번호와 비빌번호확인이 다릅니다. 확인해 주세요.');
+      return;
+    }
+
+    if(phone.length!=11){
+      toast.error('핸드폰번호를 올바르게 입력해주세요');
       return;
     }
 
@@ -303,7 +316,7 @@ const SignUp = () => {
         <div style={{ display: 'flex', gap: '10px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <SignUpLabel><RequiredMark>*</RequiredMark>이름</SignUpLabel>
-            <SignUpInput type="text" value={name} style={{ width: '175px' }} onChange={(e) => setName(e.target.value)} />
+            <SignUpInput type="text" value={name} style={{ width: '175px' }} minLength={2} placeholder="한글만 입력해주세요." onChange={(e) => setName(e.target.value)} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <SignUpLabel><RequiredMark>*</RequiredMark>닉네임</SignUpLabel>
@@ -312,7 +325,7 @@ const SignUp = () => {
         </div>
         <SignUpLabel><RequiredMark>*</RequiredMark>휴대폰 번호</SignUpLabel>
         <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-          <SignUpInput type="text" value={phone} maxLength={11} style={{ width: '270px' }} onChange={(e) => setPhone(e.target.value)} />
+          <SignUpInput type="text" value={phone} maxLength={11} placeholder="숫자만 입력해주세요." style={{ width: '270px' }} onChange={(e) => setPhone(e.target.value)} />
           <div style={{ paddingBottom: '8px' }}>
             <button type='button' style={{ width: '80px', backgroundColor: '#706EF4', padding: '9px 5px', borderRadius: '5px', color: 'white', fontSize: '0.9rem' }}>인증하기</button>
           </div>
