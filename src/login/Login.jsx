@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import kakaoLogo from '../image/sns/free-icon-kakao-talk-4494622.png'
 import naverLogo from '../image/sns/pngwing.com.png'
 import googleLogo from '../image/sns/google_logo_icon_147282.png'
-import MainLogo from '../image/logo/logo2.png'
+import MainLogo from '../image/logo/Logo.png'
 import axios from 'axios'
 
 
