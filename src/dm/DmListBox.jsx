@@ -69,12 +69,13 @@ export default function DmListBox({ chatList }) {
           <FaPlusCircle />
         </IconButton>
       </DmListHeader>
-
       {chatList.map((chat, index) => (
         <DmItem>
           <img src={"http://localhost:9090/img/bono.jpg"} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
-          <div>{chat.userName}</div>
-          <div style={{fontSize:'0.7rem'}}>{chat.lastMessage}</div>
+          <div>
+            <div style={{marginBottom:'1px'}}>{chat.userName}</div>
+            <div style={{fontSize:'0.8rem'}}>{chat.lastMessage}</div>
+          </div>
         </DmItem>
       ))}
 
