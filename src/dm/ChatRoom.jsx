@@ -21,6 +21,7 @@ export default function ChatRoom() {
   const [input, setInput] = useState('');
   const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [userId, setUserId] = useState(4);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -41,7 +42,6 @@ export default function ChatRoom() {
     .then((response) => {
       // 서버로부터 받은 데이터를 상태로 설정
       setMessages(response.data);
-      console.log(response.data);
     })
     .catch((error) => {
       console.error('Error fetching the direct message:', error);
@@ -52,7 +52,7 @@ export default function ChatRoom() {
   return (
     <div style={{ display: 'flex' }}>
       <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} />
-      <ChatBox input={input} handleInputChange={handleInputChange} sendMessage={sendMessage} />
+      <ChatBox input={input} handleInputChange={handleInputChange} sendMessage={sendMessage} messages={messages} userId={userId} />
     </div>
   );
 }

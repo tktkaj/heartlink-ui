@@ -50,7 +50,7 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox({ input, handleInputChange, sendMessage }) {
+export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId}) {
 
   // 테스트용
 
@@ -67,7 +67,7 @@ export default function ChatBox({ input, handleInputChange, sendMessage }) {
         <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
           2024년 10월 23일
         </div>
-        <MessageBubble message={input}>
+        <MessageBubble message={input} messages={messages}>
         </MessageBubble>
       </ChatContent>
       <MessageInputContainer>
