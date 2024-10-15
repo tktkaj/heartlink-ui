@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import SideMenu from '../layout/SideMenu'
 import styled from 'styled-components'
 import Feed from './Feed'
@@ -22,7 +22,6 @@ const Container = styled.div`
 `
 
 const MainContainer = styled.div`
-
     background-color: #F8F8FA;
     display: flex;
 `
@@ -66,7 +65,7 @@ const BasicAlarm = styled.div`
     background-color: white;
     border: rgba(160, 160, 160, 0.2) 1px solid;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,7 +77,7 @@ const LoveAlarm = styled.div`
     background-color: #ffebeb;
     border: rgba(160, 160, 160, 0.2) 1px solid;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -87,10 +86,25 @@ const LoveAlarm = styled.div`
 export default function MainPage() {
 
     const [showSetting, setShowSetting] = useState(false);
+    const settingRef = useRef(null);
 
-    const handleSettingClick = () => {
+    const handleSettingClick = (event) => {
         setShowSetting(prev => !prev);
+        event.stopPropagation()
     };
+
+    const handleClickOutside = (event) => {
+        if (settingRef.current && !settingRef.current.contains(event.target)) {
+            setShowSetting(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
 
     return (
@@ -104,8 +118,8 @@ export default function MainPage() {
                             <img src={profilethum} alt="" />
                         </ProfileThum>
                         <div>
-                            <p style={{ fontFamily: 'SokchoBadaBatang' }}>shinshinjeonghun</p>
-                            <p style={{ fontSize: '14px' }}>접속중</p>
+                            <p style={{ fontFamily: 'SokchoBadaBatang', fontSize: '17px' }}>shinshinjeonghun</p>
+                            <p style={{ fontSize: '15px' }}>접속중</p>
                         </div>
                     </LoveStatus>
                     <BasicAlarm>
@@ -115,9 +129,12 @@ export default function MainPage() {
                         <p>신닭가슴살님과 링크매치 성공💕 </p>
                     </LoveAlarm>
                 </StatusContainer>
+                <div ref={settingRef}>
+                    {showSetting && <Setting />}
+                </div>
             </Container>
             <Upload />
-            {showSetting && <Setting />}
+
         </MainContainer>
     )
 }

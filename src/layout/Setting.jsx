@@ -37,12 +37,12 @@ export default function Setting() {
             <SettingBox>
                 <ul>
                     <SettingList>
-                        <FaHeartBroken className='settingIcon' />
-                        <p>커플 해제</p>
-                    </SettingList>
-                    <SettingList>
                         <HiMiniEyeSlash className='settingIcon' />
                         <p>차단유저 관리</p>
+                    </SettingList>
+                    <SettingList>
+                        <FaHeartBroken className='settingIcon' />
+                        <p>커플 해제</p>
                     </SettingList>
                     <SettingList>
                         <RiLockPasswordFill className='settingIcon' />
