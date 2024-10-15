@@ -1,5 +1,7 @@
 import styled from 'styled-components';
-import TestImg from '../image/sidebar/test.png'
+import {format} from 'date-fns';
+import { useState } from 'react';
+import TestImg from '../image/testimg/와구리.png';
 
 
 const Message = styled.div`
@@ -34,23 +36,35 @@ const SpaceImage = styled.div`
 `;
 
 function Msg({ message }) {
+
+  const [flag, setFlag] = useState(message.senderId);
+  console.log(flag);
+
+
   if (message.senderId === 4) {
     return <div style={{ display: 'flex', justifyContent: 'start' }}>
-      <SpaceImage />
+      <ProfileImage src={TestImg}/>
       <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
        {message.content}
       </Message>
+      <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <div style={{ fontSize: '0.9rem', color: '#706EF4' }}>{message.read===true?'읽음':''}</div>
+          <TimeCheckBox>{format(message.lastMessageTime,'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+        </div>
     </div>
   }
-  else{
+  else {
     return <div style={{ display: 'flex', justifyContent: 'end' }}>
-    <Message style={{ borderRadius: '50px 50px 50px 50px' }}>
-      {message.content}
-    </Message>
-  </div>
+      <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
+        <div style={{ display: 'flex', justifyContent: 'end', fontSize: '0.9rem', color: '#706EF4' }}>{message.read===true?'읽음':''}</div>
+        <TimeCheckBox>{format(message.lastMessageTime,'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+      </div>
+      <Message style={{ borderRadius: '50px 50px 50px 50px' }}>
+        {message.content}
+      </Message>
+    </div>
 
   }
-    
 }
 
 export default function MessageBubble({ messages }) {
@@ -59,7 +73,7 @@ export default function MessageBubble({ messages }) {
 
   return (
     <>
-      {messages.map((message) => (
+      {messages.map((message, index) => (
         <Msg message={message} />
       ))}
 
