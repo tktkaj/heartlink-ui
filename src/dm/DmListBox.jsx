@@ -58,7 +58,9 @@ const IconButton = styled.button`
 
 `;
 
-export default function DmListBox() {
+export default function DmListBox({ chatList }) {
+
+
   return (
     <DmListBoxContainer>
       <DmListHeader>
@@ -67,14 +69,16 @@ export default function DmListBox() {
           <FaPlusCircle />
         </IconButton>
       </DmListHeader>
-      <DmItem>
-        <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
-        <div>Hyuna</div>
-      </DmItem>
-      <DmItem>
-        <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
-        <div>tktkaj</div>
-      </DmItem>
+
+      {chatList.map((chat, index) => (
+        <DmItem>
+          <img src={"http://localhost:9090/img/bono.jpg"} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+          <div>{chat.userName}</div>
+          <div style={{fontSize:'0.7rem'}}>{chat.lastMessage}</div>
+        </DmItem>
+      ))}
+
+
     </DmListBoxContainer>
   );
 }
