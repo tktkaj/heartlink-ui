@@ -18,14 +18,9 @@ export default function ChatRoom() {
       });
   }, []);
 
-  
-
   const [input, setInput] = useState('');
   const [chatList, setChatList] = useState([]);
-  const [messages, setMessages] = useState({
-    0: []
-  });
-
+  const [messages, setMessages] = useState([]);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -39,13 +34,25 @@ export default function ChatRoom() {
       }));
       setInput('');
     }
+  }
+  
+  const handleChangeRoom = (msgRoomId) => {
+    axios.get(`http://localhost:9090/dm/${msgRoomId}/detail`)
+    .then((response) => {
+      // 서버로부터 받은 데이터를 상태로 설정
+      setMessages(response.data);
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error('Error fetching the direct message:', error);
+    });
 
   }
 
   return (
     <div style={{ display: 'flex' }}>
-      <DmListBox chatList={chatList}/>
-      <ChatBox input={input} handleInputChange = {handleInputChange} sendMessage={sendMessage}/>
+      <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} />
+      <ChatBox input={input} handleInputChange={handleInputChange} sendMessage={sendMessage} />
     </div>
   );
 }

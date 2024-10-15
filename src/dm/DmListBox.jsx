@@ -58,8 +58,7 @@ const IconButton = styled.button`
 
 `;
 
-export default function DmListBox({ chatList }) {
-
+export default function DmListBox({ chatList, handleChangeRoom }) {
 
   return (
     <DmListBoxContainer>
@@ -70,7 +69,7 @@ export default function DmListBox({ chatList }) {
         </IconButton>
       </DmListHeader>
       {chatList.map((chat, index) => (
-        <DmItem>
+        <DmItem onClick={()=>handleChangeRoom(chat.msgRoomId)}>
           <img src={"http://localhost:9090/img/bono.jpg"} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
           <div>
             <div style={{marginBottom:'1px'}}>{chat.userName}</div>
