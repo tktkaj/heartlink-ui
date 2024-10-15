@@ -18,6 +18,7 @@ const Container = styled.div`
     -ms-overflow-style: none;
     scrollbar-width: none;
     padding-bottom: 20vh;
+    display: flex;
 `
 
 const MainContainer = styled.div`
@@ -25,6 +26,16 @@ const MainContainer = styled.div`
     background-color: #F8F8FA;
     display: flex;
 `
+
+const StatusContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-left: 80px;
+    gap: 10px;
+    position: fixed;
+    right: 10vw;
+`
+
 const LoveStatus = styled.div`
     width: 19vw;
     height: 12vh;
@@ -87,7 +98,7 @@ export default function MainPage() {
             <SideMenu onSettingClick={handleSettingClick} />
             <Container>
                 <Feed />
-                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '80px', gap: '10px' }}>
+                <StatusContainer>
                     <LoveStatus>
                         <ProfileThum>
                             <img src={profilethum} alt="" />
@@ -103,7 +114,7 @@ export default function MainPage() {
                     <LoveAlarm>
                         <p>신닭가슴살님과 링크매치 성공💕 </p>
                     </LoveAlarm>
-                </div>
+                </StatusContainer>
             </Container>
             <Upload />
             {showSetting && <Setting />}

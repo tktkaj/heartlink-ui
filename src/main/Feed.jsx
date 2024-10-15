@@ -7,6 +7,10 @@ import { IoIosHeartEmpty } from "react-icons/io";
 import { FaComment } from "react-icons/fa";
 import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 
 
 const FeedBox = styled.div`
@@ -39,7 +43,7 @@ const FeedProfile = styled.div`
     font-family: 'SokchoBadaBatang';
     display: flex;
     align-items: center;
-    width: 33vw;
+    width: 34vw;
     height: 72px;
     h3{
         font-family: 'SBAggroB';
@@ -57,19 +61,22 @@ const ProfileTxt = styled.div`
 `
 
 const FeedImages = styled.div`
-    width: 100%;
-    height: 52vh;
+    height: 54vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     img{
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
+
 `
 const FeedIcons = styled.div`
     display:flex;
-    width:33vw;
+    width:34vw;
     justify-content:space-between;
-    height:6vh;
+    height:8vh;
     align-items:center;
     .feedIcon {
         width: 25px;
@@ -85,7 +92,7 @@ const FeedInfo = styled.div`
     font-size: 15px;
     color: gray;
     width: 100%; 
-    padding-left: 18px;
+    padding-left: 22px;
 `
 
 const FeedContent = styled.div`
@@ -93,54 +100,30 @@ const FeedContent = styled.div`
     text-align: left;
     justify-content: flex-start;
     width: 100%; 
-    padding-left: 18px;
+    padding-left: 22px;
     margin-top: 10px;
     gap: 8px;
 `
 
-export default function Feed() {
-    return (
-        <div style={{ display: 'flex', }}>
-            <FeedBox>
-                <FeedProfile>
-                    <ProfileTxt>
-                        <ProfilePhoto>
-                            <img src={profilethum} alt="프사" />
-                        </ProfilePhoto>
-                        <p style={{ fontSize: '21px' }}>moong_52</p>
-                        <h3>&</h3>
-                        <p style={{ fontSize: '15px', color: 'gray', marginBottom: '-5px' }}>shinshinjeonghun</p>
-                    </ProfileTxt>
-                    <div style={{ display: 'flex', gap: '15px' }}>
-                        <button type="submit" style={{ backgroundColor: '#706EF4', width: '70px', height: '30px', paddingTop: '3px' }}
-                            class="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm">팔로우</button>
-                        <GoKebabHorizontal style={{ width: '30px', height: '30px' }} />
-                    </div>
-                </FeedProfile>
-                <FeedImages>
-                    <img src={feedImage} alt="피드사진" />
-                </FeedImages>
-                <FeedIcons>
-                    <div style={{ display: 'flex', gap: '13px' }}>
-                        <IoIosHeartEmpty className='feedIcon' />
-                        <FaComment className='feedIcon' />
-                        <IoMdShare className='feedIcon' />
-                    </div>
-                    <FaRegBookmark className='feedIcon' />
-                </FeedIcons>
-                <FeedInfo>
-                    <p>1시간전</p>
-                    <p>좋아요 9개</p>
-                    <p>댓글 2개</p>
-                </FeedInfo>
-                <FeedContent>
-                    <p>오늘 날씨가 좋아요...</p>
-                    <div>
-                        <p style={{ fontSize: '15px', color: 'gray' }}>더보기</p>
-                    </div>
-                </FeedContent>
+const SliderContainer = styled.div`
+    width: 37vw;
+    max-width: 600px;
+    margin: 0 auto;
+`;
 
-            </FeedBox >
+export default function Feed() {
+
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: true
+    };
+
+    return (
+        <div>
             <FeedBox>
                 <FeedProfile>
                     <ProfileTxt>
@@ -157,9 +140,40 @@ export default function Feed() {
                         <GoKebabHorizontal style={{ width: '30px', height: '30px' }} />
                     </div>
                 </FeedProfile>
-                <FeedImages>
-                    <img src={feedImage} alt="피드사진" />
-                </FeedImages>
+                <SliderContainer>
+                    <Slider {...settings}>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                        <FeedImages>
+                            <img src={feedImage} alt="피드사진" />
+                        </FeedImages>
+                    </Slider>
+                </SliderContainer>
                 <FeedIcons>
                     <div style={{ display: 'flex', gap: '13px' }}>
                         <IoIosHeartEmpty className='feedIcon' />

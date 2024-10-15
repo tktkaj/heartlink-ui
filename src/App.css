@@ -60,3 +60,44 @@ h5,
 h6 {
   transform: skew(-0.1deg);
 }
+
+
+/* Feed Slick Arrow & dot 설정 */
+.slick-prev:before,
+.slick-next:before {
+  position: absolute;
+  opacity: 1 !important;
+  font-size: 30px !important;
+  transform: translateY(-30%);
+  font-weight: bolder;
+}
+
+.slick-prev,
+.slick-next {
+  z-index: 1;
+}
+
+.slick-prev:before {
+  left: 33px;
+  content: '〈' !important;
+}
+
+.slick-next:before {
+  content: '〉' !important;
+  right: 33px;
+}
+
+.slick-dots li {
+  margin: 0 2px !important;
+}
+
+.slick-dots li button:before {
+  font-size: 8px !important;
+  color: white !important;
+}
+
+.slick-dots {
+  position: absolute;
+  top: 360px;
+
+}
