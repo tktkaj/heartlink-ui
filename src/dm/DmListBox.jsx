@@ -72,7 +72,7 @@ export default function DmListBox({ chatList, handleChangeRoom }) {
         </IconButton>
       </DmListHeader>
       {chatList.map((chat, index) => (
-        <DmItem onClick={()=>handleChangeRoom(chat.msgRoomId, chat.userImg)}>
+        <DmItem onClick={()=>handleChangeRoom(chat.msgRoomId, chat.userImg, chat.userName)}>
           <img src={chat.userImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
           <div>
             <div style={{marginBottom:'1px'}}>{chat.userName}</div>

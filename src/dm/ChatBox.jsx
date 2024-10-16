@@ -50,14 +50,14 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile}) {
+export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user}) {
   // 테스트용
   return (
     <ChatBoxContainer>
       <ChatHeader>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={userProfile} alt="프로필" />
-          <span style={{ marginLeft: '10px', fontSize: '1.7rem' }}>Hyuna</span>
+          <span style={{ marginLeft: '10px', fontSize: '1.7rem' }}>{user}</span>
         </div>
         <button style={{ padding: '2px 10px', borderRadius: '5px', fontSize: '1.2rem', color: '#706EF4', cursor: 'pointer' }}>차단</button>
       </ChatHeader>
