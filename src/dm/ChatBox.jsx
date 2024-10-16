@@ -9,7 +9,7 @@ const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 1000px;
+  width: 1500px;
   background-color: #fff;
 `;
 
