@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { FaPaperPlane } from "react-icons/fa";
 import { MdInsertPhoto } from "react-icons/md";
 import MessageBubble from './MessageBubble';
-import profileImg from '../image/testimg/와구리.png';
 
 const ChatBoxContainer = styled.div`
   display: flex;
