@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { FaHeartBroken } from "react-icons/fa";
 import { HiMiniEyeSlash } from "react-icons/hi2";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoLogOut } from "react-icons/io5";
 
+
 const SettingBox = styled.div`
-    width: 200px;
-    height: 230px;
     background-color: white;
     border: rgba(160, 160, 160, 0.2) 2px solid;
     border-radius: 20px;
@@ -15,22 +14,39 @@ const SettingBox = styled.div`
     justify-content: center;
     align-items: center;
     position: fixed;
-    left: 30px;
-    bottom: 75px;
+    left: 2vw;
+    bottom: 13vh;
+    z-index: 2000;
 `
-
 const SettingList = styled.div`
     display: flex;
     .settingIcon{
-        width: 25px;
-        height: 25px;
+        width: 23px;
+        height: 23px;
+        opacity: 0.7;
     }
+    padding: 30px 30px ;
     height: 6vh;
-    gap: 8px;
+    gap: 11px;
     align-items: center;
+    cursor: pointer;
+    &:hover{
+        background-color: #e6e6ff;
+    }
+    transition: background-color 0.4s ease;
 `
 
-export default function Setting() {
+const Canvas = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 53;
+`;
+
+export default function Setting({ closeSetting }) {
 
     return (
         <>
@@ -54,6 +70,7 @@ export default function Setting() {
                     </SettingList>
                 </ul>
             </SettingBox>
+            <Canvas onClick={closeSetting} />
         </>
     )
 }

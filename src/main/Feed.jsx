@@ -1,21 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import profilethum from '../image/sidebar/test.png';
 import feedImage from '../image/feed/yy.jpg';
 import { GoKebabHorizontal } from "react-icons/go";
 import { IoIosHeartEmpty } from "react-icons/io";
-import { FaComment } from "react-icons/fa";
 import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
+import { FiMessageCircle } from "react-icons/fi";
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import FeedModal from '../layout/FeedModal';
 
 
 
 const FeedBox = styled.div`
     width: 37vw;
-    height: 81vh;
+    height: 84vh;
     border: 1px solid rgba(160, 160, 160, 0.5);
     border-radius: 4%;
     background-color: white;
@@ -99,7 +100,7 @@ const SliderContainer = styled.div`
 
 
 const FeedImages = styled.div`
-    height: 54vh;
+    height: 56vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -122,8 +123,14 @@ export default function Feed() {
         arrows: true
     };
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     return (
         <div>
+            {isModalOpen && <FeedModal closeModal={closeModal} />}
             <FeedBox>
                 <FeedProfile>
                     <ProfileTxt>
@@ -137,7 +144,7 @@ export default function Feed() {
                     <div style={{ display: 'flex', gap: '15px' }}>
                         <button type="submit" style={{ backgroundColor: '#706EF4', width: '70px', height: '30px', paddingTop: '3px' }}
                             class="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm">팔로우</button>
-                        <GoKebabHorizontal style={{ width: '30px', height: '30px' }} />
+                        <GoKebabHorizontal style={{ width: '30px', height: '30px', cursor: 'pointer' }} onClick={openModal} />
                     </div>
                 </FeedProfile>
                 <SliderContainer>
@@ -177,7 +184,7 @@ export default function Feed() {
                 <FeedIcons>
                     <div style={{ display: 'flex', gap: '20px' }}>
                         <IoIosHeartEmpty className='feedIcon' />
-                        <FaComment className='feedIcon' />
+                        <FiMessageCircle className='feedIcon' />
                         <IoMdShare className='feedIcon' />
                     </div>
                     <FaRegBookmark className='feedIcon' />
@@ -247,7 +254,7 @@ export default function Feed() {
                 <FeedIcons>
                     <div style={{ display: 'flex', gap: '20px' }}>
                         <IoIosHeartEmpty className='feedIcon' />
-                        <FaComment className='feedIcon' />
+                        <FiMessageCircle className='feedIcon' />
                         <IoMdShare className='feedIcon' />
                     </div>
                     <FaRegBookmark className='feedIcon' />

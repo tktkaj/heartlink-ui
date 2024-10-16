@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import SideMenu from '../layout/SideMenu';
 
 let Content = styled.div`
-    width: 80vw;
+    width: 100vw;
     background-color: #F8F8FA;
     display: flex;
     height: 100vh;
@@ -14,6 +14,7 @@ let Content = styled.div`
     }
     -ms-overflow-style: none;
     scrollbar-width: none;
+    padding-left: 20vw;
 `;
 
 let ContentWrap = styled.div`

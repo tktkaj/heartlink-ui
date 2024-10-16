@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react'
 import SideMenu from '../layout/SideMenu'
 import styled from 'styled-components'
 import Feed from './Feed'
 import profilethum from '../image/sidebar/test.png';
 import Upload from '../layout/Upload';
-import Setting from '../layout/Setting';
+import MiniSide from '../layout/MiniSide';
+import { useState } from 'react';
 
 const Container = styled.div`
-    width: 80vw;
+    width: 100vw;
     height: 100vh;
     overflow-y: auto;
 
@@ -19,6 +19,7 @@ const Container = styled.div`
     scrollbar-width: none;
     padding-bottom: 20vh;
     display: flex;
+    margin-left: 20vw;
 `
 
 const MainContainer = styled.div`
@@ -85,31 +86,10 @@ const LoveAlarm = styled.div`
 
 export default function MainPage() {
 
-    const [showSetting, setShowSetting] = useState(false);
-    const settingRef = useRef(null);
-
-    const handleSettingClick = (event) => {
-        setShowSetting(prev => !prev);
-        event.stopPropagation()
-    };
-
-    const handleClickOutside = (event) => {
-        if (settingRef.current && !settingRef.current.contains(event.target)) {
-            setShowSetting(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
 
     return (
         <MainContainer>
-            <SideMenu onSettingClick={handleSettingClick} />
+            <SideMenu />
             <Container>
                 <Feed />
                 <StatusContainer>
@@ -129,9 +109,7 @@ export default function MainPage() {
                         <p>신닭가슴살님과 링크매치 성공💕 </p>
                     </LoveAlarm>
                 </StatusContainer>
-                <div ref={settingRef}>
-                    {showSetting && <Setting />}
-                </div>
+
             </Container>
             <Upload />
 
