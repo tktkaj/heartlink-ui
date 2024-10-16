@@ -72,8 +72,9 @@ export default function DmListBox({ chatList, handleChangeRoom }) {
         </IconButton>
       </DmListHeader>
       {chatList.map((chat, index) => (
+        console.log(chat.imgUrl),
         <DmItem onClick={()=>handleChangeRoom(chat.msgRoomId)}>
-          <img src={"http://localhost:9090/img/bono.jpg"} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+          <img src={chat.userImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
           <div>
             <div style={{marginBottom:'1px'}}>{chat.userName}</div>
             <div style={{fontSize:'0.8rem'}}>{chat.lastMessage}</div>
