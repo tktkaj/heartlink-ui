@@ -5,7 +5,7 @@ import { IoBookmark } from "react-icons/io5";
 import SideMenu from '../layout/SideMenu';
 
 let Content = styled.div`
-    width: 80vw;
+    width: 100vw;
     background-color: #F8F8FA;
     height: 100vh;
     overflow-y: auto;
@@ -16,6 +16,7 @@ let Content = styled.div`
     }
     -ms-overflow-style: none;
     scrollbar-width: none;
+    padding-left: 20vw;
 `;
 
 let Header = styled.div`

@@ -9,6 +9,7 @@ import { LuSearch } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import Setting from './Setting';
+import MiniSide from './MiniSide';
 
 
 
@@ -18,6 +19,7 @@ const Sidebar = styled.div`
     padding-top: 30px;
     border-right: rgba(160, 160, 160, 0.2) 2px solid;
     background-color: #ffffff;
+    position: absolute;
 `
 
 const Logostyle = styled.div`
@@ -29,6 +31,7 @@ const Logostyle = styled.div`
         height: 100%;
         object-fit: cover;
     }
+    cursor: pointer;
 `
 const Ulstyle = styled.div`
     display: flex;
@@ -74,40 +77,55 @@ export default function SideMenu() {
 
     const [isSettingOpen, setIsSettingOpen] = useState(false);
 
+    const [isMiniSideVisible, setIsMiniSideVisible] = useState(false);
+    const [isSideMenuVisible, setIsSideMenuVisible] = useState(true);
+
+
     const openSetting = () => setIsSettingOpen(true);
     const closeSetting = () => setIsSettingOpen(false);
 
+    const toggleSideMenu = () => {
+        setIsMiniSideVisible(true);
+        setIsSideMenuVisible(false);
+    };
+
     return (
         <>
-            <Sidebar>
-                <Logostyle>
-                    <img src={logo} alt="로고" />
-                </Logostyle>
-                <div>
-                    <Ulstyle>
-                        <div>
-                            <Liststyle to="/home"><IoHomeOutline className='icon' />홈</Liststyle>
-                            <Liststyle to="/search"><LuSearch className='icon' />검색</Liststyle>
-                            <Liststyle to="/couple"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-box2-heart" viewBox="0 0 16 16">
-                                <path d="M8 7.982C9.664 6.309 13.825 9.236 8 13 2.175 9.236 6.336 6.31 8 7.982" />
-                                <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zm0 1H7.5v3h-6zM8.5 4V1h3.75l2.25 3zM15 5v10H1V5z" />
-                            </svg>커플</Liststyle>
-                            <Liststyle><FaRegBell className='icon' />알림</Liststyle>
-                            <Liststyle><AiOutlineMessage className='icon' />메시지</Liststyle>
-                            <Liststyle to="/mypage">
-                                <ProfileThum>
-                                    <img src={profilethum} alt="" />
-                                </ProfileThum>
-                                <p style={{ fontFamily: 'SokchoBadaBatang' }}>moong_52</p>
-                            </Liststyle>
-                        </div>
-                        <div>
-                            <Liststyle onClick={openSetting}><IoSettingsOutline className='icon' />설정</Liststyle>
-                        </div>
-                    </Ulstyle>
-                </div >
-            </Sidebar >
-            {isSettingOpen && <Setting closeSetting={closeSetting} />}
+            {isMiniSideVisible && <MiniSide toggleSideMenu={toggleSideMenu} />}
+            {isSideMenuVisible && (
+                <Sidebar>
+                    <Logostyle>
+                        <Link to="/home">
+                            <img src={logo} alt="로고" />
+                        </Link>
+                    </Logostyle>
+                    <div>
+                        <Ulstyle>
+                            <div>
+                                <Liststyle to="/home"><IoHomeOutline className='icon' />홈</Liststyle>
+                                <Liststyle to="/search" onClick={toggleSideMenu}><LuSearch className='icon' />검색</Liststyle>
+                                <Liststyle to="/couple"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-box2-heart" viewBox="0 0 16 16">
+                                    <path d="M8 7.982C9.664 6.309 13.825 9.236 8 13 2.175 9.236 6.336 6.31 8 7.982" />
+                                    <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zm0 1H7.5v3h-6zM8.5 4V1h3.75l2.25 3zM15 5v10H1V5z" />
+                                </svg>커플</Liststyle>
+                                <Liststyle onClick={toggleSideMenu}><FaRegBell className='icon' />알림</Liststyle>
+                                <Liststyle><AiOutlineMessage className='icon' />메시지</Liststyle>
+                                <Liststyle to="/mypage">
+                                    <ProfileThum>
+                                        <img src={profilethum} alt="" />
+                                    </ProfileThum>
+                                    <p style={{ fontFamily: 'SokchoBadaBatang' }}>moong_52</p>
+                                </Liststyle>
+                            </div>
+                            <div>
+                                <Liststyle onClick={openSetting}><IoSettingsOutline className='icon' />설정</Liststyle>
+                            </div>
+                        </Ulstyle>
+                    </div >
+                </Sidebar >
+            )}
+            {isSettingOpen && <Setting closeSetting={closeSetting} />
+            }
         </>
     )
 }
