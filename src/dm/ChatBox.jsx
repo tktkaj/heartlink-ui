@@ -50,7 +50,7 @@ const MessageInput = styled.input`
 
 
 export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user, handleKeyDown}) {
-  // 테스트용
+
   return (
     <ChatBoxContainer>
       <ChatHeader>
@@ -70,11 +70,11 @@ export default function ChatBox({ input, handleInputChange, messages, sendMessag
       <MessageInputContainer>
         <MessageInput
           type="text"
+          value = {input}
           placeholder="메시지를 입력하세요"
           onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
+          onKeyPress={handleKeyDown}
           maxLength={1000}
-          value = {input}
         />
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
           <MdInsertPhoto />

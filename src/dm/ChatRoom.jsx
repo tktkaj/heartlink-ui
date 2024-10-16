@@ -42,11 +42,7 @@ export default function ChatRoom() {
         read: true
       }
 
-      const msg = messages;
-      console.log(messages);
-      msg.push(addMsg);
-      console.log(msg);
-      setMessages(msg);
+      setMessages(prevMessages => [...prevMessages, addMsg]);
 
 
     };
@@ -93,11 +89,7 @@ export default function ChatRoom() {
         read: true
       }
 
-      const msg = messages;
-      msg.push(addMsg);
-      console.log(msg);
-      setMessages(msg);
-
+      setMessages(prevMessages => [...prevMessages, addMsg]);
     }
     setInput(''); // 메시지 전송 후 초기화
   }
@@ -105,6 +97,8 @@ export default function ChatRoom() {
   // 엔터 누를 시 메세지 보내기
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
+      console.log(input);
       sendMessage();
     }
   };
