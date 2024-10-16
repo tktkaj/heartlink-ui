@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+
 export default function ChatRoom() {
 
   const { id } = useParams();
@@ -15,7 +16,38 @@ export default function ChatRoom() {
   const [userId, setUserId] = useState(id);
   const [user, setUser] = useState();
   const [userProfile, setUserProfile] = useState();
+  const [ws, setWs] = useState(null); // WebSocket 객체를 상태로 관리
+  const [receivedMessage, setReceivedMessage] = useState(''); // 수신된
 
+  useEffect(() => {
+    // WebSocket 연결을 설정
+    const webSocket = new WebSocket('ws://localhost:9090/message');
+    
+    // 연결이 열렸을 때 실행
+    webSocket.onopen = () => {
+      console.log('WebSocket 연결 성공');
+    };
+
+    // 서버에서 메시지를 받을 때 실행
+    webSocket.onmessage = (event) => {
+      console.log('메시지 수신:', event.data);
+      setReceivedMessage(event.data);
+    };
+
+    // 연결이 닫혔을 때 실행
+    webSocket.onclose = () => {
+      console.log('WebSocket 연결 닫힘');
+    };
+
+    // WebSocket 객체 저장
+    setWs(webSocket);
+
+    // 컴포넌트가 언마운트될 때 WebSocket 연결 닫기
+    return () => {
+      webSocket.close();
+    };
+  }, []);
+  
   useEffect(() => {
     axios.get(`http://localhost:9090/dm/${id}`)
       .then((response) => {
@@ -32,12 +64,10 @@ export default function ChatRoom() {
   }
 
   const sendMessage = () => {
-    if (input.trim() !== '') {
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        [0]: [...prevMessages[0], { text: input, isMine: true }],
-      }));
-      setInput('');
+    if (ws && input) {
+      ws.send(input); // WebSocket을 통해 메시지 전송
+      console.log('메시지 보냄:', input);
+      setInput(''); // 메시지 전송 후 초기화
     }
   }
   
