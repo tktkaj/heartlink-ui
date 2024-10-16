@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import logo from '../image/sidebar/logo2.png';
+import logo from '../image/logo/logo2.png';
 import profilethum from '../image/sidebar/test.png';
 import { IoHomeOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
