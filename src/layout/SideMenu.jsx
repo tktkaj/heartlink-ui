@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import logo from '../image/logo/logo2.png';
 import profilethum from '../image/sidebar/test.png';
@@ -8,6 +8,7 @@ import { AiOutlineMessage } from "react-icons/ai";
 import { LuSearch } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
+import Setting from './Setting';
 
 
 
@@ -69,7 +70,12 @@ const ProfileThum = styled.div`
     }
 `
 
-export default function SideMenu({ onSettingClick }) {
+export default function SideMenu() {
+
+    const [isSettingOpen, setIsSettingOpen] = useState(false);
+
+    const openSetting = () => setIsSettingOpen(true);
+    const closeSetting = () => setIsSettingOpen(false);
 
     return (
         <>
@@ -96,11 +102,12 @@ export default function SideMenu({ onSettingClick }) {
                             </Liststyle>
                         </div>
                         <div>
-                            <Liststyle onClick={onSettingClick}><IoSettingsOutline className='icon' />설정</Liststyle>
+                            <Liststyle onClick={openSetting}><IoSettingsOutline className='icon' />설정</Liststyle>
                         </div>
                     </Ulstyle>
                 </div >
             </Sidebar >
+            {isSettingOpen && <Setting closeSetting={closeSetting} />}
         </>
     )
 }

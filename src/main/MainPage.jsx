@@ -85,31 +85,10 @@ const LoveAlarm = styled.div`
 
 export default function MainPage() {
 
-    const [showSetting, setShowSetting] = useState(false);
-    const settingRef = useRef(null);
-
-    const handleSettingClick = (event) => {
-        setShowSetting(prev => !prev);
-        event.stopPropagation()
-    };
-
-    const handleClickOutside = (event) => {
-        if (settingRef.current && !settingRef.current.contains(event.target)) {
-            setShowSetting(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
 
     return (
         <MainContainer>
-            <SideMenu onSettingClick={handleSettingClick} />
+            <SideMenu />
             <Container>
                 <Feed />
                 <StatusContainer>
@@ -129,9 +108,7 @@ export default function MainPage() {
                         <p>신닭가슴살님과 링크매치 성공💕 </p>
                     </LoveAlarm>
                 </StatusContainer>
-                <div ref={settingRef}>
-                    {showSetting && <Setting />}
-                </div>
+
             </Container>
             <Upload />
 
