@@ -36,7 +36,7 @@ const SpaceImage = styled.div`
 `;
 
 function Msg({ message, userId, userProfile }) {
-  if (message.senderId == userId) {
+  if (message.senderId != userId) {
     return <div style={{ display: 'flex', justifyContent: 'start' }}>
       <ProfileImage src={userProfile}/>
       <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>

@@ -12,7 +12,8 @@ export default function ChatRoom() {
 
   const [input, setInput] = useState('');
   const [chatList, setChatList] = useState([]);
-  const [messages, setMessages] = useState(null); // 초기값을 null로 설정
+  const [messages, setMessages] = useState([]);
+  const [newMessages, setNewMessages] = useState([]);
   const [userId, setUserId] = useState(id);
   const [user, setUser] = useState();
   const [userProfile, setUserProfile] = useState();
@@ -30,8 +31,24 @@ export default function ChatRoom() {
 
     // 서버에서 메시지를 받을 때 실행
     webSocket.onmessage = (event) => {
-      console.log('메시지 수신:', event.data);
+      // console.log('메시지 수신:', event.data);
       setReceivedMessage(event.data);
+
+      const addMsg = {
+        senderId: 7,
+        content: event.data,
+        emoji: '',
+        imageUrl: '',
+        lastMessageTime: new Date(),
+        read: true
+      }
+
+      setNewMessages(addMsg);
+      const msg = messages;
+      msg.push(addMsg);
+      console.log(msg);
+      setMessages(msg);
+
     };
 
     // 연결이 닫혔을 때 실행
@@ -66,9 +83,28 @@ export default function ChatRoom() {
   const sendMessage = () => {
     if (ws && input) {
       ws.send(input); // WebSocket을 통해 메시지 전송
-      console.log('메시지 보냄:', input);
-      setInput(''); // 메시지 전송 후 초기화
+
+      const addMsg = {
+        senderId: userId,
+        content: input,
+        emoji: '',
+        imageUrl: '',
+        lastMessageTime: new Date(),
+        read: true
+      }
+
+      setNewMessages(addMsg);
+      const msg = messages;
+      msg.push(addMsg);
+      console.log(msg);
+      setMessages(msg);
+
     }
+    setInput(''); // 메시지 전송 후 초기화
+  }
+  
+  const handleMessageAdd = () =>{
+
   }
   
   const handleChangeRoom = (msgRoomId, userImg, userName) => {
@@ -87,7 +123,7 @@ export default function ChatRoom() {
   return (
     <div style={{ display: 'flex' }}>
       <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} />
-      {messages ? ( // messages가 존재하면 ChatBox를 보여줌
+      {user ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox 
           input={input} 
           handleInputChange={handleInputChange} 
@@ -96,9 +132,10 @@ export default function ChatRoom() {
           userId = {userId}
           userProfile = {userProfile}
           user = {user}
+          newMessages={newMessages}
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <div style={{display: 'flex', textAlign:'center'}}>삐쀼삐</div>
+        <div style={{display: 'flex', textAlign:'center'}}>챗내용이 없으요 힛.</div>
       )}
     </div>
   );
