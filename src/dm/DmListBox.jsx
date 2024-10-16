@@ -36,6 +36,9 @@ const DmItem = styled.div`
     background-color: rgba(112, 110, 244, 0.07);
     color: #333;
   }
+  &:hover{
+        background-color: #e6e6ff;
+    }
 `;
 
 const UserNameLabel = styled.div`
