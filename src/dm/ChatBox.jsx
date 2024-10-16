@@ -49,7 +49,7 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user}) {
+export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user, handleKeyDown}) {
   // 테스트용
   return (
     <ChatBoxContainer>
@@ -72,6 +72,7 @@ export default function ChatBox({ input, handleInputChange, messages, sendMessag
           type="text"
           placeholder="메시지를 입력하세요"
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           maxLength={1000}
           value = {input}
         />

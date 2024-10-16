@@ -13,8 +13,7 @@ export default function ChatRoom() {
   const [input, setInput] = useState('');
   const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [newMessages, setNewMessages] = useState([]);
-  const [userId, setUserId] = useState(id);
+  const [userId, setUserId] = useState();
   const [user, setUser] = useState();
   const [userProfile, setUserProfile] = useState();
   const [ws, setWs] = useState(null); // WebSocket 객체를 상태로 관리
@@ -23,7 +22,7 @@ export default function ChatRoom() {
   useEffect(() => {
     // WebSocket 연결을 설정
     const webSocket = new WebSocket('ws://localhost:9090/message');
-    
+
     // 연결이 열렸을 때 실행
     webSocket.onopen = () => {
       console.log('WebSocket 연결 성공');
@@ -43,11 +42,12 @@ export default function ChatRoom() {
         read: true
       }
 
-      setNewMessages(addMsg);
       const msg = messages;
+      console.log(messages);
       msg.push(addMsg);
       console.log(msg);
       setMessages(msg);
+
 
     };
 
@@ -64,7 +64,7 @@ export default function ChatRoom() {
       webSocket.close();
     };
   }, []);
-  
+
   useEffect(() => {
     axios.get(`http://localhost:9090/dm/${id}`)
       .then((response) => {
@@ -93,7 +93,6 @@ export default function ChatRoom() {
         read: true
       }
 
-      setNewMessages(addMsg);
       const msg = messages;
       msg.push(addMsg);
       console.log(msg);
@@ -102,11 +101,14 @@ export default function ChatRoom() {
     }
     setInput(''); // 메시지 전송 후 초기화
   }
-  
-  const handleMessageAdd = () =>{
 
-  }
-  
+  // 엔터 누를 시 메세지 보내기
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  };
+
   const handleChangeRoom = (msgRoomId, userImg, userName) => {
     axios.get(`http://localhost:9090/dm/${msgRoomId}/detail`)
       .then((response) => {
@@ -114,6 +116,7 @@ export default function ChatRoom() {
         setUserProfile(userImg);
         setUser(userName);
         setMessages(response.data);
+        setUserId(id);
       })
       .catch((error) => {
         console.error('Error fetching the direct message:', error);
@@ -124,18 +127,19 @@ export default function ChatRoom() {
     <div style={{ display: 'flex' }}>
       <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} />
       {user ? ( // messages가 존재하면 ChatBox를 보여줌
-        <ChatBox 
-          input={input} 
-          handleInputChange={handleInputChange} 
-          sendMessage={sendMessage} 
-          messages={messages} 
-          userId = {userId}
-          userProfile = {userProfile}
-          user = {user}
-          newMessages={newMessages}
+        <ChatBox
+          input={input}
+          handleInputChange={handleInputChange}
+          handleKeyDown={handleKeyDown}
+          sendMessage={sendMessage}
+          messages={messages}
+          userId={userId}
+          userProfile={userProfile}
+          user={user}
+    
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <div style={{display: 'flex', textAlign:'center'}}>챗내용이 없으요 힛.</div>
+        <div style={{ display: 'flex', textAlign: 'center' }}>챗내용이 없으요 힛.</div>
       )}
     </div>
   );
