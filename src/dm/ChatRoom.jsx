@@ -13,6 +13,7 @@ export default function ChatRoom() {
   const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState(null); // 초기값을 null로 설정
   const [userId, setUserId] = useState(id);
+  const [userProfile, setUserProfile] = useState();
 
   useEffect(() => {
     axios.get(`http://localhost:9090/dm/${id}`)
@@ -39,10 +40,11 @@ export default function ChatRoom() {
     }
   }
   
-  const handleChangeRoom = (msgRoomId) => {
+  const handleChangeRoom = (msgRoomId, userImg) => {
     axios.get(`http://localhost:9090/dm/${msgRoomId}/detail`)
       .then((response) => {
         // 방이 선택되면 메시지를 상태로 설정
+        setUserProfile(userImg);
         setMessages(response.data);
       })
       .catch((error) => {
@@ -60,9 +62,10 @@ export default function ChatRoom() {
           sendMessage={sendMessage} 
           messages={messages} 
           userId = {userId}
+          userProfile = {userProfile}
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <MainPage/>
+        <div style={{display: 'flex', textAlign:'center'}}>삐쀼삐</div>
       )}
     </div>
   );
