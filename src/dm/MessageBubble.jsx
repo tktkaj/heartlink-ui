@@ -35,13 +35,8 @@ const SpaceImage = styled.div`
   height: 50px;
 `;
 
-function Msg({ message }) {
-
-  const [flag, setFlag] = useState(message.senderId);
-  console.log(flag);
-
-
-  if (message.senderId === 4) {
+function Msg({ message, userId }) {
+  if (message.senderId == userId) {
     return <div style={{ display: 'flex', justifyContent: 'start' }}>
       <ProfileImage src={TestImg}/>
       <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
@@ -67,14 +62,11 @@ function Msg({ message }) {
   }
 }
 
-export default function MessageBubble({ messages }) {
-
-  console.log(messages);
-
+export default function MessageBubble({ messages, userId }) {
   return (
     <>
       {messages.map((message, index) => (
-        <Msg message={message} />
+        <Msg message={message} userId={userId} />
       ))}
 
     </>
