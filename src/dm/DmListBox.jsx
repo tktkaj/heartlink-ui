@@ -36,6 +36,9 @@ const DmItem = styled.div`
     background-color: rgba(112, 110, 244, 0.07);
     color: #333;
   }
+  &:hover{
+        background-color: #e6e6ff;
+    }
 `;
 
 const UserNameLabel = styled.div`
@@ -58,7 +61,8 @@ const IconButton = styled.button`
 
 `;
 
-export default function DmListBox() {
+export default function DmListBox({ chatList, handleChangeRoom }) {
+
   return (
     <DmListBoxContainer>
       <DmListHeader>
@@ -67,14 +71,17 @@ export default function DmListBox() {
           <FaPlusCircle />
         </IconButton>
       </DmListHeader>
-      <DmItem>
-        <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
-        <div>Hyuna</div>
-      </DmItem>
-      <DmItem>
-        <img src={profileImg} alt="프로필" style={{ width: '50px', borderRadius: '50%' }} />
-        <div>tktkaj</div>
-      </DmItem>
+      {chatList.map((chat, index) => (
+        <DmItem onClick={()=>handleChangeRoom(chat.msgRoomId, chat.userImg, chat.userName)}>
+          <img src={chat.userImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+          <div>
+            <div style={{marginBottom:'1px'}}>{chat.userName}</div>
+            <div style={{fontSize:'0.8rem'}}>{chat.lastMessage}</div>
+          </div>
+        </DmItem>
+      ))}
+
+
     </DmListBoxContainer>
   );
 }
