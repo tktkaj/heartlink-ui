@@ -5,6 +5,7 @@ import profilethum from '../image/sidebar/test.png';
 import Upload from '../layout/Upload';
 import MiniSide from '../layout/MiniSide';
 import { useState } from 'react';
+import SearchMenu from '../layout/SearchMenu';
 
 const Container = styled.div`
     width: 100vw;
@@ -112,7 +113,6 @@ export default function MainPage() {
 
             </Container>
             <Upload />
-
         </MainContainer>
     )
 }
