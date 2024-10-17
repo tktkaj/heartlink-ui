@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import logo from '../image/logo/임시로고.png';
+import logo from '../image/logo/fav.png';
 import profilethum from '../image/sidebar/test.png';
 import { IoHomeOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
