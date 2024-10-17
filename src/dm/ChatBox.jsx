@@ -3,13 +3,12 @@ import styled from 'styled-components';
 import { FaPaperPlane } from "react-icons/fa";
 import { MdInsertPhoto } from "react-icons/md";
 import MessageBubble from './MessageBubble';
-import profileImg from '../image/testimg/와구리.png';
 
 const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 1000px;
+  width: 1500px;
   background-color: #fff;
 `;
 
@@ -50,16 +49,14 @@ const MessageInput = styled.input`
 
 
 
-export default function ChatBox({ input, handleInputChange, sendMessage }) {
-
-  // 테스트용
+export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user, handleKeyDown}) {
 
   return (
     <ChatBoxContainer>
       <ChatHeader>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={profileImg} alt="프로필" />
-          <span style={{ marginLeft: '10px', fontSize: '1.7rem' }}>Hyuna</span>
+          <img src={userProfile} alt="프로필" />
+          <span style={{ marginLeft: '10px', fontSize: '1.7rem' }}>{user}</span>
         </div>
         <button style={{ padding: '2px 10px', borderRadius: '5px', fontSize: '1.2rem', color: '#706EF4', cursor: 'pointer' }}>차단</button>
       </ChatHeader>
@@ -67,14 +64,16 @@ export default function ChatBox({ input, handleInputChange, sendMessage }) {
         <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
           2024년 10월 23일
         </div>
-        <MessageBubble message={input}>
+        <MessageBubble message={input} messages={messages} userId={userId} userProfile={userProfile}>
         </MessageBubble>
       </ChatContent>
       <MessageInputContainer>
         <MessageInput
           type="text"
+          value = {input}
           placeholder="메시지를 입력하세요"
           onChange={handleInputChange}
+          onKeyPress={handleKeyDown}
           maxLength={1000}
         />
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
