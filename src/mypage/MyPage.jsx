@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { CgMenuGridR } from "react-icons/cg";
 import { IoHeart } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
-import SideMenu from '../layout/SideMenu';
+import SideMenu from '../sideMenu/SideMenu';
 
 let Content = styled.div`
     width: 100vw;

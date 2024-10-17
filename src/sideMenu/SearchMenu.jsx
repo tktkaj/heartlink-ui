@@ -73,7 +73,7 @@ export default function SearchMenu() {
                 </div>
                 <div style={{ marginLeft: '2vw' }}>
                     <input type="text" required placeholder="검색어 입력"
-                        class="block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 " style={{ width: '240px', paddingLeft: '7px', fontSize: '15px' }}></input>
+                        class="block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 " style={{ width: '290px', paddingLeft: '7px', fontSize: '15px', backgroundColor: '#f5f5f5' }}></input>
                 </div>
                 <hr style={{ marginTop: '4vh' }}></hr>
                 <SearchList>
