@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import logo from '../image/logo/Logo2.png';
+import logo from '../image/logo/logo2.png';
 import profilethum from '../image/sidebar/test.png';
 import { IoHomeOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
@@ -12,6 +12,7 @@ import Setting from './Setting';
 import MiniSide from './MiniSide';
 import SearchMenu from './SearchMenu';
 import AlarmMenu from './AlarmMenu';
+import DmListBox from '../dm/DmListBox';
 
 
 
@@ -78,31 +79,41 @@ const ProfileThum = styled.div`
 export default function SideMenu() {
 
     const [isSettingOpen, setIsSettingOpen] = useState(false);
+    const openSetting = () => setIsSettingOpen(true);
+    const closeSetting = () => setIsSettingOpen(false);
 
     const [isMiniSideVisible, setIsMiniSideVisible] = useState(false);
     const [isSideMenuVisible, setIsSideMenuVisible] = useState(true);
     const [isSearchMenuVisible, setIsSearchMenuVisible] = useState(true);
     const [isAlarmMenuVisible, setIsAlarmMenuVisible] = useState(true);
-
-    const openSetting = () => setIsSettingOpen(true);
-    const closeSetting = () => setIsSettingOpen(false);
+    const [isDmMenuVisible, setIsDmMenuVisible] = useState(true);
 
     const toggleSideMenuSearch = () => {
         setIsMiniSideVisible(true);
+        setIsSearchMenuVisible(true);
         setIsSideMenuVisible(false);
         setIsAlarmMenuVisible(false);
-        setIsSearchMenuVisible(true);
+        setIsDmMenuVisible(false);
     };
     const toggleSideMenuAlarm = () => {
         setIsMiniSideVisible(true);
-        setIsSideMenuVisible(false);
         setIsAlarmMenuVisible(true);
+        setIsSideMenuVisible(false);
+        setIsSearchMenuVisible(false);
+        setIsDmMenuVisible(false);
+    };
+    const toggleSideMenuDm = () => {
+        setIsMiniSideVisible(true);
+        setIsDmMenuVisible(true);
+        setIsSideMenuVisible(false);
+        setIsAlarmMenuVisible(false);
         setIsSearchMenuVisible(false);
     };
 
     return (
         <>
-            {isMiniSideVisible && <MiniSide toggleSideMenuSearch={toggleSideMenuSearch} toggleSideMenuAlarm={toggleSideMenuAlarm} />}
+            {isMiniSideVisible && <MiniSide toggleSideMenuSearch={toggleSideMenuSearch} toggleSideMenuAlarm={toggleSideMenuAlarm} toggleSideMenuDm={toggleSideMenuDm} />}
+            {isMiniSideVisible && isDmMenuVisible && <DmListBox toggleSideMenuDm={toggleSideMenuDm} />}
             {isMiniSideVisible && isSearchMenuVisible && <SearchMenu toggleSideMenuSearch={toggleSideMenuSearch} />}
             {isMiniSideVisible && isAlarmMenuVisible && <AlarmMenu toggleSideMenuAlarm={toggleSideMenuAlarm} />}
             {isSideMenuVisible && (
@@ -122,7 +133,7 @@ export default function SideMenu() {
                                     <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zm0 1H7.5v3h-6zM8.5 4V1h3.75l2.25 3zM15 5v10H1V5z" />
                                 </svg>커플</Liststyle>
                                 <Liststyle onClick={toggleSideMenuAlarm}><FaRegBell className='icon' />알림</Liststyle>
-                                <Liststyle><AiOutlineMessage className='icon' />메시지</Liststyle>
+                                <Liststyle onClick={toggleSideMenuDm}><AiOutlineMessage className='icon' />메시지</Liststyle>
                                 <Liststyle to="/mypage">
                                     <ProfileThum>
                                         <img src={profilethum} alt="" />

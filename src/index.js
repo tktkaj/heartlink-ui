@@ -9,6 +9,9 @@ import Search from './search/Search';
 import ChatRoom from './dm/ChatRoom';
 import MyPage from './mypage/MyPage';
 import Login from './login/Login';
+import ChatBox from './dm/ChatBox';
+import DmListBox from './dm/DmListBox';
+import MessageBubble from './dm/MessageBubble';
 
 
 const router = createBrowserRouter([
@@ -20,9 +23,11 @@ const router = createBrowserRouter([
       { path: '/home', element: <MainPage /> },
       { path: '/search', element: <Search /> },
       { path: '/couple', element: <MainPage /> },
-      { path: '/dm/:id', element: <ChatRoom /> },
+      { path: '/dm', element: <ChatRoom /> },
       { path: '/mypage', element: <MyPage /> },
       { path: '/login', element: <Login /> },
+      { path: '/dmlistbox', element: <DmListBox /> },
+
     ],
   },
 ]);

@@ -1,17 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
-import profileImg from '../image/testimg/와구리.png';
 import { FaPlusCircle } from "react-icons/fa";
 
 const DmListBoxContainer = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  width: 300px;
-  border-right: 1px solid #ddd;
-  background-color: #F8F8FA;
+  width: 350px;
+    height: 100vh;
+    background-color: white;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    left: 4.7vw;
+    @keyframes slideIn {
+    from {
+        transform: translateX(-80%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+    animation: slideIn 0.4s forwards;
+    padding-top: 5vh;
 `;
 
 const DmListHeader = styled.div`
@@ -43,7 +52,7 @@ const DmItem = styled.div`
 
 const UserNameLabel = styled.div`
   height: 35px;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
 `
 const IconButton = styled.button`
 
@@ -61,7 +70,7 @@ const IconButton = styled.button`
 
 `;
 
-export default function DmListBox({ chatList, handleChangeRoom }) {
+export default function DmListBox({ chatList = [], handleChangeRoom }) {
 
   return (
     <DmListBoxContainer>
@@ -72,11 +81,11 @@ export default function DmListBox({ chatList, handleChangeRoom }) {
         </IconButton>
       </DmListHeader>
       {chatList.map((chat, index) => (
-        <DmItem onClick={()=>handleChangeRoom(chat.msgRoomId, chat.userImg, chat.userName)}>
+        <DmItem onClick={() => handleChangeRoom(chat.msgRoomId, chat.userImg, chat.userName)}>
           <img src={chat.userImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
           <div>
-            <div style={{marginBottom:'1px'}}>{chat.userName}</div>
-            <div style={{fontSize:'0.8rem'}}>{chat.lastMessage}</div>
+            <div style={{ marginBottom: '1px' }}>{chat.userName}</div>
+            <div style={{ fontSize: '0.8rem' }}>{chat.lastMessage}</div>
           </div>
         </DmItem>
       ))}

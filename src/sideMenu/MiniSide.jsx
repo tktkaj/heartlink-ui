@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import logo from '../image/logo/fav.png';
 import profilethum from '../image/sidebar/test.png';
@@ -9,8 +9,6 @@ import { LuSearch } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import Setting from './Setting';
 import { Link } from 'react-router-dom';
-import SearchMenu from './SearchMenu';
-import AlarmMenu from './AlarmMenu';
 
 
 const MiniContainer = styled.div`
@@ -30,7 +28,9 @@ const MiniContainer = styled.div`
         transform: translateX(0);
     }
 }
+    
 animation: slideIn 0.5s forwards;
+
 `
 
 const Logostyle = styled.div`
@@ -79,31 +79,16 @@ const ProfileThum = styled.div`
     }
 `
 
-export default function MiniSide() {
+export default function MiniSide({ toggleSideMenuSearch, toggleSideMenuAlarm, toggleSideMenuDm }) {
 
     const [isSettingOpen, setIsSettingOpen] = useState(false);
 
     const openSetting = () => setIsSettingOpen(true);
     const closeSetting = () => setIsSettingOpen(false);
 
-    const [isMiniSideVisible, setIsMiniSideVisible] = useState(true);
-    const [isSearchMenuVisible, setIsSearchMenuVisible] = useState(true);
-    const [isAlarmMenuVisible, setIsAlarmMenuVisible] = useState(true);
-
-    const toggleSideMenuSearch = () => {
-        setIsAlarmMenuVisible(false);
-        setIsSearchMenuVisible(true);
-
-    };
-    const toggleSideMenuAlarm = () => {
-        setIsAlarmMenuVisible(true);
-        setIsSearchMenuVisible(false);
-    };
 
     return (
         <>
-            {isMiniSideVisible && isSearchMenuVisible && <SearchMenu toggleSideMenuSearch={toggleSideMenuSearch} />}
-            {isMiniSideVisible && isAlarmMenuVisible && <AlarmMenu toggleSideMenuAlarm={toggleSideMenuAlarm} />}
             <MiniContainer>
                 <Logostyle>
                     <Link to="/home">
@@ -119,7 +104,7 @@ export default function MiniSide() {
                             <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zm0 1H7.5v3h-6zM8.5 4V1h3.75l2.25 3zM15 5v10H1V5z" />
                         </svg></Liststyle>
                         <Liststyle onClick={toggleSideMenuAlarm}><FaRegBell className='icon' /></Liststyle>
-                        <Liststyle><AiOutlineMessage className='icon' /></Liststyle>
+                        <Liststyle onClick={toggleSideMenuDm}><AiOutlineMessage className='icon' /></Liststyle>
                         <Liststyle to="/mypage">
                             <ProfileThum>
                                 <img src={profilethum} alt="" />
