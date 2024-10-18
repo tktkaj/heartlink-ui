@@ -1,10 +1,11 @@
-import SideMenu from '../layout/SideMenu'
+import SideMenu from '../sideMenu/SideMenu'
 import styled from 'styled-components'
 import Feed from './Feed'
 import profilethum from '../image/sidebar/test.png';
 import Upload from '../layout/Upload';
-import MiniSide from '../layout/MiniSide';
+import MiniSide from '../sideMenu/MiniSide';
 import { useState } from 'react';
+import SearchMenu from '../sideMenu/SearchMenu';
 
 const Container = styled.div`
     width: 100vw;
@@ -112,7 +113,6 @@ export default function MainPage() {
 
             </Container>
             <Upload />
-
         </MainContainer>
     )
 }

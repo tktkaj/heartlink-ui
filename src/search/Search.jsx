@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import SideMenu from '../layout/SideMenu';
+import SideMenu from '../sideMenu/SideMenu';
 
 let Content = styled.div`
     width: 100vw;

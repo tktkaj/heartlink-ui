@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import logo from '../image/logo/logo2.png';
+import logo from '../image/logo/Logo2.png';
 import profilethum from '../image/sidebar/test.png';
 import { IoHomeOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
@@ -10,6 +10,8 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import Setting from './Setting';
 import MiniSide from './MiniSide';
+import SearchMenu from './SearchMenu';
+import AlarmMenu from './AlarmMenu';
 
 
 
@@ -24,7 +26,7 @@ const Sidebar = styled.div`
 
 const Logostyle = styled.div`
     width: 170px;
-    margin-left: 28px;
+    margin-left: 26px;
     padding-bottom: 30px;
     img{
         width: 100%;
@@ -42,15 +44,15 @@ const Ulstyle = styled.div`
 
 const Liststyle = styled(Link)`
     display: flex;
-    height: 68px;
+    height: 69.5px;
     font-size: 17px;
-    gap: 13px;
+    gap: 16px;
     align-items: center;
     justify-content: flex-start;
-    padding-left:40px;
+    padding-left:31px;
     .icon {
-        width: 25px;
-        height: 25px;
+        width: 26px;
+        height: 26px;
     } 
     transition: background-color 0.4s ease;
     cursor: pointer;
@@ -79,19 +81,30 @@ export default function SideMenu() {
 
     const [isMiniSideVisible, setIsMiniSideVisible] = useState(false);
     const [isSideMenuVisible, setIsSideMenuVisible] = useState(true);
-
+    const [isSearchMenuVisible, setIsSearchMenuVisible] = useState(true);
+    const [isAlarmMenuVisible, setIsAlarmMenuVisible] = useState(true);
 
     const openSetting = () => setIsSettingOpen(true);
     const closeSetting = () => setIsSettingOpen(false);
 
-    const toggleSideMenu = () => {
+    const toggleSideMenuSearch = () => {
         setIsMiniSideVisible(true);
         setIsSideMenuVisible(false);
+        setIsAlarmMenuVisible(false);
+        setIsSearchMenuVisible(true);
+    };
+    const toggleSideMenuAlarm = () => {
+        setIsMiniSideVisible(true);
+        setIsSideMenuVisible(false);
+        setIsAlarmMenuVisible(true);
+        setIsSearchMenuVisible(false);
     };
 
     return (
         <>
-            {isMiniSideVisible && <MiniSide toggleSideMenu={toggleSideMenu} />}
+            {isMiniSideVisible && <MiniSide toggleSideMenuSearch={toggleSideMenuSearch} toggleSideMenuAlarm={toggleSideMenuAlarm} />}
+            {isMiniSideVisible && isSearchMenuVisible && <SearchMenu toggleSideMenuSearch={toggleSideMenuSearch} />}
+            {isMiniSideVisible && isAlarmMenuVisible && <AlarmMenu toggleSideMenuAlarm={toggleSideMenuAlarm} />}
             {isSideMenuVisible && (
                 <Sidebar>
                     <Logostyle>
@@ -103,12 +116,12 @@ export default function SideMenu() {
                         <Ulstyle>
                             <div>
                                 <Liststyle to="/home"><IoHomeOutline className='icon' />홈</Liststyle>
-                                <Liststyle to="/search" onClick={toggleSideMenu}><LuSearch className='icon' />검색</Liststyle>
+                                <Liststyle onClick={toggleSideMenuSearch}><LuSearch className='icon' />검색</Liststyle>
                                 <Liststyle to="/couple"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-box2-heart" viewBox="0 0 16 16">
                                     <path d="M8 7.982C9.664 6.309 13.825 9.236 8 13 2.175 9.236 6.336 6.31 8 7.982" />
                                     <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zm0 1H7.5v3h-6zM8.5 4V1h3.75l2.25 3zM15 5v10H1V5z" />
                                 </svg>커플</Liststyle>
-                                <Liststyle onClick={toggleSideMenu}><FaRegBell className='icon' />알림</Liststyle>
+                                <Liststyle onClick={toggleSideMenuAlarm}><FaRegBell className='icon' />알림</Liststyle>
                                 <Liststyle><AiOutlineMessage className='icon' />메시지</Liststyle>
                                 <Liststyle to="/mypage">
                                     <ProfileThum>
