@@ -93,9 +93,7 @@ export default function SearchMenu() {
                             </Liststyle>
                         </Link>
                         <Liststyle>
-                            <ProfileThum>
 
-                            </ProfileThum>
                             <p>꾸래핑</p>
                         </Liststyle>
                     </Ulstyle>
