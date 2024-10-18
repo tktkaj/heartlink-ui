@@ -93,6 +93,7 @@ export default function MiniSide() {
     const toggleSideMenuSearch = () => {
         setIsAlarmMenuVisible(false);
         setIsSearchMenuVisible(true);
+
     };
     const toggleSideMenuAlarm = () => {
         setIsAlarmMenuVisible(true);
