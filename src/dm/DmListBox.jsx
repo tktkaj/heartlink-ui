@@ -25,10 +25,7 @@ const DmListBoxContainer = styled.div`
 
 const DmListHeader = styled.div`
   display: flex;
-  padding-top: 15px;
-  margin-bottom: 20px;
-  margin-right: auto;
-  margin-left: 15px;
+  margin-left: 2vw;
   font-size: 1.8rem;
   color: #333;
 `;
@@ -59,8 +56,8 @@ const IconButton = styled.button`
   height: 35px;
   background: none;
   position: absolute;
-  right: 5px;
-  top: 20px;
+  right: 10px;
+  top: 35px;
   border: none;
   padding: 10px;
   cursor: pointer;
