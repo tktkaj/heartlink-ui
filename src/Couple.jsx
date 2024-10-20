@@ -67,12 +67,12 @@ const LinkMatch = styled.div`
   }
 `;
 
-const 버튼컨테이너 = styled.div`
+const ButtonContainer = styled.div`
   position: relative;
   display: inline-block;
 `;
 
-const 기록버튼 = styled.div`
+const RecordButton = styled.div`
   width: 70px;
   height: 30px;
   font-size: 14px;
@@ -88,7 +88,7 @@ const 기록버튼 = styled.div`
   }
 `;
 
-const 버튼그림자 = styled.div`
+const ButtonShadow = styled.div`
   position: absolute;
   bottom: -3px;
   right: -3px;
@@ -158,7 +158,7 @@ const BingoCell = styled.div`
   background-position: center;
 `;
 
-const 통계 = styled.div`
+const Graph = styled.div`
   width: 300px;
   height: 300px;
 `;
@@ -194,10 +194,10 @@ export default function Couple() {
             <LoveHeader>
               <p>🩷+ 365</p>
               <LinkMatch>Link Match</LinkMatch>
-              <버튼컨테이너>
-                <기록버튼>기록보기</기록버튼>
-                <버튼그림자></버튼그림자>
-              </버튼컨테이너>
+              <ButtonContainer>
+                <RecordButton>기록보기</RecordButton>
+                <ButtonShadow></ButtonShadow>
+              </ButtonContainer>
             </LoveHeader>
             <LinkMatchContent>
               <Match>
@@ -335,7 +335,7 @@ export default function Couple() {
                   ))}
                 </BingoBoard>
               </LinkMission>
-              <통계></통계>
+              <Graph></Graph>
             </div>
           </FeedBox>
           <Advert>
