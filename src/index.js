@@ -12,6 +12,7 @@ import Login from "./login/Login";
 import DmListBox from "./dm/DmListBox";
 import Couple from "./Couple";
 import NotFound from "./main/NotFound";
+import LogoutAlert from "./alert/LogoutAlert";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/dmlistbox", element: <DmListBox /> },
       { path: "/*", element: <NotFound /> },
+      { path: "/alertLogout", element: <LogoutAlert /> },
     ],
   },
 ]);

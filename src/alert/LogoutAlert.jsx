@@ -6,9 +6,22 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 export default function Example() {
   const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    setOpen(false);
+    // 전 페이지로 돌아가기
+    window.history.back();
+  };
+
+  const handleLogout = () => {
+    setOpen(false);
+    navigate("/login");
+  };
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -36,33 +49,26 @@ export default function Example() {
                     as="h3"
                     className="text-base font-semibold leading-6 text-gray-900"
                   >
-                    Deactivate account
+                    정말 로그아웃 하시겠습니까ㅠ_ㅠ?
                   </DialogTitle>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to deactivate your account? All of
-                      your data will be permanently removed. This action cannot
-                      be undone.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={handleCancel}
                 className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
               >
-                Deactivate
+                아니용
               </button>
               <button
                 type="button"
                 data-autofocus
-                onClick={() => setOpen(false)}
+                onClick={handleLogout}
                 className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
               >
-                Cancel
+                네.
               </button>
             </div>
           </DialogPanel>
