@@ -55,10 +55,12 @@ export default function Setting({ closeSetting }) {
             <HiMiniEyeSlash className="settingIcon" />
             <p>차단유저 관리</p>
           </SettingList>
-          <SettingList>
-            <FaHeartBroken className="settingIcon" />
-            <p>커플 해제</p>
-          </SettingList>
+          <Link to="/alertCouple">
+            <SettingList>
+              <FaHeartBroken className="settingIcon" />
+              <p>커플 해제</p>
+            </SettingList>
+          </Link>
           <SettingList>
             <RiLockPasswordFill className="settingIcon" />
             <p>비밀번호 변경</p>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 import styled from 'styled-components'
 
 const SettingBox = styled.div`
@@ -48,9 +49,11 @@ export default function FeedModal({ closeModal }) {
                     <SettingList>
                         <p>게시글 수정</p>
                     </SettingList>
-                    <SettingList>
-                        <p>게시글 삭제</p>
-                    </SettingList>
+                    <Link to="/deleteAlert">
+                        <SettingList>
+                            <p>게시글 삭제</p>
+                        </SettingList>
+                    </Link>
                 </ul>
             </SettingBox>
             <Canvas onClick={closeModal} />

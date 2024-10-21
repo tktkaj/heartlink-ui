@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import SideMenu from "./sideMenu/SideMenu";
-import downArrow from "./image/couple/arrow.png";
-import Upload from "./layout/Upload";
+import SideMenu from "../sideMenu/SideMenu";
+import downArrow from "../image/couple/arrow.png";
+import Upload from "../layout/Upload";
 
 const MainContainer = styled.div`
   background-color: #f8f8fa;
