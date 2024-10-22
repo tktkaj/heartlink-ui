@@ -113,7 +113,7 @@ export default function SideMenu() {
     return (
         <>
             {isMiniSideVisible && <MiniSide toggleSideMenuSearch={toggleSideMenuSearch} toggleSideMenuAlarm={toggleSideMenuAlarm} toggleSideMenuDm={toggleSideMenuDm} />}
-            {isMiniSideVisible && isDmMenuVisible && <DmListBox toggleSideMenuDm={toggleSideMenuDm} />}
+            {isMiniSideVisible && isDmMenuVisible && <DmListBox toggleSideMenuDm={toggleSideMenuDm} id={4} />}
             {isMiniSideVisible && isSearchMenuVisible && <SearchMenu toggleSideMenuSearch={toggleSideMenuSearch} />}
             {isMiniSideVisible && isAlarmMenuVisible && <AlarmMenu toggleSideMenuAlarm={toggleSideMenuAlarm} />}
             {isSideMenuVisible && (

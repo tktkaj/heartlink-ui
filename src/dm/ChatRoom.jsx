@@ -1,6 +1,5 @@
 import DmListBox from './DmListBox';
 import ChatBox from './ChatBox';
-import MainPage from '../main/MainPage'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -61,16 +60,16 @@ export default function ChatRoom() {
     };
   }, []);
 
-  useEffect(() => {
-    axios.get(`http://localhost:9090/dm/${id}`)
-      .then((response) => {
-        // 서버로부터 받은 데이터를 상태로 설정
-        setChatList(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching the direct message:', error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`http://localhost:9090/dm/${id}`)
+  //     .then((response) => {
+  //       // 서버로부터 받은 데이터를 상태로 설정
+  //       setChatList(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching the direct message:', error);
+  //     });
+  // }, [id]);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -103,23 +102,23 @@ export default function ChatRoom() {
     }
   };
 
-  const handleChangeRoom = (msgRoomId, userImg, userName) => {
-    axios.get(`http://localhost:9090/dm/${msgRoomId}/detail`)
-      .then((response) => {
-        // 방이 선택되면 메시지를 상태로 설정
-        setUserProfile(userImg);
-        setUser(userName);
-        setMessages(response.data);
-        setUserId(id);
-      })
-      .catch((error) => {
-        console.error('Error fetching the direct message:', error);
-      });
-  }
+  // const handleChangeRoom = (msgRoomId, userImg, userName) => {
+  //   axios.get(`http://localhost:9090/dm/${msgRoomId}/detail`)
+  //     .then((response) => {
+  //       // 방이 선택되면 메시지를 상태로 설정
+  //       setUserProfile(userImg);
+  //       setUser(userName);
+  //       setMessages(response.data);
+  //       setUserId(id);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching the direct message:', error);
+  //     });
+  // }
 
   return (
     <div style={{ display: 'flex' }}>
-      <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} />
+      {/* <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} /> */}
       {user ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
@@ -130,10 +129,10 @@ export default function ChatRoom() {
           userId={userId}
           userProfile={userProfile}
           user={user}
-    
+
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <div style={{ display: 'flex', textAlign: 'center' }}>챗내용이 없으요 힛.</div>
+        <div style={{ display: 'flex', textAlign: 'center', marginLeft: '30vw' }}>챗내용이 없으요 힛.</div>
       )}
     </div>
   );
