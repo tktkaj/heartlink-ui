@@ -17,18 +17,20 @@ import CoupleAlert from "./alert/CoupleAlert";
 import DeleteAlert from "./alert/DeleteAlert";
 import CoupleConnect from "./couple/CoupleConnect";
 import CoupleConnect2 from "./couple/CoupleConnect2";
+import SignUp from "./join/SignUp";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      { index: true, element: <MainPage /> },
+      { index: true, element: <Login /> },
       { path: "/home", element: <MainPage /> },
       { path: "/search", element: <Search /> },
       { path: "/couple", element: <Couple /> },
       { path: "/dm/:userid", element: <DmListBox /> },
-      { path: "/mypage", element: <MyPage /> },
+      { path: "/user/profile/:userid", element: <MyPage /> },
+      { path: "/user/join", element: <SignUp /> },
       { path: "/login", element: <Login /> },
       { path: "/dm/:msgRoomId/detail", element: <ChatRoom /> },
       { path: "/*", element: <NotFound /> },
