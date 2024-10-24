@@ -154,10 +154,8 @@ const FindIdButton = styled.button`
 const logs = { kakaoLogo, googleLogo, naverLogo };
 
 export default function Login() {
-  const navigate = useNavigate();
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
-  const hello = "1";
   const data = {
     loginId: loginId,
     password: password,
@@ -176,25 +174,16 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
+    console.log("로그인 시도 중...");
     try {
-      console.log("로그인 시도 중...");
-      const response = await axios.post(
-        "https://15071f57-00d2-45c8-9dc1-b0ea0ea22657.mock.pstmn.io/login",
-        data
-      );
-      if (response.status === 200) {
-        console.log(response.status);
-        alert("login successful");
-      } else if (response.status === 400) {
-        alert("jwt authentication error");
-      }
-    } catch (error) {
-      if (error.response) {
-        console.error("Error response:", error.response.data);
-        alert("join failed: " + error.response.data);
-      } else {
-        console.error("Error message:", error.message);
-      }
+      const res = await axios.post("http://localhost:9090/login", data);
+      console.log(res); // 전체 응답을 콘솔에 출력
+
+      const { accessToken, refreshToken } = res.data; // 응답에서 refreshToken 추출
+      localStorage.setItem("token", accessToken);
+      console.log("Refresh Token:", refreshToken); // refreshToken 콘솔에 출력
+    } catch (err) {
+      console.log(err);
     }
   };
 
