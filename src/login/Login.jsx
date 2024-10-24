@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import kakaoLogo from '../image/sns/free-icon-kakao-talk-4494622.png'
-import naverLogo from '../image/sns/pngwing.com.png'
-import googleLogo from '../image/sns/google_logo_icon_147282.png'
-import MainLogo from '../image/logo/Logo.png'
-import axios from 'axios'
-
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import kakaoLogo from "../image/sns/free-icon-kakao-talk-4494622.png";
+import naverLogo from "../image/sns/pngwing.com.png";
+import googleLogo from "../image/sns/google_logo_icon_147282.png";
+import MainLogo from "../image/logo/Logo.png";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -20,10 +20,15 @@ const LoginBox = styled.div`
   flex-direction: row;
   position: absolute;
   top: 50%;
-  left: 50%; 
+  left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px, rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px, rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px, rgba(42, 51, 70, 0.04) 0px 6px 6px -3px, rgba(14, 63, 126, 0.04) 0px 12px 12px -6px, rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
-`
+  box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px,
+    rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px,
+    rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
+    rgba(42, 51, 70, 0.04) 0px 6px 6px -3px,
+    rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
+    rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
+`;
 
 const LoginBoxRight = styled.form`
   width: 45%;
@@ -33,7 +38,7 @@ const LoginBoxRight = styled.form`
   align-items: center;
   border-right: 2px solid #f0f0f0;
   flex-direction: column;
-`
+`;
 
 const LoginBanner = styled.div`
   font-size: 2rem;
@@ -42,7 +47,7 @@ const LoginBanner = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const OAuthButton = styled.button`
   width: 45px;
@@ -55,14 +60,14 @@ const OAuthButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 3px 3px 5px #d3d3d3; 
+  box-shadow: 3px 3px 5px #d3d3d3;
   img {
     display: block;
     width: 100%;
     height: 100%;
     border-radius: 50%;
   }
-`
+`;
 
 const Input = styled.input`
   width: 60%;
@@ -75,7 +80,7 @@ const Input = styled.input`
   &::placeholder {
     font-size: 0.8rem;
   }
-`
+`;
 
 const LoginButton = styled.button`
   width: 60%;
@@ -87,33 +92,33 @@ const LoginButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: 3px 3px 5px #bdbdbd; 
-  margin: 20px 0; 
-`
+  box-shadow: 3px 3px 5px #bdbdbd;
+  margin: 20px 0;
+`;
 const IdLabel = styled.p`
-    font-size: 0.8rem;
-    padding-right: 250px; 
-    display: flex;
-    align-items: center;
-`
+  font-size: 0.8rem;
+  padding-right: 250px;
+  display: flex;
+  align-items: center;
+`;
 const PassLabel = styled.p`
-    font-size: 0.8rem;
-    padding-right: 240px; 
-    display: flex;
-    align-items: center;
-    margin-top: 5px;
-`
+  font-size: 0.8rem;
+  padding-right: 240px;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+`;
 const LoginTitle = styled.div`
   font-size: 2.1rem;
   padding-right: 190px;
   line-height: 45px;
-`
+`;
 
 const LoginIntro = styled.div`
   font-size: 0.8rem;
   padding-right: 12px;
   color: gray;
-`
+`;
 
 const LoginTitleAndIntroContainer = styled.div`
   display: flex;
@@ -121,14 +126,14 @@ const LoginTitleAndIntroContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin-bottom: 35px;
-`
+`;
 
 const SignUpAndFindIdContainer = styled.div`
   width: 290px;
   display: flex;
   justify-content: end;
   margin-top: 5px;
-`
+`;
 
 const SignUpButton = styled.button`
   background-color: transparent;
@@ -136,7 +141,7 @@ const SignUpButton = styled.button`
   color: #333;
   cursor: pointer;
   font-size: 0.8rem;
-`
+`;
 
 const FindIdButton = styled.button`
   background-color: transparent;
@@ -144,80 +149,108 @@ const FindIdButton = styled.button`
   color: #333;
   cursor: pointer;
   font-size: 0.8rem;
-`
+`;
 
 const logs = { kakaoLogo, googleLogo, naverLogo };
 
 export default function Login() {
-
-  const [loginId, setLoginId] = useState('');
-  const [password, setPassword] = useState('');
-  const hello = '1';
+  const navigate = useNavigate();
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+  const hello = "1";
   const data = {
     loginId: loginId,
     password: password,
   };
 
   const handleLoginIdChange = (e) => {
-
     if (e) {
       setLoginId(e);
     }
-  }
+  };
 
   const handlePasswordChange = (e) => {
-
     if (e) {
       setPassword(e);
     }
-  }
+  };
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('https://15071f57-00d2-45c8-9dc1-b0ea0ea22657.mock.pstmn.io/login', data);
+      console.log("로그인 시도 중...");
+      const response = await axios.post(
+        "https://15071f57-00d2-45c8-9dc1-b0ea0ea22657.mock.pstmn.io/login",
+        data
+      );
       if (response.status === 200) {
         console.log(response.status);
-        alert('login successful');
-      }
-      else if (response.status === 400) {
-        alert('jwt authentication error');
+        alert("login successful");
+      } else if (response.status === 400) {
+        alert("jwt authentication error");
       }
     } catch (error) {
       if (error.response) {
-        console.error('Error response:', error.response.data);
-        alert('join failed: ' + error.response.data);
+        console.error("Error response:", error.response.data);
+        alert("join failed: " + error.response.data);
       } else {
-        console.error('Error message:', error.message);
+        console.error("Error message:", error.message);
       }
     }
-  }
+  };
 
   return (
     <LoginBox>
       <LoginBoxRight>
         <LoginTitleAndIntroContainer>
-          <LoginTitle>
-            LOGIN
-          </LoginTitle>
-          <LoginIntro><p style={{ display: 'inline-block', color: '#f1767a ' }}>사랑하는 사람</p>과의 소중한 순간을 함께 기록하세요.</LoginIntro>
+          <LoginTitle>LOGIN</LoginTitle>
+          <LoginIntro>
+            <p style={{ display: "inline-block", color: "#f1767a " }}>
+              사랑하는 사람
+            </p>
+            과의 소중한 순간을 함께 기록하세요.
+          </LoginIntro>
         </LoginTitleAndIntroContainer>
-        <IdLabel>아이디</IdLabel><Input type="text" placeholder="ID" onChange={(e) => { handleLoginIdChange(e.target.value) }} />
-        <PassLabel>비밀번호</PassLabel><Input type="password" placeholder="비밀번호" onChange={(e) => { handlePasswordChange(e.target.value) }} />
+        <IdLabel>아이디</IdLabel>
+        <Input
+          type="text"
+          placeholder="ID"
+          onChange={(e) => {
+            handleLoginIdChange(e.target.value);
+          }}
+        />
+        <PassLabel>비밀번호</PassLabel>
+        <Input
+          type="password"
+          placeholder="비밀번호"
+          onChange={(e) => {
+            handlePasswordChange(e.target.value);
+          }}
+        />
         <SignUpAndFindIdContainer>
-          <SignUpButton style={{ marginRight: '4px' }}>회원가입 |</SignUpButton>
+          <SignUpButton style={{ marginRight: "4px" }}>회원가입 |</SignUpButton>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
-        <LoginButton>LOGIN</LoginButton>
-        <div style={{ display: 'flex', gap: "15px" }}>
-          <OAuthButton><img src={logs.kakaoLogo} alt="카카오 로그인" /></OAuthButton>
-          <OAuthButton><img src={logs.naverLogo} alt="네이버 로그인" /></OAuthButton>
-          <OAuthButton><img src={logs.googleLogo} alt="구글 로그인" /></OAuthButton>
+        <LoginButton onClick={handleLogin}>LOGIN</LoginButton>
+        <div style={{ display: "flex", gap: "15px" }}>
+          <OAuthButton>
+            <img src={logs.kakaoLogo} alt="카카오 로그인" />
+          </OAuthButton>
+          <OAuthButton>
+            <img src={logs.naverLogo} alt="네이버 로그인" />
+          </OAuthButton>
+          <OAuthButton>
+            <img src={logs.googleLogo} alt="구글 로그인" />
+          </OAuthButton>
         </div>
       </LoginBoxRight>
       <LoginBanner>
-        <img src={MainLogo} style={{ width: '200px', height: '100px' }} />
+        <div style={{ width: "300px", height: "100px" }}>
+          <img
+            src={MainLogo}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
       </LoginBanner>
     </LoginBox>
-  )
+  );
 }
-
