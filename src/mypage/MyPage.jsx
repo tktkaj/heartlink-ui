@@ -5,6 +5,7 @@ import { IoBookmark } from "react-icons/io5";
 import SideMenu from "../sideMenu/SideMenu";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getMyPage } from "../api/mypage";
 
 let Content = styled.div`
   width: 100vw;
@@ -133,10 +134,18 @@ function MyPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [data, setData] = useState();
 
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
+
+    getMyPage(() => {
+      getMyPage().then((res) => {
+        setData(res);
+      })
+    }, [])
+
     const fetchProfileData = async () => {
       try {
         const profileResponse = await axios.get(

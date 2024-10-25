@@ -6,6 +6,7 @@ import googleLogo from "../image/sns/google_logo_icon_147282.png";
 import MainLogo from "../image/logo/Logo.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { login } from "../api/login";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -154,38 +155,36 @@ const FindIdButton = styled.button`
 const logs = { kakaoLogo, googleLogo, naverLogo };
 
 export default function Login() {
-  const [loginId, setLoginId] = useState("");
-  const [password, setPassword] = useState("");
-  const data = {
-    loginId: loginId,
-    password: password,
+  const [loginId, setId] = useState("");
+  const [password, setPw] = useState("");
+
+  const onChangeId = (e) => {
+    setId(e.target.value);
   };
 
-  const handleLoginIdChange = (e) => {
-    if (e) {
-      setLoginId(e);
-    }
+  const onChangePw = (e) => {
+    setPw(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
-    if (e) {
-      setPassword(e);
-    }
-  };
-
-  const handleLogin = async () => {
-    console.log("로그인 시도 중...");
+  const onClick = async (e) => {
+    e.preventDefault();
+    console.log('loginId:', loginId, 'password:', password);
     try {
-      const res = await axios.post("http://localhost:9090/login", data);
-      console.log(res); // 전체 응답을 콘솔에 출력
+      const result = await login(loginId, password);
+      console.log(result);
+      const { authorization, refreshToken } = result;
+      localStorage.setItem('access', authorization);
+      localStorage.setItem('refresh', refreshToken);
 
-      const { accessToken, refreshToken } = res.data; // 응답에서 refreshToken 추출
-      localStorage.setItem("token", accessToken);
-      console.log("Refresh Token:", refreshToken); // refreshToken 콘솔에 출력
-    } catch (err) {
-      console.log(err);
+      alert('로그인 성공!')
+      window.location.href = '/home';
+
+    } catch (error) {
+      alert('로그인 실패!')
     }
+
   };
+
 
   return (
     <LoginBox>
@@ -201,25 +200,21 @@ export default function Login() {
         </LoginTitleAndIntroContainer>
         <IdLabel>아이디</IdLabel>
         <Input
-          type="text"
+          value={loginId}
           placeholder="ID"
-          onChange={(e) => {
-            handleLoginIdChange(e.target.value);
-          }}
+          onChange={onChangeId}
         />
         <PassLabel>비밀번호</PassLabel>
         <Input
-          type="password"
+          value={password}
           placeholder="비밀번호"
-          onChange={(e) => {
-            handlePasswordChange(e.target.value);
-          }}
+          onChange={onChangePw}
         />
         <SignUpAndFindIdContainer>
           <SignUpButton style={{ marginRight: "4px" }}>회원가입 |</SignUpButton>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
-        <LoginButton onClick={handleLogin}>LOGIN</LoginButton>
+        <LoginButton onClick={onClick}>LOGIN</LoginButton>
         <div style={{ display: "flex", gap: "15px" }}>
           <OAuthButton>
             <img src={logs.kakaoLogo} alt="카카오 로그인" />
