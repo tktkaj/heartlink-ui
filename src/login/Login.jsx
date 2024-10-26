@@ -5,7 +5,7 @@ import naverLogo from "../image/sns/pngwing.com.png";
 import googleLogo from "../image/sns/google_logo_icon_147282.png";
 import MainLogo from "../image/logo/Logo.png";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
 
 const LoginBox = styled.div`
@@ -168,23 +168,20 @@ export default function Login() {
 
   const onClick = async (e) => {
     e.preventDefault();
-    console.log('loginId:', loginId, 'password:', password);
+    console.log("loginId:", loginId, "password:", password);
     try {
       const result = await login(loginId, password);
       console.log(result);
       const { authorization, refreshToken } = result;
-      localStorage.setItem('access', authorization);
-      localStorage.setItem('refresh', refreshToken);
+      localStorage.setItem("access", authorization);
+      localStorage.setItem("refresh", refreshToken);
 
-      alert('로그인 성공!')
-      window.location.href = '/home';
-
+      alert("로그인 성공!");
+      window.location.href = "/home";
     } catch (error) {
-      alert('로그인 실패!')
+      alert("로그인 실패!");
     }
-
   };
-
 
   return (
     <LoginBox>
@@ -199,19 +196,16 @@ export default function Login() {
           </LoginIntro>
         </LoginTitleAndIntroContainer>
         <IdLabel>아이디</IdLabel>
-        <Input
-          value={loginId}
-          placeholder="ID"
-          onChange={onChangeId}
-        />
+        <Input value={loginId} placeholder="ID" onChange={onChangeId} />
         <PassLabel>비밀번호</PassLabel>
-        <Input
-          value={password}
-          placeholder="비밀번호"
-          onChange={onChangePw}
-        />
+        <Input value={password} placeholder="비밀번호" onChange={onChangePw} />
+
         <SignUpAndFindIdContainer>
-          <SignUpButton style={{ marginRight: "4px" }}>회원가입 |</SignUpButton>
+          <Link to="/user/join">
+            <SignUpButton style={{ marginRight: "4px" }}>
+              회원가입 |
+            </SignUpButton>
+          </Link>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
         <LoginButton onClick={onClick}>LOGIN</LoginButton>
