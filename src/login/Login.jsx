@@ -212,13 +212,28 @@ export default function Login() {
         <LoginButton onClick={onClick}>LOGIN</LoginButton>
         <div style={{ display: "flex", gap: "15px" }}>
           <OAuthButton>
-            <img src={logs.kakaoLogo} alt="카카오 로그인" />
+            <a
+              href="http://localhost:9090/oauth2/authorization/kakao"
+              target="_blank"
+            >
+              <img src={logs.kakaoLogo} alt="카카오 로그인" />
+            </a>
           </OAuthButton>
           <OAuthButton>
-            <img src={logs.naverLogo} alt="네이버 로그인" />
+            <a
+              href="http://localhost:9090/oauth2/authorization/naver"
+              target="_blank"
+            >
+              <img src={logs.naverLogo} alt="네이버 로그인" />
+            </a>
           </OAuthButton>
           <OAuthButton>
-            <img src={logs.googleLogo} alt="구글 로그인" />
+            <a
+              href="http://localhost:9090/oauth2/authorization/google"
+              target="_blank"
+            >
+              <img src={logs.googleLogo} alt="구글 로그인" />
+            </a>
           </OAuthButton>
         </div>
       </LoginBoxRight>
