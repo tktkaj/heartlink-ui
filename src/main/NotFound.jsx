@@ -45,7 +45,7 @@ const NotFound = () => {
   return (
     <PageContainer>
       <Title>404</Title>
-      <Message>찾을 수 없는 페이지에요!</Message>
+      <Message>찾을 수 없는 페이지예요!</Message>
       <HomeButton onClick={handleHomeRedirect}>홈으로 돌아가기</HomeButton>
     </PageContainer>
   );

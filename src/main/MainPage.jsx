@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Feed from "./Feed";
 import profilethum from "../image/sidebar/test.png";
 import Upload from "../layout/Upload";
+import { useAuth } from "../api/AuthContext";
 
 const Container = styled.div`
   width: 100vw;
@@ -83,6 +84,8 @@ const LoveAlarm = styled.div`
 `;
 
 export default function MainPage() {
+  const { token, setToken, authAxios } = useAuth();
+  console.log(token);
   return (
     <MainContainer>
       <SideMenu />

@@ -5,7 +5,8 @@ import naverLogo from "../image/sns/pngwing.com.png";
 import googleLogo from "../image/sns/google_logo_icon_147282.png";
 import MainLogo from "../image/logo/Logo.png";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../api/login";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -154,47 +155,32 @@ const FindIdButton = styled.button`
 const logs = { kakaoLogo, googleLogo, naverLogo };
 
 export default function Login() {
-  const navigate = useNavigate();
-  const [loginId, setLoginId] = useState("");
-  const [password, setPassword] = useState("");
-  const hello = "1";
-  const data = {
-    loginId: loginId,
-    password: password,
+  const [loginId, setId] = useState("");
+  const [password, setPw] = useState("");
+
+  const onChangeId = (e) => {
+    setId(e.target.value);
   };
 
-  const handleLoginIdChange = (e) => {
-    if (e) {
-      setLoginId(e);
-    }
+  const onChangePw = (e) => {
+    setPw(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
-    if (e) {
-      setPassword(e);
-    }
-  };
-
-  const handleLogin = async () => {
+  const onClick = async (e) => {
+    e.preventDefault();
+    console.log("loginId:", loginId, "password:", password);
     try {
-      console.log("로그인 시도 중...");
-      const response = await axios.post(
-        "https://15071f57-00d2-45c8-9dc1-b0ea0ea22657.mock.pstmn.io/login",
-        data
-      );
-      if (response.status === 200) {
-        console.log(response.status);
-        alert("login successful");
-      } else if (response.status === 400) {
-        alert("jwt authentication error");
-      }
+      const result = await login(loginId, password);
+      console.log(result);
+      const authorization = result.authorization;
+      const refreshToken = result.refreshToken;
+      localStorage.setItem("access", authorization);
+      localStorage.setItem("refresh", refreshToken);
+
+      alert("로그인 성공!");
+      window.location.href = "/home";
     } catch (error) {
-      if (error.response) {
-        console.error("Error response:", error.response.data);
-        alert("join failed: " + error.response.data);
-      } else {
-        console.error("Error message:", error.message);
-      }
+      alert("로그인 실패!");
     }
   };
 
@@ -211,35 +197,43 @@ export default function Login() {
           </LoginIntro>
         </LoginTitleAndIntroContainer>
         <IdLabel>아이디</IdLabel>
-        <Input
-          type="text"
-          placeholder="ID"
-          onChange={(e) => {
-            handleLoginIdChange(e.target.value);
-          }}
-        />
+        <Input value={loginId} placeholder="ID" onChange={onChangeId} />
         <PassLabel>비밀번호</PassLabel>
-        <Input
-          type="password"
-          placeholder="비밀번호"
-          onChange={(e) => {
-            handlePasswordChange(e.target.value);
-          }}
-        />
+        <Input value={password} placeholder="비밀번호" onChange={onChangePw} />
+
         <SignUpAndFindIdContainer>
-          <SignUpButton style={{ marginRight: "4px" }}>회원가입 |</SignUpButton>
+          <Link to="/user/join">
+            <SignUpButton style={{ marginRight: "4px" }}>
+              회원가입 |
+            </SignUpButton>
+          </Link>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
-        <LoginButton onClick={handleLogin}>LOGIN</LoginButton>
+        <LoginButton onClick={onClick}>LOGIN</LoginButton>
         <div style={{ display: "flex", gap: "15px" }}>
           <OAuthButton>
-            <img src={logs.kakaoLogo} alt="카카오 로그인" />
+            <a
+              href="http://localhost:9090/oauth2/authorization/kakao"
+              target="_blank"
+            >
+              <img src={logs.kakaoLogo} alt="카카오 로그인" />
+            </a>
           </OAuthButton>
           <OAuthButton>
-            <img src={logs.naverLogo} alt="네이버 로그인" />
+            <a
+              href="http://localhost:9090/oauth2/authorization/naver"
+              target="_blank"
+            >
+              <img src={logs.naverLogo} alt="네이버 로그인" />
+            </a>
           </OAuthButton>
           <OAuthButton>
-            <img src={logs.googleLogo} alt="구글 로그인" />
+            <a
+              href="http://localhost:9090/oauth2/authorization/google"
+              target="_blank"
+            >
+              <img src={logs.googleLogo} alt="구글 로그인" />
+            </a>
           </OAuthButton>
         </div>
       </LoginBoxRight>

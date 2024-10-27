@@ -5,6 +5,7 @@ import { IoBookmark } from "react-icons/io5";
 import SideMenu from "../sideMenu/SideMenu";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getMyPage } from "../api/mypage";
 
 let Content = styled.div`
   width: 100vw;
@@ -133,17 +134,21 @@ function MyPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [data, setData] = useState({
+    feed: null,
+    likes: null,
+    bookmarks: null,
+  });
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    const fetchProfileData = async () => {
+    const fetchData = async () => {
       try {
-        const profileResponse = await axios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/user/profile/1"
-        );
-        setProfile(profileResponse.data);
-        fetchPosts(0); // 처음 로드할 때 기본 탭의 포스트를 가져옴
+        const res = await getMyPage();
+        console.log("API 응답:", res);
+        setData(res);
+        setProfile(res.profile);
+        setPosts(res.feed); // 초기 데이터로 feed 설정
       } catch (err) {
         setError(err);
       } finally {
@@ -151,54 +156,42 @@ function MyPage() {
       }
     };
 
-    fetchProfileData();
-  }, []);
+    fetchData();
+  }, []); // 컴포넌트가 마운트될 때 한 번만 실행
 
-  const fetchPosts = async (tabIndex) => {
-    try {
-      let postsResponse;
-      if (tabIndex === 0) {
-        postsResponse = await axios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/2/couple"
-        );
-        setPosts(postsResponse.data.feed || []);
-      } else if (tabIndex === 1) {
-        postsResponse = await axios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/2/like"
-        );
-        setPosts(postsResponse.data.feeds || []);
-      } else if (tabIndex === 2) {
-        postsResponse = await axios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/2/bookmark"
-        );
-        setPosts(postsResponse.data.feeds || []);
-      }
-      console.log(postsResponse.data);
-    } catch (err) {
-      setError(err);
+  if (loading) return <div>로딩주웅...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const fetchPosts = (type) => {
+    if (type === "feed") {
+      setPosts(data.feed);
+    } else if (type === "like") {
+      setPosts(data.likes);
+    } else if (type === "bookmark") {
+      setPosts(data.bookmarks);
     }
   };
 
-  const handleMenuClick = (tabIndex) => {
-    setActiveTab(tabIndex);
-    fetchPosts(tabIndex); // 클릭 시 포스트를 가져옴
+  const handleTabClick = (type) => {
+    setActiveTab(type);
+    fetchPosts(type); // 선택된 탭에 맞는 포스트 가져오기
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div style={{ display: "flex" }}>
       <SideMenu />
       <Content>
         <Header>
-          <MainProfile background={profile.userimg}>
-            <SubProfile background={profile.pairimg}></SubProfile>
+          <MainProfile>
+            <img src={profile.userimg} alt="내프사" />
+            <SubProfile>
+              <img src={profile.pairimg} alt="짝프사" />
+            </SubProfile>
           </MainProfile>
 
           <WordWrap>
             <NicknameWrap>
-              <Nickname>{profile.nickname}</Nickname>
+              <Nickname> {profile.nickname}</Nickname>
               <Nickname style={{ paddingLeft: "15px" }}>
                 {profile.userId}
               </Nickname>
@@ -224,13 +217,13 @@ function MyPage() {
           </FollowWrap>
         </Header>
         <MenuWrap>
-          <Menu onClick={() => handleMenuClick(0)}>
+          <Menu onClick={() => handleTabClick("feed")}>
             <CgMenuGridR style={{ width: "100%", height: "100%" }} />
           </Menu>
-          <Menu onClick={() => handleMenuClick(1)}>
+          <Menu onClick={() => handleTabClick("like")}>
             <IoHeart style={{ width: "100%", height: "100%" }} />
           </Menu>
-          <Menu onClick={() => handleMenuClick(2)}>
+          <Menu onClick={() => handleTabClick("bookmark")}>
             <IoBookmark style={{ width: "100%", height: "100%" }} />
           </Menu>
         </MenuWrap>
@@ -238,7 +231,7 @@ function MyPage() {
         <PostList>
           {posts.length > 0 ? (
             posts.map((post, index) => (
-              <Post key={index} background={post.feedImg}>
+              <Post key={index} img src={post.feedImg} alt="썸네일">
                 <PostLink></PostLink>
               </Post>
             ))
