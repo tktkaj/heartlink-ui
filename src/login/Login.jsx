@@ -172,7 +172,8 @@ export default function Login() {
     try {
       const result = await login(loginId, password);
       console.log(result);
-      const { authorization, refreshToken } = result;
+      const authorization = result.authorization;
+      const refreshToken = result.refreshToken;
       localStorage.setItem("access", authorization);
       localStorage.setItem("refresh", refreshToken);
 

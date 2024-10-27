@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { FaHeartBroken } from "react-icons/fa";
 import { HiMiniEyeSlash } from "react-icons/hi2";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoLogOut } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { getAuthAxios } from "../api/authAxios";
 
 const SettingBox = styled.div`
   background-color: white;
