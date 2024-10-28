@@ -10,13 +10,13 @@ export const getMyPage = async () => {
           "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/user/profile/2"
         ),
         authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/2/couple"
+          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/couple"
         ),
         authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/2/like"
+          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/like"
         ),
         authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/2/bookmark"
+          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/bookmark"
         ),
       ]);
 

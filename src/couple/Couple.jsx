@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SideMenu from "../sideMenu/SideMenu";
 import downArrow from "../image/couple/arrow.png";
 import Upload from "../layout/Upload";
+import axios from "axios";
+import { getAuthAxios } from "../api/authAxios";
 
 const MainContainer = styled.div`
   background-color: #f8f8fa;
@@ -117,6 +119,7 @@ const Match = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 const MatchTxt = styled.div`
   width: 13vw;
@@ -174,17 +177,60 @@ export default function Couple() {
     setIsOpen2((prev) => !prev);
   };
 
-  const themes = [
-    "#바다",
-    "#산",
-    "#피크닉",
-    "#하늘",
-    "#여행",
-    "#도시",
-    "#파티",
-    "#선물",
-    "#영화",
-  ];
+  const [couple, setCouple] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [themes, setThemes] = useState([]);
+
+  const fetchMissionTags = async (year, month) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:9090/couple/missionslink",
+        {
+          params: { year, month },
+        }
+      );
+      setThemes(response.data);
+    } catch (error) {
+      console.error("미션 태그 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    const access = localStorage.getItem("access");
+    const authAxios = getAuthAxios(access);
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // 미션태그 가져오기
+        await fetchMissionTags(selectedYear, selectedMonth);
+
+        const match = await authAxios.get(
+          "http://localhost:9090/couple/missionmatch/questions"
+        );
+        console.log(match);
+        setCouple(match.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [selectedYear, selectedMonth]); // year와 month가 변경될 떄마다 호출
+
+  const handleYearSelect = (year) => {
+    setSelectedYear(year);
+    setIsOpen1(false);
+  };
+
+  const handleMonthSelect = (month) => {
+    setSelectedMonth(month);
+    setIsOpen2(false);
+  };
   return (
     <>
       <MainContainer>
@@ -202,13 +248,13 @@ export default function Couple() {
             <LinkMatchContent>
               <Match>
                 <MatchTxt>
-                  <p>한명을 10년동안 만나기</p>
+                  <p>{couple.match1}</p>
                 </MatchTxt>
               </Match>
               <p style={{ fontSize: "20px", fontWeight: "bold" }}>V S</p>
               <Match>
                 <MatchTxt>
-                  <p>1년동안 10명 만나기</p>
+                  <p>{couple.match2}</p>
                 </MatchTxt>
               </Match>
             </LinkMatchContent>
@@ -224,10 +270,10 @@ export default function Couple() {
                           onClick={toggleDropdown1}
                           class="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
-                          aria-expanded="true"
+                          aria-expanded={isOpen1}
                           aria-haspopup="true"
                         >
-                          2024
+                          {selectedYear}
                           <img
                             src={downArrow}
                             alt="아래화살표"
@@ -251,6 +297,7 @@ export default function Couple() {
                               <a
                                 href="#"
                                 key={index}
+                                onClick={() => handleYearSelect(year)}
                                 className="block px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
                                 tabIndex="-1"
@@ -270,10 +317,25 @@ export default function Couple() {
                           onClick={toggleDropdown2}
                           class="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
-                          aria-expanded="true"
+                          aria-expanded={isOpen2}
                           aria-haspopup="true"
                         >
-                          Oct
+                          {
+                            [
+                              "1",
+                              "2",
+                              "3",
+                              "4",
+                              "5",
+                              "6",
+                              "7",
+                              "8",
+                              "9",
+                              "10",
+                              "11",
+                              "12",
+                            ][selectedMonth - 1]
+                          }
                           <img
                             src={downArrow}
                             alt="아래화살표"
@@ -292,24 +354,25 @@ export default function Couple() {
                           aria-labelledby="menu-button"
                           tabIndex="-1"
                         >
-                          <div className="py-1" role="none">
+                          <div className="py-1">
                             {[
-                              "Jan",
-                              "Feb",
-                              "Mar",
-                              "Apr",
-                              "May",
-                              "Jun",
-                              "Jul",
-                              "Aug",
-                              "Sep",
-                              "Oct",
-                              "Nov",
-                              "Dec",
+                              "1",
+                              "2",
+                              "3",
+                              "4",
+                              "5",
+                              "6",
+                              "7",
+                              "8",
+                              "9",
+                              "10",
+                              "11",
+                              "12",
                             ].map((month, index) => (
                               <a
                                 href="#"
                                 key={index}
+                                onClick={() => handleMonthSelect(index + 1)}
                                 className="block px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
                                 tabIndex="-1"

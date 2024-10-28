@@ -13,6 +13,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import FeedModal from "../layout/FeedModal";
 import axios from "axios";
+import { getAuthAxios } from "../api/authAxios";
 
 const FeedBox = styled.div`
   width: 37vw;
@@ -146,7 +147,9 @@ export default function Feed() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get("http://localhost:9090/feed/8");
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const result = await authAxios.get("http://localhost:9090/feed/8");
         console.log(result);
         setPosts(result.data.nonFollowedPosts);
       } catch (err) {
@@ -171,7 +174,9 @@ export default function Feed() {
           <FeedBox>
             <FeedProfile>
               <ProfileTxt>
-                <ProfilePhoto></ProfilePhoto>
+                <ProfilePhoto>
+                  <img src={post.profileImg} alt="프사" />
+                </ProfilePhoto>
                 <p style={{ fontSize: "21px" }}>{post.loginId}</p>
                 <h3>&</h3>
                 <p
@@ -181,7 +186,7 @@ export default function Feed() {
                     marginBottom: "-5px",
                   }}
                 >
-                  {post.loginId}
+                  {post.partnerId}
                 </p>
               </ProfileTxt>
               <div style={{ display: "flex", gap: "15px" }}>
