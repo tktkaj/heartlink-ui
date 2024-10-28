@@ -4,7 +4,6 @@ import kakaoLogo from "../image/sns/free-icon-kakao-talk-4494622.png";
 import naverLogo from "../image/sns/pngwing.com.png";
 import googleLogo from "../image/sns/google_logo_icon_147282.png";
 import MainLogo from "../image/logo/Logo.png";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
 
@@ -157,6 +156,15 @@ const logs = { kakaoLogo, googleLogo, naverLogo };
 export default function Login() {
   const [loginId, setId] = useState("");
   const [password, setPw] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 로그인 상태 확인
+    const isLoggedIn = localStorage.getItem("access");
+    if (isLoggedIn) {
+      navigate("/home"); // 이미 로그인된 경우 홈으로 리다이렉트
+    }
+  }, [navigate]);
 
   const onChangeId = (e) => {
     setId(e.target.value);
@@ -174,6 +182,8 @@ export default function Login() {
       console.log(result);
       const authorization = result.authorization;
       const refreshToken = result.refreshToken;
+
+      localStorage.setItem("loginId", loginId);
       localStorage.setItem("access", authorization);
       localStorage.setItem("refresh", refreshToken);
 

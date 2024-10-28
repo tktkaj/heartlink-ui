@@ -7,11 +7,10 @@ function App() {
     return localStorage.getItem("access") !== null;
   };
 
-  // 사용 예시
   if (!isLoggedIn()) {
     console.log("로그아웃 상태입니다.");
   } else {
-    console.log("로그인 상태입니다.");
+    console.log("로그인 상태입니다.", localStorage.getItem("loginId"));
   }
 
   return (
