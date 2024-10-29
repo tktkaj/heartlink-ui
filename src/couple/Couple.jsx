@@ -170,57 +170,94 @@ export default function Couple() {
   const [isOpen1, setIsOpen1] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
 
-  const toggleDropdown1 = () => {
-    setIsOpen1((prev) => !prev);
-  };
-  const toggleDropdown2 = () => {
-    setIsOpen2((prev) => !prev);
-  };
+  const toggleDropdown1 = () => setIsOpen1((prev) => !prev);
+  const toggleDropdown2 = () => setIsOpen2((prev) => !prev);
 
-  const [couple, setCouple] = useState([]);
+  const [mission, setMission] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [themes, setThemes] = useState([]);
-
-  const fetchMissionTags = async (year, month) => {
-    try {
-      const response = await axios.get(
-        "http://localhost:9090/couple/missionslink",
-        {
-          params: { year, month },
-        }
-      );
-      setThemes(response.data);
-    } catch (error) {
-      console.error("미션 태그 가져오는 중 오류 발생:", error);
-    }
-  };
+  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [dday, setDday] = useState(null);
 
   useEffect(() => {
+    const savedMatch = localStorage.getItem("selectedMatch");
+    if (savedMatch) {
+      setSelectedMatch(Number(savedMatch)); // 저장된 매치를 숫자로 변환
+    }
+
     const access = localStorage.getItem("access");
     const authAxios = getAuthAxios(access);
 
     const fetchData = async () => {
       setLoading(true);
       try {
-        // 미션태그 가져오기
         await fetchMissionTags(selectedYear, selectedMonth);
-
         const match = await authAxios.get(
           "http://localhost:9090/couple/missionmatch/questions"
         );
         console.log(match);
-        setCouple(match.data);
+        setMission(match.data);
       } catch (err) {
-        setError(err);
+        setError("API 호출 중 오류 발생: " + err.message);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [selectedYear, selectedMonth]); // year와 month가 변경될 떄마다 호출
+  }, [selectedYear, selectedMonth]);
+
+  const handleMatchSelect = async (couple) => {
+    const questionId = mission.linkMatchId;
+    if (questionId === null) {
+      console.error("질문 ID가 없습니다.");
+      return;
+    }
+
+    localStorage.setItem("selectedMatch", couple);
+
+    const matchAnswer = { questionId, selectedOption: couple };
+    console.log(matchAnswer);
+
+    try {
+      const access = localStorage.getItem("access");
+      const response = await axios.post(
+        "http://localhost:9090/couple/missionmatch/questions/choose",
+        matchAnswer,
+        {
+          headers: {
+            Authorization: access,
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.error("API 호출 중 오류 발생:", error);
+      setError("매칭을 저장하는 중 오류 발생: " + error.message);
+    }
+    setSelectedMatch(couple);
+  };
+
+  const fetchMissionTags = async (year, month) => {
+    try {
+      const access = localStorage.getItem("access");
+      const response = await axios.get(
+        "http://localhost:9090/couple/missionslink",
+        { params: { year, month } },
+        {
+          headers: {
+            Authorization: access,
+          },
+        }
+      );
+      console.log(response.data);
+      setThemes(response.data);
+    } catch (error) {
+      console.error("미션 태그 가져오는 중 오류 발생:", error);
+    }
+  };
 
   const handleYearSelect = (year) => {
     setSelectedYear(year);
@@ -246,15 +283,25 @@ export default function Couple() {
               </ButtonContainer>
             </LoveHeader>
             <LinkMatchContent>
-              <Match>
+              <Match
+                onClick={() => handleMatchSelect(0)}
+                style={{
+                  border: selectedMatch === 0 ? "5px dotted pink" : "none",
+                }}
+              >
                 <MatchTxt>
-                  <p>{couple.match1}</p>
+                  <p>{mission.match1}</p>
                 </MatchTxt>
               </Match>
               <p style={{ fontSize: "20px", fontWeight: "bold" }}>V S</p>
-              <Match>
+              <Match
+                onClick={() => handleMatchSelect(1)}
+                style={{
+                  border: selectedMatch === 1 ? "5px dotted pink" : "none",
+                }}
+              >
                 <MatchTxt>
-                  <p>{couple.match2}</p>
+                  <p>{mission.match2}</p>
                 </MatchTxt>
               </Match>
             </LinkMatchContent>
@@ -263,12 +310,12 @@ export default function Couple() {
                 <MissionHeader>
                   <LinkMatch>Link Mission</LinkMatch>
                   <LinkMatchDrop>
-                    <div class="relative inline-block text-left">
+                    <div className="relative inline-block text-left">
                       <div>
                         <button
                           type="button"
                           onClick={toggleDropdown1}
-                          class="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
                           aria-expanded={isOpen1}
                           aria-haspopup="true"
@@ -310,12 +357,12 @@ export default function Couple() {
                         </div>
                       )}
                     </div>
-                    <div class="relative inline-block text-left">
+                    <div className="relative inline-block text-left">
                       <div>
                         <button
                           type="button"
                           onClick={toggleDropdown2}
-                          class="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
                           aria-expanded={isOpen2}
                           aria-haspopup="true"
@@ -388,12 +435,12 @@ export default function Couple() {
                   </LinkMatchDrop>
                 </MissionHeader>
                 <BingoBoard>
-                  {themes.map((theme, index) => (
+                  {themes.map((theme) => (
                     <BingoCell
-                      key={index}
-                      image={`url/to/image${index + 1}.jpg`}
+                      key={theme.missionId}
+                      image={`url/to/image${theme.missionId}.jpg`}
                     >
-                      {theme}
+                      {theme.linkTag} {/* linkTag를 출력 */}
                     </BingoCell>
                   ))}
                 </BingoBoard>
