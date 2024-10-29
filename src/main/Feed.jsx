@@ -210,15 +210,9 @@ export default function Feed() {
             </FeedProfile>
             <SliderContainer>
               <Slider {...settings}>
-                {posts.map((post) => (
-                  <FeedImages key={post.postId}>
-                    {post.files.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image.fileUrl}
-                        alt={`피드사진 ${index + 1}`}
-                      />
-                    ))}
+                {post.files.map((image, index) => (
+                  <FeedImages key={index}>
+                    <img src={image.fileUrl} alt={`피드사진 ${index + 1}`} />
                   </FeedImages>
                 ))}
               </Slider>
