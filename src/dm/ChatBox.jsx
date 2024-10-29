@@ -8,12 +8,14 @@ const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 1500px;
+  width: 1450px;
+  margin-left: 465px;
   background-color: #fff;
 `;
 
 const ChatHeader = styled.div`
   padding: 10px;
+  padding-left: 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -62,7 +64,7 @@ export default function ChatBox({ input, handleInputChange, messages, sendMessag
       </ChatHeader>
       <ChatContent>
         <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
-          2024년 10월 23일
+          {messages.length}
         </div>
         <MessageBubble message={input} messages={messages} userId={userId} userProfile={userProfile}>
         </MessageBubble>

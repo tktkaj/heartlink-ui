@@ -1,16 +1,15 @@
 import DmListBox from './DmListBox';
 import ChatBox from './ChatBox';
 import { useEffect, useState } from 'react';
+import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
 
 export default function ChatRoom() {
 
-  const { id } = useParams();
-
+  const [dmList, setDmList] = useState([]);
   const [input, setInput] = useState('');
-  const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
   const [userId, setUserId] = useState();
   const [user, setUser] = useState();
@@ -60,16 +59,50 @@ export default function ChatRoom() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   axios.get(`http://localhost:9090/dm/${id}`)
-  //     .then((response) => {
-  //       // 서버로부터 받은 데이터를 상태로 설정
-  //       setChatList(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching the direct message:', error);
-  //     });
-  // }, [id]);
+  // 대화중인 상대방 리스트 불러오는 axios 
+  useEffect(() => {
+    const token = localStorage.getItem('access');
+
+    axios.get("http://localhost:9090/dm"
+      , {
+        headers: {
+          Authorization: `${token}`
+        }
+      }
+    )
+      .then((response) => {
+        // 서버로부터 받은 데이터를 상태로 설정
+        setDmList(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching the direct message:', error);
+      });
+  }, []);
+
+
+// 상대방 클릭시 채팅방이 바뀌도록
+  const handleChangeRoom = (chat) => {
+    
+    const token = localStorage.getItem('access');
+    axios.get(`http://localhost:9090/dm/${chat.msgRoomId}/detail`
+      , {
+        headers: {
+          Authorization: `${token}`
+        }
+      }
+    )
+      .then((response) => {
+        // 방이 선택되면 메시지를 상태로 설정
+        setUserId(response.data.userId);
+        setUserProfile(chat.userImg);
+        setUser(chat.userName);
+        setMessages(response.data.msgList);
+      })
+      .catch((error) => {
+        console.error('Error fetching the direct message:', error);
+      });
+  }
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -102,23 +135,10 @@ export default function ChatRoom() {
     }
   };
 
-  // const handleChangeRoom = (msgRoomId, userImg, userName) => {
-  //   axios.get(`http://localhost:9090/dm/${msgRoomId}/detail`)
-  //     .then((response) => {
-  //       // 방이 선택되면 메시지를 상태로 설정
-  //       setUserProfile(userImg);
-  //       setUser(userName);
-  //       setMessages(response.data);
-  //       setUserId(id);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching the direct message:', error);
-  //     });
-  // }
-
   return (
     <div style={{ display: 'flex' }}>
-      {/* <DmListBox chatList={chatList} handleChangeRoom={handleChangeRoom} /> */}
+      <MiniSide />
+      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom}/>
       {user ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
@@ -129,10 +149,9 @@ export default function ChatRoom() {
           userId={userId}
           userProfile={userProfile}
           user={user}
-
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <div style={{ display: 'flex', textAlign: 'center', marginLeft: '30vw' }}>챗내용이 없으요 힛.</div>
+        <div style={{ display: 'flex', textAlign: 'center', marginLeft: '62vw', marginTop:'50vh'}}>채팅이 없습니다.</div>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 import { useState } from 'react';
 import TestImg from '../image/testimg/와구리.png';
 
@@ -36,28 +36,55 @@ const SpaceImage = styled.div`
 `;
 
 function Msg({ message, userId, userProfile }) {
+
   if (message.senderId != userId) {
-    return <div style={{ display: 'flex', justifyContent: 'start' }}>
-      <ProfileImage src={userProfile}/>
-      <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
-       {message.content}
-      </Message>
-      <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-          <div style={{ fontSize: '0.9rem', color: '#706EF4' }}>{message.read===true?'읽음':''}</div>
-          <TimeCheckBox>{format(message.lastMessageTime,'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+
+    if (message.imageUrl) {
+      return <div style={{ display: 'flex', justifyContent: 'start' }}>
+        <ProfileImage src={userProfile} />
+        <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }}></img>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
         </div>
-    </div>
+      </div>
+    }
+    else {
+      return <div style={{ display: 'flex', justifyContent: 'start' }}>
+        <ProfileImage src={userProfile} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          {message.content}
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          {/* <div style={{ fontSize: '0.9rem', color: '#706EF4' }}>{message.read===true?'읽음':''}</div> */}
+          <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+        </div>
+      </div>
+    }
+
   }
   else {
-    return <div style={{ display: 'flex', justifyContent: 'end' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-        <div style={{ display: 'flex', justifyContent: 'end', fontSize: '0.9rem', color: '#706EF4' }}>{message.read===true?'읽음':''}</div>
-        <TimeCheckBox>{format(message.lastMessageTime,'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+
+    if (message.imageUrl) {
+      return <div style={{ display: 'flex', justifyContent: 'end' }}>
+        <ProfileImage src={userProfile} />
+        <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }}></img>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+        </div>
       </div>
-      <Message style={{ borderRadius: '50px 50px 50px 50px' }}>
-        {message.content}
-      </Message>
-    </div>
+    }
+
+    else {
+      return <div style={{ display: 'flex', justifyContent: 'end' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
+          {/* <div style={{ display: 'flex', justifyContent: 'end', fontSize: '0.9rem', color: '#706EF4' }}>{message.read===true?'읽음':''}</div> */}
+          <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+        </div>
+        <Message style={{ borderRadius: '50px 50px 50px 50px' }}>
+          {message.content}
+        </Message>
+      </div>
+    }
 
   }
 }
