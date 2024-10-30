@@ -164,7 +164,7 @@ export default function SideMenu() {
                   <AiOutlineMessage className="icon" />
                   메시지
                 </Liststyle>
-                <Liststyle to="/user/profile">
+                <Liststyle to="/user/profile/:userId">
                   <ProfileThum>
                     <img src={profilethum} alt="" />
                   </ProfileThum>

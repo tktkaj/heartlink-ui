@@ -6,6 +6,7 @@ import SideMenu from "../sideMenu/SideMenu";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getMyPage } from "../api/mypage";
+import { getAuthAxios } from "../api/authAxios";
 
 let Content = styled.div`
   width: 100vw;
@@ -35,11 +36,17 @@ let Header = styled.div`
 let MainProfile = styled.div`
   width: 140px;
   height: 140px;
-  border-radius: 100%;
+  border-radius: 50%;
   background-image: url(${(props) => props.background});
   background-size: cover;
   background-position: center;
   position: relative;
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 `;
 
 let SubProfile = styled.div`
@@ -52,8 +59,9 @@ let SubProfile = styled.div`
   background-position: center;
   bottom: -10px;
   right: 0;
-  z-index: 4;
+  z-index: 994;
   outline: 5px solid white;
+  overflow: hidden;
 `;
 
 let WordWrap = styled.div`
@@ -120,6 +128,11 @@ let Post = styled.div`
   background-image: url(${(props) => props.background});
   background-size: cover;
   background-position: center;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 let PostLink = styled.a`
@@ -145,9 +158,16 @@ function MyPage() {
     const fetchData = async () => {
       try {
         const res = await getMyPage();
-        console.log("API 응답:", res);
         setData(res);
-        setProfile(res.profile);
+        console.log("API 응답:", res);
+        console.log("유저아이디는:", res.userId);
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const profileData = await authAxios.get(
+          `http://localhost:9090/user/profile/${res.userId}`
+        );
+        setProfile(profileData.data);
+        console.log("프로필 정보:", profileData.data);
         setPosts(res.feed); // 초기 데이터로 feed 설정
       } catch (err) {
         setError(err);
@@ -184,7 +204,12 @@ function MyPage() {
         <Header>
           <MainProfile>
             <img src={profile.userimg} alt="내프사" />
-            <SubProfile>
+            <SubProfile
+              onClick={() =>
+                (window.location.href = `/user/profile/${profile.pairId}`)
+              }
+              style={{ cursor: "pointer" }}
+            >
               <img src={profile.pairimg} alt="짝프사" />
             </SubProfile>
           </MainProfile>
@@ -193,11 +218,13 @@ function MyPage() {
             <NicknameWrap>
               <Nickname> {profile.nickname}</Nickname>
               <Nickname style={{ paddingLeft: "15px" }}>
-                {profile.userId}
+                {profile.loginId}
               </Nickname>
             </NicknameWrap>
             <StatusMessageWrap>
-              <StatusMessage>{profile.statusMessage}</StatusMessage>
+              <StatusMessage>
+                {profile.bio || "상태메세지가 없습니다."}
+              </StatusMessage>
             </StatusMessageWrap>
           </WordWrap>
 
@@ -231,12 +258,15 @@ function MyPage() {
         <PostList>
           {posts.length > 0 ? (
             posts.map((post, index) => (
-              <Post key={index} img src={post.feedImg} alt="썸네일">
+              <Post key={index}>
+                {post.fileType === "IMAGE" && (
+                  <img src={post.fileUrl} alt="썸네일" />
+                )}
                 <PostLink></PostLink>
               </Post>
             ))
           ) : (
-            <div>게시글이 없습니다.</div> // 포스트가 없을 경우 대체 내용
+            <div>게시글이 없습니다.</div>
           )}
         </PostList>
       </Content>

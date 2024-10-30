@@ -149,9 +149,18 @@ export default function Feed() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const result = await authAxios.get("http://localhost:9090/feed/4");
+        const result = await authAxios.get("http://localhost:9090/feed", {
+          headers: {
+            Authorization: access,
+          },
+        });
         console.log(result);
-        setPosts(result.data.nonFollowedPosts);
+        // followingPosts와 nonFollowedPosts를 합쳐서 순서대로 보여주기
+        const allPosts = [
+          ...(result.data.followingPosts || []),
+          ...(result.data.nonFollowedPosts || []),
+        ];
+        setPosts(allPosts);
       } catch (err) {
         setError(err);
       } finally {

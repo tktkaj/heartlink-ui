@@ -4,32 +4,24 @@ export const getMyPage = async () => {
   const access = localStorage.getItem("access");
   const authAxios = getAuthAxios(access);
   try {
-    const [profileResult, feedResult, likesResult, bookmarksResult] =
+    const [userId, feedResult, likesResult, bookmarksResult] =
       await Promise.all([
-        authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/user/profile/2"
-        ),
-        authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/couple"
-        ),
-        authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/like"
-        ),
-        authAxios.get(
-          "https://virtserver.swaggerhub.com/changemode777/HeartLink/1.0.0/feed/bookmark"
-        ),
+        authAxios.get("http://localhost:9090/user/profile"),
+        authAxios.get("http://localhost:9090/feed/couple"),
+        authAxios.get("http://localhost:9090/feed/like"),
+        authAxios.get("http://localhost:9090/feed/bookmark"),
       ]);
 
-    console.log("profile response:", profileResult);
-    console.log("Feed response:", feedResult);
-    console.log("Likes response:", likesResult);
-    console.log("Bookmarks response:", bookmarksResult);
+    console.log("유저아이디는:", userId);
+    console.log("피드 데이터:", feedResult);
+    console.log("좋아요 데이터:", likesResult);
+    console.log("북마크 데이터:", bookmarksResult);
 
     return {
-      profile: profileResult.data,
-      feed: feedResult.data.feed,
-      likes: likesResult.data.feeds,
-      bookmarks: bookmarksResult.data.feeds,
+      userId: userId.data,
+      feed: feedResult.data,
+      likes: likesResult.data,
+      bookmarks: bookmarksResult.data,
     };
   } catch (error) {
     console.error("Error fetching my page:", error);
