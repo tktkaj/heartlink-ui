@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaPlusCircle } from "react-icons/fa";
 
@@ -69,11 +68,6 @@ const IconButton = styled.button`
 export default function DmListBox({dmList, handleChangeRoom}) {
 
   const { username, chatList } = dmList; 
-
-  const [user, setUser] = useState();
-  const [messages, setMessages] = useState([]);
-  const [userProfile, setUserProfile] = useState();
-  const [userId, setUserId] = useState();
 
   return (
     <DmListBoxContainer>

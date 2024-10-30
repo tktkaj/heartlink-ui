@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { useState, useRef, useEffect } from 'react';
 
 
 const MessageBox = styled.div`
@@ -37,142 +36,234 @@ const SpaceImage = styled.div`
   height: 50px;
 `;
 
-function Msg({ message, userId, userProfile }) {
-  if (message.senderId !== userId) {
-    if (message.imageUrl) {
-      return (
-        <MessageBox>
-          <ProfileImage src={userProfile} />
-          <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
-          <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
-          </div>
-        </MessageBox>
-      );
-    } else {
-      return (
-        <MessageBox>
-          <ProfileImage src={userProfile} />
-          <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
-            {message.content}
-          </Message>
-          <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
-          </div>
-        </MessageBox>
-      );
-    }
-  } else if (message.senderId == userId) {
-    if (message.imageUrl) {
-      return (
-        <MessageBox style={{ display: 'flex', justifyContent: 'end' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
-          </div>
-          <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
-          <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-          </div>
-        </MessageBox>
-      );
-    } else {
-      return (
-        <MessageBox style={{ display: 'flex', justifyContent: 'end' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
-          </div>
-          <Message style={{ borderRadius: '50px 50px 50px 50px' }}>
-            {message.content}
-          </Message>
-        </MessageBox>
-      );
-    }
-  }
-}
+const TimeBox = styled.div`
+  text-align: center;
+   margin-top: 20px; 
+   margin-bottom: 40px;
+   font-size: 1rem;
+   color : #333;
+`
 
-export default function MessageBubble({ messages, userId, userProfile }) {
-  const messagesEndRef = useRef(null);
-
-  // 메시지가 추가될 때마다 스크롤을 하단으로 이동시키는 함수
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // messages 상태가 업데이트될 때마다 스크롤 이동
-  useEffect(scrollToBottom, [messages]);
-
+export default function MessageBubble() {
   return (
+
     <div style={{ maxHeight: '700px', overflowY: 'auto' }}>
-      {messages.map((message, index) => (
-        <Msg key={index} message={message} userId={userId} userProfile={userProfile} />
-      ))}
-      <div ref={messagesEndRef} /> {/* 스크롤을 맞출 요소 */}
+      <TimeBox>
+        시간 나오는 곳
+      </TimeBox>
+      <MessageBox>
+        <ProfileImage src={null} alt='상대방 사진' />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>메세지 보낸 시간</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+      <MessageBox>
+        <ProfileImage src={null} />
+        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+          안녕
+        </Message>
+        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+          <TimeCheckBox>오전 11:11</TimeCheckBox>
+        </div>
+      </MessageBox>
+
+
     </div>
   );
 }
 
-{/* <div style={{ display: 'flex', justifyContent: 'end' }}>
-        <Message style={{ borderRadius: '10px 10px 5px 10px' }}>
-          {message}
-        </Message>
-      </div>
-      
-      <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <ProfileImage src={TestImg}/>
-        <Message isMine={true} style={{ borderRadius: '10px 10px 10px 10px' }}>
-          어떤걸로 먹을까??
-        </Message>
-      </div> */}
-{/* 
-      <div style={{ display: 'flex', justifyContent: 'end' }}>
-        <Message style={{ borderRadius: '50px 50px 10px 50px' }}>
-          흐..
-        </Message>
-      </div>
 
-      <div style={{ display: 'flex', justifyContent: 'end' }}>
-        <Message style={{ borderRadius: '50px 10px 10px 50px' }}>
-          맛있는거 고르고싶은디..
-        </Message>
-      </div>
+// 이미지 메시지인 경우
+// <MessageBox>
+// <ProfileImage src={null} />
+// <img src={null} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
+// <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+//   {/* <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox> */}
+//   <TimeCheckBox>오전 12:00</TimeCheckBox>
+// </div>
+// </MessageBox>
 
-      <div style={{ display: 'flex', justifyContent: 'end' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-          <div style={{ display: 'flex', justifyContent: 'end', fontSize: '0.9rem', color: '#706EF4' }}>읽음</div>
-          <TimeCheckBox>오전 12:50</TimeCheckBox>
-        </div>
-        <Message style={{ borderRadius: '50px 10px 50px 50px' }}>
-          좀 어렵군..
-        </Message>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <div style={{ display: 'flex', alignItems: 'start' }}><ProfileImage src={TestImg} /></div>
-        <Message isMine={true} style={{ borderRadius: '50px 50px 50px 10px' }}>
-          어떤걸로 먹을까??
-        </Message>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <SpaceImage />
-        <Message isMine={true} style={{ borderRadius: '10px 50px 50px 10px' }}>
-          나는 그 청다 먹고싶어!
-        </Message>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <SpaceImage />
-        <Message isMine={true} style={{ borderRadius: '10px 50px 50px 50px' }}>
-          당장 시키자ㅏㅏ!!!ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ
-        </Message>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'start' }}>
-        <SpaceImage />
-        <Message isMine={true} style={{ borderRadius: '10px 10px 10px 10px', padding: '0', backgroundColor: '#FFFFFF' }}>
-          <img src={TestImg} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }}></img>
-        </Message>
-        <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-          <div style={{ fontSize: '0.9rem', color: '#706EF4' }}>읽음</div>
-          <TimeCheckBox>오전 12:52</TimeCheckBox>
-        </div>
-      </div> */}
+// 텍스트 메시지인 경우
+{/* <MessageBox>
+<ProfileImage src={null} />
+<Message isMine={true} style={{ borderRadius: '50px 50px 50px 50px' }}>
+  {message.content}
+</Message>
+<div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+  <TimeCheckBox>오전 11:11</TimeCheckBox>
+</div>
+</MessageBox> */}

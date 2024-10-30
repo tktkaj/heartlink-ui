@@ -3,8 +3,16 @@ import ChatBox from './ChatBox';
 import { useEffect, useState } from 'react';
 import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import styled from 'styled-components'
 
+
+
+const NoChatContainer = styled.div`
+  display: flex;
+  text-align: center;
+  margin-left: 62vw;
+  margin-top: 50vh;
+`;
 
 export default function ChatRoom() {
 
@@ -16,9 +24,9 @@ export default function ChatRoom() {
   const [user, setUser] = useState();
   const [userProfile, setUserProfile] = useState();
   const [ws, setWs] = useState(null); // WebSocket 객체를 상태로 관리
-  const [receivedMessage, setReceivedMessage] = useState(''); // 수신된
 
   useEffect(() => {
+
     // WebSocket 연결을 설정
     const webSocket = new WebSocket('ws://localhost:9090/message');
 
@@ -28,16 +36,12 @@ export default function ChatRoom() {
 
     // 서버에서 메시지를 받을 때 실행
     webSocket.onmessage = (event) => {
-      setReceivedMessage(event.data);
+
+      console.log(event.data);
 
       const addMsg = {
-        senderId: 7,
-        content: event.data,
-        emoji: '',
-        imageUrl: '',
-        lastMessageTime: new Date(),
-        read: true
       }
+
 
       setMessages(prevMessages => [...prevMessages, addMsg]);
 
@@ -103,10 +107,12 @@ export default function ChatRoom() {
       });
   }
 
+  // 메세지 입력을 받아서 input에 저장하는 함수
   const handleInputChange = (e) => {
     setInput(e.target.value);
   }
 
+  // 메세지를 웹소켓으로 보내는 함수
   const sendMessage = () => {
     const token = localStorage.getItem('access');
 
@@ -114,10 +120,6 @@ export default function ChatRoom() {
       ws.send(input); // WebSocket을 통해 메시지 전송
 
       const addMsg = {
-        msgRoomId: msgRoomId,
-        senderId: userId,
-        content: input,
-        lastMessageTime: new Date()
       }
 
       axios.post("http://localhost:9090/dm/messages/text", addMsg
@@ -126,7 +128,7 @@ export default function ChatRoom() {
             Authorization: `${token}`
           }
         }
-      ).then((response)=>{
+      ).then((response) => {
       }
       ).catch((error) => {
         console.error('Error fetching the direct message:', error);
@@ -147,8 +149,9 @@ export default function ChatRoom() {
     }
   };
 
+  // 파일을 전송하는 함수
   const handleFileChange = (event) => {
-    
+
     const file = event.target.files[0];
     const token = localStorage.getItem("access");
     let image = window.URL.createObjectURL(file);
@@ -157,9 +160,8 @@ export default function ChatRoom() {
     formData.append("file", file)
     formData.append("msgRoomId", msgRoomId)
     formData.append("senderId", userId);
-    console.log(userId)
-    console.log(messages)
 
+    // api를 통해 db에 저장
     if (file) {
 
       const addMsg = {
@@ -169,22 +171,22 @@ export default function ChatRoom() {
         lastMessageTime: new Date()
       }
 
-      axios.post("http://localhost:9090/dm/messages/img",formData,
+      axios.post("http://localhost:9090/dm/messages/img", formData,
         {
           headers: {
             Authorization: `${token}`
-            , "Content-Type" : "multipart/form-data"
+            , "Content-Type": "multipart/form-data"
           }
-        }).then((response)=>{
+        }).then((response) => {
           console.log(response.data);
           console.log(response.status);
         })
-      .catch((error)=>{
-        console.log("Error uploading file", error);
-      })
-
+        .catch((error) => {
+          console.log("Error uploading file", error);
+        })
+      // 이거는 내 화면에 출력되게 message에 저장
       setMessages(prevMessages => [...prevMessages, addMsg]);
-      
+
     }
   };
 
@@ -206,7 +208,7 @@ export default function ChatRoom() {
           msgRoomId={msgRoomId}
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <div style={{ display: 'flex', textAlign: 'center', marginLeft: '62vw', marginTop: '50vh' }}>채팅이 없습니다.</div>
+        <NoChatContainer>채팅이 없습니다.</NoChatContainer>
       )}
     </div>
   );
