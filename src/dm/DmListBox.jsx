@@ -65,14 +65,15 @@ const IconButton = styled.button`
   justify-content: center;
 `;
 
-export default function DmListBox({dmList, handleChangeRoom}) {
+export default function DmListBox({dmList, handleChangeRoom, setUserId}) {
 
   const { username, chatList } = dmList; 
+  setUserId(dmList.MyUserId);
 
   return (
     <DmListBoxContainer>
       <DmListHeader>
-        <UserNameLabel>{username}</UserNameLabel>
+        <UserNameLabel>{dmList.MyLoginId}</UserNameLabel>
         <IconButton>
           <FaPlusCircle />
         </IconButton>
@@ -83,9 +84,9 @@ export default function DmListBox({dmList, handleChangeRoom}) {
               key={index} 
               onClick={() => handleChangeRoom(chat)}
             >
-              <img src={chat.userImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+              <img src={chat.otherUserImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
               <div>
-                <div style={{ marginBottom: '1px' }}>{chat.userName}</div>
+                <div style={{ marginBottom: '1px' }}>{chat.otherLoginId}</div>
                 <div style={{ fontSize: '0.8rem' }}>{chat.lastMessage}</div>
               </div>
             </DmItem>

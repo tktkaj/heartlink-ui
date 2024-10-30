@@ -5,8 +5,6 @@ import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
 import styled from 'styled-components'
 
-
-
 const NoChatContainer = styled.div`
   display: flex;
   text-align: center;
@@ -16,15 +14,18 @@ const NoChatContainer = styled.div`
 
 export default function ChatRoom() {
 
-  const [dmList, setDmList] = useState([]);
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [userId, setUserId] = useState();
-  const [msgRoomId, setMsgRoomId] = useState();
+  const [ws, setWs] = useState(null); // WebSocket 객체를 상태로 관리
+  const [dmList, setDmList] = useState([]); // dmList
+  const [input, setInput] = useState(''); // 입력된 값
+  const [messages, setMessages] = useState(); // 보여질 메세지들
+  const [chatRoom, setChatRoom] = useState(); // 메세지방 하나의 정보가 들어있는 변수
+  const [userId, setUserId] = useState(); // 나의 LoginId
+  const [msgRoomId, setMsgRoomId] = useState(); //
   const [user, setUser] = useState();
   const [userProfile, setUserProfile] = useState();
-  const [ws, setWs] = useState(null); // WebSocket 객체를 상태로 관리
 
+
+  // 웹 소켓 연결
   useEffect(() => {
 
     // WebSocket 연결을 설정
@@ -37,13 +38,11 @@ export default function ChatRoom() {
     // 서버에서 메시지를 받을 때 실행
     webSocket.onmessage = (event) => {
 
-      console.log(event.data);
-
-      const addMsg = {
+      const newMessage = {
       }
 
 
-      setMessages(prevMessages => [...prevMessages, addMsg]);
+      setMessages(prevMessages => [...prevMessages, newMessage]);
 
     };
 
@@ -74,7 +73,6 @@ export default function ChatRoom() {
       .then((response) => {
         // 서버로부터 받은 데이터를 상태로 설정
         setDmList(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error('Error fetching the direct message:', error);
@@ -84,27 +82,7 @@ export default function ChatRoom() {
 
   // 상대방 클릭시 채팅방이 바뀌도록
   const handleChangeRoom = (chat) => {
-
-    setMsgRoomId(chat.msgRoomId);
-
-    const token = localStorage.getItem('access');
-    axios.get(`http://localhost:9090/dm/${chat.msgRoomId}/detail`
-      , {
-        headers: {
-          Authorization: `${token}`
-        }
-      }
-    )
-      .then((response) => {
-        // 방이 선택되면 메시지를 상태로 설정
-        setUserId(response.data.userId);
-        setUserProfile(chat.userImg);
-        setUser(chat.userName);
-        setMessages(response.data.msgList);
-      })
-      .catch((error) => {
-        console.error('Error fetching the direct message:', error);
-      });
+    setChatRoom(chat);
   }
 
   // 메세지 입력을 받아서 input에 저장하는 함수
@@ -164,7 +142,7 @@ export default function ChatRoom() {
     // api를 통해 db에 저장
     if (file) {
 
-      const addMsg = {
+      const newMessage = {
         msgRoomId: msgRoomId,
         senderId: userId,
         imageUrl: image,
@@ -185,7 +163,7 @@ export default function ChatRoom() {
           console.log("Error uploading file", error);
         })
       // 이거는 내 화면에 출력되게 message에 저장
-      setMessages(prevMessages => [...prevMessages, addMsg]);
+      setMessages(prevMessages => [...prevMessages, newMessage]);
 
     }
   };
@@ -193,19 +171,19 @@ export default function ChatRoom() {
   return (
     <div style={{ display: 'flex' }}>
       <MiniSide />
-      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} />
-      {user ? ( // messages가 존재하면 ChatBox를 보여줌
+      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId}/>
+      {chatRoom ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
           handleInputChange={handleInputChange}
           handleKeyDown={handleKeyDown}
           sendMessage={sendMessage}
-          messages={messages}
-          userId={userId}
+          chatRoom={chatRoom}
           userProfile={userProfile}
           user={user}
           handleFileChange={handleFileChange}
           msgRoomId={msgRoomId}
+          userId={userId}
         />
       ) : ( // messages가 null일 경우 공백을 표시
         <NoChatContainer>채팅이 없습니다.</NoChatContainer>
