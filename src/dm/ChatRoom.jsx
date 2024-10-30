@@ -147,6 +147,35 @@ export default function ChatRoom() {
     }
   };
 
+  const handleFileChange = (event) => {
+    
+    const file = event.target.files[0];
+    const token = localStorage.getItem("access");
+
+    let formData = new FormData();
+    formData.append("file", file)
+    formData.append("msgRoomId", msgRoomId)
+    formData.append("senderId", userId);
+
+    if (file) {
+
+      axios.post("http://localhost:9090/dm/messages/img",formData,
+        {
+          headers: {
+            Authorization: `${token}`
+            , "Content-Type" : "multipart/form-data"
+          }
+        }).then((response)=>{
+          console.log(response.data);
+          console.log(response.status);
+        })
+      .catch((error)=>{
+        console.log("Error uploading file", error);
+      })
+      
+    }
+  };
+
   return (
     <div style={{ display: 'flex' }}>
       <MiniSide />
@@ -161,6 +190,8 @@ export default function ChatRoom() {
           userId={userId}
           userProfile={userProfile}
           user={user}
+          handleFileChange={handleFileChange}
+          msgRoomId={msgRoomId}
         />
       ) : ( // messages가 null일 경우 공백을 표시
         <div style={{ display: 'flex', textAlign: 'center', marginLeft: '62vw', marginTop: '50vh' }}>채팅이 없습니다.</div>

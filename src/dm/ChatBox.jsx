@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { FaPaperPlane } from "react-icons/fa";
 import { MdInsertPhoto } from "react-icons/md";
@@ -49,9 +49,12 @@ const MessageInput = styled.input`
   border-radius: 5px;
 `;
 
+export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user, handleKeyDown, handleFileChange, msgRoomId }) {
+  const fileInputRef = useRef(null);
 
-
-export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user, handleKeyDown }) {
+  const handlePhotoClick = () => {
+    fileInputRef.current.click();
+  };
 
   return (
     <ChatBoxContainer>
@@ -66,8 +69,7 @@ export default function ChatBox({ input, handleInputChange, messages, sendMessag
         <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
           {messages.length}
         </div>
-        <MessageBubble message={input} messages={messages} userId={userId} userProfile={userProfile}>
-        </MessageBubble>
+        <MessageBubble message={input} messages={messages} userId={userId} userProfile={userProfile} />
       </ChatContent>
       <MessageInputContainer>
         <MessageInput
@@ -78,9 +80,15 @@ export default function ChatBox({ input, handleInputChange, messages, sendMessag
           onKeyPress={handleKeyDown}
           maxLength={1000}
         />
-        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }} onClick={handlePhotoClick}>
           <MdInsertPhoto />
         </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '1.7rem', marginLeft: '15px' }} onClick={sendMessage}>
           <FaPaperPlane />
         </div>
