@@ -13,8 +13,6 @@ export const getAuthAxios = (token) => {
     async (error) => {
       if (error.response.status === 401) {
         const { accessToken, refreshToken } = await getNewRefreshToken();
-        localStorage.setItem("access", accessToken);
-        localStorage.setItem("refresh", refreshToken);
         error.config.headers.Authorization = accessToken;
         return axios.get(error.config.url, error.config);
       }
