@@ -57,7 +57,7 @@ function Msg({ message, userId, userProfile }) {
             {message.content}
           </Message>
           <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-          <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
           </div>
         </MessageBox>
       );
@@ -66,6 +66,9 @@ function Msg({ message, userId, userProfile }) {
     if (message.imageUrl) {
       return (
         <MessageBox style={{ display: 'flex', justifyContent: 'end' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
+            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+          </div>
           <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
           <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
           </div>
@@ -75,7 +78,7 @@ function Msg({ message, userId, userProfile }) {
       return (
         <MessageBox style={{ display: 'flex', justifyContent: 'end' }}>
           <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-
+            <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
           </div>
           <Message style={{ borderRadius: '50px 50px 50px 50px' }}>
             {message.content}
