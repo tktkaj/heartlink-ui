@@ -151,13 +151,23 @@ export default function ChatRoom() {
     
     const file = event.target.files[0];
     const token = localStorage.getItem("access");
+    let image = window.URL.createObjectURL(file);
 
     let formData = new FormData();
     formData.append("file", file)
     formData.append("msgRoomId", msgRoomId)
     formData.append("senderId", userId);
+    console.log(userId)
+    console.log(messages)
 
     if (file) {
+
+      const addMsg = {
+        msgRoomId: msgRoomId,
+        senderId: userId,
+        imageUrl: image,
+        lastMessageTime: new Date()
+      }
 
       axios.post("http://localhost:9090/dm/messages/img",formData,
         {
@@ -172,6 +182,8 @@ export default function ChatRoom() {
       .catch((error)=>{
         console.log("Error uploading file", error);
       })
+
+      setMessages(prevMessages => [...prevMessages, addMsg]);
       
     }
   };
