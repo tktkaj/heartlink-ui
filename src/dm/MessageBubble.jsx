@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import { format } from 'date-fns';
-
+import { useEffect, useRef } from 'react';
 
 const MessageBox = styled.div`
   display: flex;
   justify-content: start;
-`
+`;
+
 const Message = styled.div`
   font-size: 1.1rem;
   display: flex;
@@ -29,6 +30,7 @@ const ProfileImage = styled.img`
   height: 50px;
   border-radius: 50%;
 `;
+
 // 빈공간으로 쓰일 div
 const SpaceImage = styled.div`
   margin: 0 15px;
@@ -38,64 +40,75 @@ const SpaceImage = styled.div`
 
 const TimeBox = styled.div`
   text-align: center;
-   margin-top: 20px; 
-   margin-bottom: 40px;
-   font-size: 1rem;
-   color : #333;
-`
+  margin-top: 20px; 
+  margin-bottom: 40px;
+  font-size: 1rem;
+  color : #333;
+`;
 
-export default function MessageBubble({ messages, otherUserImg, userId }) {
+export default function MessageBubble({ otherUserImg, messages, userId }) {
+  const messagesEndRef = useRef(null);
+
+  // messages가 업데이트될 때마다 스크롤을 최신 메시지로 이동
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   return (
-<div style={{ maxHeight: '700px', overflowY: 'auto' }}>
-  {messages.map((message, index) => {
-    const currentDate = message.lastMessageTime ? format(message.lastMessageTime, 'yyyy년 MM월 dd일') : null;
-    const previousDate = index > 0 && messages[index - 1].lastMessageTime 
-                          ? format(messages[index - 1].lastMessageTime, 'yyyy년 MM월 dd일') 
-                          : null;
-    const isNewDate = currentDate && currentDate !== previousDate;
+    <div style={{ maxHeight: '700px', overflowY: 'auto' }}>
+      {messages.map((message, index) => {
+        const currentDate = message.lastMessageTime ? format(message.lastMessageTime, 'yyyy년 MM월 dd일') : null;
+        const previousDate = index > 0 && messages[index - 1].lastMessageTime
+          ? format(messages[index - 1].lastMessageTime, 'yyyy년 MM월 dd일')
+          : null;
+        const isNewDate = currentDate && currentDate !== previousDate;
 
-    return (
-      <>
-        {isNewDate && (
-          <TimeBox>
-            {currentDate}
-          </TimeBox>
-        )}
-        <MessageBox style={{ justifyContent: userId === message.senderId ? 'end' : 'start' }}>
-          {userId === message.senderId && (
-            <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
-              <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
-            </div>
-          )}
-          {userId !== message.senderId && <ProfileImage src={otherUserImg} />}
-          <Message isMine={userId === message.senderId} style={{ borderRadius: '50px 50px 50px 50px' }}>
-            {message.content}
-          </Message>
-          {userId !== message.senderId && (
-            <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-              <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
-            </div>
-          )}
-        </MessageBox>
-      </>
-    );
-  })}
-</div>
-
-  
+        return (
+          <div key={index}>
+            {isNewDate && (
+              <TimeBox>
+                {currentDate}
+              </TimeBox>
+            )}
+            <MessageBox style={{ justifyContent: userId === message.senderId ? 'end' : 'start' }}>
+              {userId === message.senderId && (
+                <div style={{ display: 'flex', flexDirection: 'column', paddingRight: '15px', justifyContent: 'end' }}>
+                  <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+                </div>
+              )}
+              {userId !== message.senderId && <ProfileImage src={otherUserImg} />}
+              {message.content && <Message isMine={userId === message.senderId} style={{ borderRadius: '50px 50px 50px 50px' }}>
+                {message.content}
+              </Message>}
+              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />}
+              {userId !== message.senderId && (
+                <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+                  <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
+                </div>
+              )}
+            </MessageBox>
+          </div>
+        );
+      })}
+      {/* 새 메시지가 추가될 때마다 이 요소로 스크롤 이동 */}
+      <div ref={messagesEndRef} />
+    </div>
   );
 }
 
 
+
 // 이미지 메시지인 경우
-// <MessageBox>
-// <ProfileImage src={null} />
-// <img src={null} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
-// <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-//   {/* <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox> */}
-//   <TimeCheckBox>오전 12:00</TimeCheckBox>
-// </div>
-// </MessageBox>
+<MessageBox>
+<ProfileImage src={null} />
+<img src={null} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
+<div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
+  {/* <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox> */}
+  <TimeCheckBox>오전 12:00</TimeCheckBox>
+</div>
+</MessageBox>
 
 // 텍스트 메시지인 경우
 {/* <MessageBox>
