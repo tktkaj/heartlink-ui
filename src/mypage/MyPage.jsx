@@ -1,12 +1,16 @@
 import styled from "styled-components";
 import { CgMenuGridR } from "react-icons/cg";
 import { IoBookmark } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getMyPage } from "../api/mypage";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { FaRegBookmark } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
+import { FaRegPenToSquare } from "react-icons/fa6";
+import { RiUserSettingsLine } from "react-icons/ri";
+import { getAuthAxios } from "../api/authAxios";
+import BlockUser from "./BlockUser";
 
 let Content = styled.div`
   background-color: #f8f8fa;
@@ -71,11 +75,45 @@ let WordWrap = styled.div`
 `;
 
 let NicknameWrap = styled.div`
+  width: 25vw;
+  justify-content: space-between;
   padding-bottom: 5px;
+  display: flex;
+  position: relative;
 `;
 
 let Nickname = styled.span`
   font-size: 20px;
+`;
+
+let SettingWrap = styled.div`
+  display: flex;
+  gap: 15px;
+  .icon {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+`;
+
+let SettingPopup = styled.div`
+  position: absolute;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  right: 0;
+  top: 100%;
+  overflow: hidden;
+`;
+
+let SettingOption = styled.div`
+  padding: 15px;
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    background: #e6e6ff;
+  }
 `;
 
 let StatusMessageWrap = styled.div``;
@@ -153,12 +191,38 @@ function MyPage() {
     bookmarks: null,
   });
   const [activeTab, setActiveTab] = useState(0);
+  const [showSettingPopup, setShowSettingPopup] = useState(false);
+  const [showBlockUser, setShowBlockUser] = useState(false);
+  const settingRef = useRef();
+  const [Iding, setIding] = useState(null);
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (settingRef.current && !settingRef.current.contains(event.target)) {
+        setShowSettingPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const userIdRes = await authAxios.get(
+          "http://localhost:9090/user/profile"
+        );
+        console.log("접속중인 아이디는:", userIdRes.data);
+        setIding(userIdRes.data);
+
         const res = await getMyPage(userId);
         setData(res);
         console.log("API 응답:", res);
@@ -173,7 +237,7 @@ function MyPage() {
     };
 
     fetchData();
-  }, [userId]); // 컴포넌트가 마운트될 때 한 번만 실행
+  }, []); // 컴포넌트가 마운트될 때 한 번만 실행
 
   if (loading) return <div>로딩주웅...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -192,6 +256,8 @@ function MyPage() {
     setActiveTab(type);
     fetchPosts(type); // 선택된 탭에 맞는 포스트 가져오기
   };
+  console.log("Iding:", Iding, "type:", typeof Iding);
+  console.log("userId:", userId, "type:", typeof userId);
 
   return (
     <div style={{ display: "flex" }}>
@@ -210,11 +276,33 @@ function MyPage() {
           </MainProfile>
 
           <WordWrap>
+            {showBlockUser && (
+              <BlockUser onClose={() => setShowBlockUser(false)} />
+            )}
             <NicknameWrap>
-              <Nickname> {profile.nickname}</Nickname>
-              <Nickname style={{ paddingLeft: "15px" }}>
-                {profile.loginId}
-              </Nickname>
+              <div>
+                <Nickname> {profile.nickname}</Nickname>
+                <Nickname style={{ paddingLeft: "15px" }}>
+                  {profile.loginId}
+                </Nickname>
+              </div>
+              {Iding && userId && String(Iding) === userId && (
+                <SettingWrap ref={settingRef}>
+                  <FaRegPenToSquare className="icon" />
+                  <RiUserSettingsLine
+                    className="icon"
+                    onClick={() => setShowSettingPopup(!showSettingPopup)}
+                  />
+                  {showSettingPopup && (
+                    <SettingPopup>
+                      <SettingOption onClick={() => setShowBlockUser(true)}>
+                        차단유저 관리
+                      </SettingOption>
+                      <SettingOption>계정 비공개</SettingOption>
+                    </SettingPopup>
+                  )}
+                </SettingWrap>
+              )}
             </NicknameWrap>
             <StatusMessageWrap>
               <StatusMessage>

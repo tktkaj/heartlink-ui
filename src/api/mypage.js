@@ -8,7 +8,7 @@ export const getMyPage = async (userId) => {
     const [profileResult, feedResult, likesResult, bookmarksResult] =
       await Promise.all([
         authAxios.get(`http://localhost:9090/user/profile/${userId}`),
-        authAxios.get("http://localhost:9090/feed/couple"),
+        authAxios.get(`http://localhost:9090/feed/couple/${userId}`),
         authAxios.get("http://localhost:9090/feed/like"),
         authAxios.get("http://localhost:9090/feed/bookmark"),
       ]);
