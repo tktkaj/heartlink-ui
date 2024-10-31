@@ -14,7 +14,6 @@ const MainContainer = styled.div`
 `;
 
 const Container = styled.div`
-  width: 100vw;
   height: 100vh;
   display: flex;
   margin-left: 20vw;
@@ -222,6 +221,7 @@ export default function Couple() {
     const savedMatch = localStorage.getItem("selectedMatch");
     if (savedMatch) {
       setSelectedMatch(Number(savedMatch)); // 저장된 매치를 숫자로 변환
+      console.log(selectedMatch);
     }
 
     const access = localStorage.getItem("access");
@@ -312,7 +312,6 @@ export default function Couple() {
   return (
     <>
       <MainContainer>
-        <SideMenu />
         <Container>
           <FeedBox>
             <LoveHeader>
@@ -431,7 +430,7 @@ export default function Couple() {
                       key={theme.missionId}
                       image={`url/to/image${theme.missionId}.jpg`}
                     >
-                      {theme.linkTag} {/* linkTag를 출력 */}
+                      {theme.linkTag}
                     </BingoCell>
                   ))}
                 </BingoBoard>

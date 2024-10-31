@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import logo from "../image/logo/logo2.png";
 import profilethum from "../image/sidebar/test.png";
@@ -13,6 +13,8 @@ import MiniSide from "./MiniSide";
 import SearchMenu from "./SearchMenu";
 import AlarmMenu from "./AlarmMenu";
 import DmListBox from "../dm/DmListBox";
+import { getAuthAxios } from "../api/authAxios";
+import { useAuth } from "../api/AuthContext";
 
 const Sidebar = styled.div`
   width: 20vw;
@@ -75,9 +77,17 @@ const ProfileThum = styled.div`
 `;
 
 export default function SideMenu() {
+  const { token, setToken, authAxios } = useAuth();
+  console.log(token);
+
   const [isSettingOpen, setIsSettingOpen] = useState(false);
-  const openSetting = () => setIsSettingOpen(true);
+  const openSetting = () => {
+    setIsSettingOpen(true);
+  };
   const closeSetting = () => setIsSettingOpen(false);
+
+  const [userId, setUserId] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   const [isMiniSideVisible, setIsMiniSideVisible] = useState(false);
   const [isSideMenuVisible, setIsSideMenuVisible] = useState(true);
@@ -106,6 +116,28 @@ export default function SideMenu() {
     setIsAlarmMenuVisible(false);
     setIsSearchMenuVisible(false);
   };
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const res = await authAxios.get("http://localhost:9090/user/profile");
+        console.log("로그인한 유저아이디", res);
+        if (res.data) {
+          setUserId(res.data);
+          const profileResult = await authAxios.get(
+            `http://localhost:9090/user/profile/${res.data}`
+          );
+          setProfile(profileResult.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   return (
     <>
@@ -164,15 +196,17 @@ export default function SideMenu() {
                   <AiOutlineMessage className="icon" />
                   메시지
                 </Liststyle>
-                <Liststyle to="/user/profile/:userId">
+                <Liststyle to={`/user/profile/${userId}`}>
                   <ProfileThum>
-                    <img src={profilethum} alt="" />
+                    <img src={profile ? profile.userimg : profilethum} alt="" />
                   </ProfileThum>
-                  <p style={{ fontFamily: "SokchoBadaBatang" }}>moong_52</p>
+                  <p style={{ fontFamily: "SokchoBadaBatang" }}>
+                    {profile ? profile.loginId : "사용자 정보 없음"}
+                  </p>
                 </Liststyle>
               </div>
               <div>
-                <Liststyle onClick={openSetting}>
+                <Liststyle as="div" onClick={openSetting}>
                   <IoSettingsOutline className="icon" />
                   설정
                 </Liststyle>

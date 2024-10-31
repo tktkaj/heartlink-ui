@@ -20,7 +20,7 @@ const Container = styled.div`
   scrollbar-width: none;
   padding-bottom: 20vh;
   display: flex;
-  margin-left: 20vw;
+  padding-left: 20vw;
 `;
 
 const MainContainer = styled.div`
@@ -64,27 +64,14 @@ const ProfileThum = styled.div`
 export default function MainPage() {
   const { token, setToken, authAxios } = useAuth();
   console.log(token);
-  const [myInfo, setMyInfo] = useState(null);
   const [partnerInfo, setPartnerInfo] = useState(null);
 
   useEffect(() => {
     const fetchPartnerInfo = async () => {
       try {
-        // 먼저 현재 사용자의 ID를 가져옴
-        const userId = await authAxios.get(
-          "http://localhost:9090/user/profile"
-        );
-        const myId = userId.data;
-
-        // 내 정보를 가져옴
-        const userResponse = await authAxios.get(
-          `http://localhost:9090/user/profile/${myId}`
-        );
-        setMyInfo(userResponse.data);
-
         // 내 파트너 정보를 가져옴
         const partnerResponse = await authAxios.get(
-          `http://localhost:9090/user/profile/${myInfo.coupleUserId}`
+          "http://localhost:9090/user/couple"
         );
         setPartnerInfo(partnerResponse.data);
         console.log("짝꿍정보", partnerResponse.data);
@@ -98,17 +85,16 @@ export default function MainPage() {
 
   return (
     <MainContainer>
-      <SideMenu />
       <Container>
         <Feed />
         <StatusContainer>
           <LoveStatus>
             <ProfileThum>
-              <img src={partnerInfo?.userimg || profilethum} alt="프사" />
+              <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
             </ProfileThum>
             <div>
               <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
-                {partnerInfo?.nickname}
+                {partnerInfo?.coupleNickname}
               </p>
               <p style={{ fontSize: "15px" }}>접속중</p>
             </div>

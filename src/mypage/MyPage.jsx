@@ -1,17 +1,17 @@
 import styled from "styled-components";
 import { CgMenuGridR } from "react-icons/cg";
-import { IoHeart } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
-import SideMenu from "../sideMenu/SideMenu";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { getMyPage } from "../api/mypage";
-import { getAuthAxios } from "../api/authAxios";
+import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
+import { FaRegBookmark } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
 
 let Content = styled.div`
-  width: 100vw;
   background-color: #f8f8fa;
   height: 100vh;
+  width: 100vw;
   overflow-y: auto;
 
   /* 스크롤바 숨기기 */
@@ -154,20 +154,16 @@ function MyPage() {
   });
   const [activeTab, setActiveTab] = useState(0);
 
+  const { userId } = useParams();
+  console.log("Retrieved userId:", userId);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getMyPage();
+        const res = await getMyPage(userId);
         setData(res);
         console.log("API 응답:", res);
-        console.log("유저아이디는:", res.userId);
-        const access = localStorage.getItem("access");
-        const authAxios = getAuthAxios(access);
-        const profileData = await authAxios.get(
-          `http://localhost:9090/user/profile/${res.userId}`
-        );
-        setProfile(profileData.data);
-        console.log("프로필 정보:", profileData.data);
+        setProfile(res.profile);
+        console.log("프로필 정보:", res.profile);
         setPosts(res.feed); // 초기 데이터로 feed 설정
       } catch (err) {
         setError(err);
@@ -177,7 +173,7 @@ function MyPage() {
     };
 
     fetchData();
-  }, []); // 컴포넌트가 마운트될 때 한 번만 실행
+  }, [userId]); // 컴포넌트가 마운트될 때 한 번만 실행
 
   if (loading) return <div>로딩주웅...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -199,14 +195,13 @@ function MyPage() {
 
   return (
     <div style={{ display: "flex" }}>
-      <SideMenu />
       <Content>
         <Header>
           <MainProfile>
             <img src={profile.userimg} alt="내프사" />
             <SubProfile
               onClick={() =>
-                (window.location.href = `/user/profile/${profile.pairId}`)
+                (window.location.href = `/user/profile/${profile.coupleUserId}`)
               }
               style={{ cursor: "pointer" }}
             >
@@ -248,10 +243,18 @@ function MyPage() {
             <CgMenuGridR style={{ width: "100%", height: "100%" }} />
           </Menu>
           <Menu onClick={() => handleTabClick("like")}>
-            <IoHeart style={{ width: "100%", height: "100%" }} />
+            {activeTab === "like" ? (
+              <FaHeart style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <FaRegHeart style={{ width: "100%", height: "100%" }} />
+            )}
           </Menu>
           <Menu onClick={() => handleTabClick("bookmark")}>
-            <IoBookmark style={{ width: "100%", height: "100%" }} />
+            {activeTab === "bookmark" ? (
+              <IoBookmark style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <FaRegBookmark style={{ width: "100%", height: "100%" }} />
+            )}
           </Menu>
         </MenuWrap>
 
