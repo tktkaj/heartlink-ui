@@ -1,12 +1,9 @@
-import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { FaHeartBroken } from "react-icons/fa";
 import { HiMiniEyeSlash } from "react-icons/hi2";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoLogOut } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { getAuthAxios } from "../api/authAxios";
 
 const SettingBox = styled.div`
   background-color: white;
@@ -44,7 +41,7 @@ const Canvas = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0);
   z-index: 53;
 `;
 

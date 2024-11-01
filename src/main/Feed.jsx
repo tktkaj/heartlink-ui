@@ -149,9 +149,18 @@ export default function Feed() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const result = await authAxios.get("http://localhost:9090/feed/8");
+        const result = await authAxios.get("http://localhost:9090/feed", {
+          headers: {
+            Authorization: access,
+          },
+        });
         console.log(result);
-        setPosts(result.data.nonFollowedPosts);
+        // followingPosts와 nonFollowedPosts를 합쳐서 순서대로 보여주기
+        const allPosts = [
+          ...(result.data.followingPosts || []),
+          ...(result.data.nonFollowedPosts || []),
+        ];
+        setPosts(allPosts);
       } catch (err) {
         setError(err);
       } finally {
@@ -174,10 +183,17 @@ export default function Feed() {
           <FeedBox>
             <FeedProfile>
               <ProfileTxt>
-                <ProfilePhoto>
-                  <img src={post.profileImg} alt="프사" />
-                </ProfilePhoto>
-                <p style={{ fontSize: "21px" }}>{post.loginId}</p>
+                <a
+                  href={`http://localhost:3000/user/profile/${post.userId}`}
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <ProfilePhoto>
+                    <img src={post.profileImg} alt="프사" />
+                  </ProfilePhoto>
+                  <p style={{ fontSize: "21px", cursor: "pointer" }}>
+                    {post.loginId}
+                  </p>
+                </a>
                 <h3>&</h3>
                 <p
                   style={{
@@ -191,7 +207,6 @@ export default function Feed() {
               </ProfileTxt>
               <div style={{ display: "flex", gap: "15px" }}>
                 <button
-                  type="submit"
                   style={{
                     backgroundColor: "#706EF4",
                     width: "70px",
@@ -210,15 +225,9 @@ export default function Feed() {
             </FeedProfile>
             <SliderContainer>
               <Slider {...settings}>
-                {posts.map((post) => (
-                  <FeedImages key={post.postId}>
-                    {post.files.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image.fileUrl}
-                        alt={`피드사진 ${index + 1}`}
-                      />
-                    ))}
+                {post.files.map((image, index) => (
+                  <FeedImages key={index}>
+                    <img src={image.fileUrl} alt={`피드사진 ${index + 1}`} />
                   </FeedImages>
                 ))}
               </Slider>

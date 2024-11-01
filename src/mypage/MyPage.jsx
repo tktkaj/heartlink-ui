@@ -1,19 +1,23 @@
 import styled from "styled-components";
 import { CgMenuGridR } from "react-icons/cg";
-import { IoHeart } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
-import SideMenu from "../sideMenu/SideMenu";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState, useRef } from "react";
 import { getMyPage } from "../api/mypage";
+import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
+import { FaRegBookmark } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
+import { FaRegPenToSquare } from "react-icons/fa6";
+import { RiUserSettingsLine } from "react-icons/ri";
+import { getAuthAxios } from "../api/authAxios";
+import BlockUser from "./BlockUser";
 
 let Content = styled.div`
-  width: 100vw;
   background-color: #f8f8fa;
   height: 100vh;
+  width: 100vw;
   overflow-y: auto;
 
-  /* 스크롤바 숨기기 */
   &::-webkit-scrollbar {
     display: none;
   }
@@ -35,11 +39,17 @@ let Header = styled.div`
 let MainProfile = styled.div`
   width: 140px;
   height: 140px;
-  border-radius: 100%;
+  border-radius: 50%;
   background-image: url(${(props) => props.background});
   background-size: cover;
   background-position: center;
   position: relative;
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 `;
 
 let SubProfile = styled.div`
@@ -52,8 +62,9 @@ let SubProfile = styled.div`
   background-position: center;
   bottom: -10px;
   right: 0;
-  z-index: 4;
+  z-index: 994;
   outline: 5px solid white;
+  overflow: hidden;
 `;
 
 let WordWrap = styled.div`
@@ -63,11 +74,45 @@ let WordWrap = styled.div`
 `;
 
 let NicknameWrap = styled.div`
+  width: 25vw;
+  justify-content: space-between;
   padding-bottom: 5px;
+  display: flex;
+  position: relative;
 `;
 
 let Nickname = styled.span`
   font-size: 20px;
+`;
+
+let SettingWrap = styled.div`
+  display: flex;
+  gap: 15px;
+  .icon {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+`;
+
+let SettingPopup = styled.div`
+  position: absolute;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  right: 0;
+  top: 100%;
+  overflow: hidden;
+`;
+
+let SettingOption = styled.div`
+  padding: 15px;
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    background: #e6e6ff;
+  }
 `;
 
 let StatusMessageWrap = styled.div``;
@@ -120,6 +165,11 @@ let Post = styled.div`
   background-image: url(${(props) => props.background});
   background-size: cover;
   background-position: center;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 let PostLink = styled.a`
@@ -140,14 +190,44 @@ function MyPage() {
     bookmarks: null,
   });
   const [activeTab, setActiveTab] = useState(0);
+  const [showSettingPopup, setShowSettingPopup] = useState(false);
+  const [showBlockUser, setShowBlockUser] = useState(false);
+  const [showFollow, setShowFollow] = useState(false);
+  const settingRef = useRef();
+  const [Iding, setIding] = useState(null);
+
+  const { userId } = useParams();
+  console.log("Retrieved userId:", userId);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (settingRef.current && !settingRef.current.contains(event.target)) {
+        setShowSettingPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getMyPage();
-        console.log("API 응답:", res);
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const userIdRes = await authAxios.get(
+          "http://localhost:9090/user/profile"
+        );
+        console.log("접속중인 아이디는:", userIdRes.data);
+        setIding(userIdRes.data);
+
+        const res = await getMyPage(userId);
         setData(res);
+        console.log("API 응답:", res);
         setProfile(res.profile);
+        console.log("프로필 정보:", res.profile);
         setPosts(res.feed); // 초기 데이터로 feed 설정
       } catch (err) {
         setError(err);
@@ -177,37 +257,125 @@ function MyPage() {
     fetchPosts(type); // 선택된 탭에 맞는 포스트 가져오기
   };
 
+  const handlePrivacyToggle = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+      const response = await authAxios.patch(
+        `http://localhost:9090/user/profile/${userId}/update/${
+          profile.isPrivate ? "public" : "private"
+        }`
+      );
+      if (response.status === 200) {
+        setProfile({
+          ...profile,
+          isPrivate: !profile.isPrivate,
+        });
+        console.log(
+          profile.isPrivate
+            ? "계정이 공개로 변경되었습니다."
+            : "계정이 비공개로 변경되었습니다."
+        );
+      } else if (response.status === 404) {
+        console.error("유저를 찾을 수 없습니다.");
+        alert("유저를 찾을 수 없습니다.");
+      } else if (response.status === 409) {
+        console.error("이미 비공개 계정입니다.");
+        alert("이미 비공개 계정입니다.");
+      } else if (response.status === 403) {
+        console.error("계정 상태 변경 권한이 없습니다.");
+        alert("계정 상태 변경 권한이 없습니다.");
+      }
+    } catch (error) {
+      console.error("계정 상태 변경 실패:", error);
+      alert("계정 상태 변경에 실패했습니다.");
+    }
+  };
+
+  console.log("Iding:", Iding, "type:", typeof Iding);
+  console.log("userId:", userId, "type:", typeof userId);
+
   return (
     <div style={{ display: "flex" }}>
-      <SideMenu />
       <Content>
         <Header>
           <MainProfile>
             <img src={profile.userimg} alt="내프사" />
-            <SubProfile>
+            <SubProfile
+              onClick={() =>
+                (window.location.href = `/user/profile/${profile.coupleUserId}`)
+              }
+              style={{ cursor: "pointer" }}
+            >
               <img src={profile.pairimg} alt="짝프사" />
             </SubProfile>
           </MainProfile>
 
           <WordWrap>
+            {showBlockUser && (
+              <BlockUser onClose={() => setShowBlockUser(false)} />
+            )}
+
             <NicknameWrap>
-              <Nickname> {profile.nickname}</Nickname>
-              <Nickname style={{ paddingLeft: "15px" }}>
-                {profile.userId}
-              </Nickname>
+              <div>
+                <Nickname> {profile.nickname}</Nickname>
+                <Nickname style={{ paddingLeft: "15px" }}>
+                  {profile.loginId}
+                </Nickname>
+              </div>
+              {Iding && userId && String(Iding) === userId && (
+                <SettingWrap ref={settingRef}>
+                  <FaRegPenToSquare className="icon" />
+                  <RiUserSettingsLine
+                    className="icon"
+                    onClick={() => setShowSettingPopup(!showSettingPopup)}
+                  />
+                  {showSettingPopup && (
+                    <SettingPopup>
+                      <SettingOption
+                        onClick={() => {
+                          setShowBlockUser(true);
+                          setShowSettingPopup(false);
+                        }}
+                      >
+                        차단유저 관리
+                      </SettingOption>
+                      <SettingOption onClick={handlePrivacyToggle}>
+                        {profile.isPrivate ? "계정 공개" : "계정 비공개"}
+                      </SettingOption>
+                    </SettingPopup>
+                  )}
+                </SettingWrap>
+              )}
             </NicknameWrap>
             <StatusMessageWrap>
-              <StatusMessage>{profile.statusMessage}</StatusMessage>
+              <StatusMessage>
+                {profile.bio || "상태메세지가 없습니다."}
+              </StatusMessage>
             </StatusMessageWrap>
           </WordWrap>
-
+          {showFollow && (
+            <Follow
+              onClose={() => setShowFollow(false)}
+              type="followers"
+              userId={userId}
+            />
+          )}
           <FollowWrap>
             <Follow>
-              <FollowLi>
+              <FollowLi
+                onClick={() => {
+                  setShowFollow(true);
+                }}
+              >
                 <Nickname style={{ paddingRight: "10px" }}>팔로워</Nickname>
                 <Nickname>{profile.followerCount}</Nickname>
               </FollowLi>
-              <FollowLi>
+              <FollowLi
+                onClick={() => {
+                  setShowFollow(true);
+                }}
+              >
                 <Nickname style={{ paddingLeft: "30px", paddingRight: "10px" }}>
                   팔로잉
                 </Nickname>
@@ -221,22 +389,33 @@ function MyPage() {
             <CgMenuGridR style={{ width: "100%", height: "100%" }} />
           </Menu>
           <Menu onClick={() => handleTabClick("like")}>
-            <IoHeart style={{ width: "100%", height: "100%" }} />
+            {activeTab === "like" ? (
+              <FaHeart style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <FaRegHeart style={{ width: "100%", height: "100%" }} />
+            )}
           </Menu>
           <Menu onClick={() => handleTabClick("bookmark")}>
-            <IoBookmark style={{ width: "100%", height: "100%" }} />
+            {activeTab === "bookmark" ? (
+              <IoBookmark style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <FaRegBookmark style={{ width: "100%", height: "100%" }} />
+            )}
           </Menu>
         </MenuWrap>
 
         <PostList>
           {posts.length > 0 ? (
             posts.map((post, index) => (
-              <Post key={index} img src={post.feedImg} alt="썸네일">
+              <Post key={index}>
+                {post.fileType === "IMAGE" && (
+                  <img src={post.fileUrl} alt="썸네일" />
+                )}
                 <PostLink></PostLink>
               </Post>
             ))
           ) : (
-            <div>게시글이 없습니다.</div> // 포스트가 없을 경우 대체 내용
+            <div>게시글이 없습니다.</div>
           )}
         </PostList>
       </Content>
