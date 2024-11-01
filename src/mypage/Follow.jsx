@@ -99,7 +99,8 @@ function Follow({ onClose, type, userId }) {
             : `http://localhost:9090/follow/following/${userId}`;
 
         const response = await authAxios.get(endpoint);
-        setUsers(response.data);
+        console.log("팔로워팔로잉", response.data.content);
+        setUsers(response.data.content);
       } catch (error) {
         console.error(`${type} 목록을 불러오는데 실패했습니다:`, error);
       }
@@ -171,11 +172,16 @@ function Follow({ onClose, type, userId }) {
                     alt="프로필 썸네일"
                   />
                 </UserImage>
-                <UserId>
-                  {type === "follower"
-                    ? user.followerLoginId
-                    : user.followingLoginId}
-                </UserId>
+                <div>
+                  <UserId>
+                    {type === "follower"
+                      ? user.followerLoginId
+                      : user.followingLoginId}
+                  </UserId>
+                  <div style={{ fontSize: "0.9em", color: "#666" }}>
+                    {type === "follower" ? user.followerBio : user.followingBio}
+                  </div>
+                </div>
               </UserInfo>
               <FollowButton
                 onClick={() =>

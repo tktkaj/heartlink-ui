@@ -209,6 +209,7 @@ function MyPage() {
   const [Iding, setIding] = useState(null);
   const [followType, setFollowType] = useState("followers");
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
@@ -242,6 +243,7 @@ function MyPage() {
         console.log("API 응답:", res);
         setProfile(res.profile);
         setIsFollowing(res.profile.isFollowing);
+        setIsPrivate(res.profile.private);
         console.log("프로필 정보:", res.profile);
         setPosts(res.feed); // 초기 데이터로 feed 설정
       } catch (err) {
@@ -299,16 +301,19 @@ function MyPage() {
       const authAxios = getAuthAxios(access);
       const response = await authAxios.patch(
         `http://localhost:9090/user/profile/${userId}/update/${
-          profile.isPrivate ? "public" : "private"
+          isPrivate ? "public" : "private"
         }`
       );
       if (response.status === 200) {
+        setIsPrivate(!isPrivate);
         setProfile({
           ...profile,
-          isPrivate: !profile.isPrivate,
+          private: !isPrivate,
         });
+        console.log("플텍여부:", isPrivate);
+        alert(isPrivate ? "계정 공개성공" : "계정 비공개성공");
         console.log(
-          profile.isPrivate
+          isPrivate
             ? "계정이 공개로 변경되었습니다."
             : "계정이 비공개로 변경되었습니다."
         );
@@ -377,7 +382,7 @@ function MyPage() {
                         차단유저 관리
                       </SettingOption>
                       <SettingOption onClick={handlePrivacyToggle}>
-                        {profile.isPrivate ? "계정 공개" : "계정 비공개"}
+                        {isPrivate ? "계정 공개" : "계정 비공개"}
                       </SettingOption>
                     </SettingPopup>
                   )}
