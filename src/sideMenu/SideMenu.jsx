@@ -192,7 +192,7 @@ export default function SideMenu() {
                   <FaRegBell className="icon" />
                   알림
                 </Liststyle>
-                <Liststyle onClick={toggleSideMenuDm}>
+                <Liststyle to={"/dm"}>
                   <AiOutlineMessage className="icon" />
                   메시지
                 </Liststyle>
