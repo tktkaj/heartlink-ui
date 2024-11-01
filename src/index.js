@@ -18,6 +18,7 @@ import DeleteAlert from "./alert/DeleteAlert";
 import CoupleConnect from "./couple/CoupleConnect";
 import CoupleConnect2 from "./couple/CoupleConnect2";
 import SignUp from "./join/SignUp";
+import Test from './Test'
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,6 @@ const router = createBrowserRouter([
       { path: "/home", element: <MainPage /> },
       { path: "/search", element: <Search /> },
       { path: "/couple", element: <Couple /> },
-      { path: "/dm/:userid", element: <DmListBox /> },
       { path: "/user/profile", element: <MyPage /> },
       { path: "/user/join", element: <SignUp /> },
       { path: "/login", element: <Login /> },
@@ -39,6 +39,7 @@ const router = createBrowserRouter([
       { path: "/deleteAlert", element: <DeleteAlert /> },
       { path: "/coupleConnect", element: <CoupleConnect /> },
       { path: "/coupleConnect2", element: <CoupleConnect2 /> },
+      { path: "/test", element: <Test /> },
     ],
   },
 ]);
