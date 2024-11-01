@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { IoClose } from "react-icons/io5";
 import profilethum from "../image/sidebar/test.png";
 import { getAuthAxios } from "../api/authAxios";
 import { useEffect, useState } from "react";
@@ -95,13 +94,12 @@ function Follow({ onClose, type, userId }) {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         const endpoint =
-          type === "followers"
+          type === "follower"
             ? `http://localhost:9090/follow/follower/${userId}`
             : `http://localhost:9090/follow/following/${userId}`;
 
         const response = await authAxios.get(endpoint);
         setUsers(response.data);
-        console.log(`${type} 목록:`, response.data);
       } catch (error) {
         console.error(`${type} 목록을 불러오는데 실패했습니다:`, error);
       }
@@ -109,20 +107,33 @@ function Follow({ onClose, type, userId }) {
     fetchUsers();
   }, [type, userId]);
 
-  const handleFollow = (targetUserId) => async () => {
+  const handleFollow = async (targetUserId) => {
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
-      const response = await authAxios.post(
-        `http://localhost:9090/user/follow/${targetUserId}`
-      );
+
+      const endpoint =
+        type === "follower"
+          ? `http://localhost:9090/follow/delete/${targetUserId}`
+          : `http://localhost:9090/follow/cancel/${targetUserId}`;
+
+      const response = await authAxios.delete(endpoint);
 
       if (response.status === 200) {
-        // UI 업데이트 로직
-        console.log("팔로우/언팔로우 성공");
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => {
+            console.log(targetUserId, user.followerUserId);
+            return type === "follower"
+              ? user.followerUserId !== targetUserId
+              : user.followingUserId !== targetUserId;
+          })
+        );
       }
     } catch (error) {
-      console.error("팔로우/언팔로우 실패:", error);
+      console.error(
+        type === "follower" ? "팔로워 끊기 실패:" : "언팔로우 실패:",
+        error
+      );
     }
   };
 
@@ -133,7 +144,7 @@ function Follow({ onClose, type, userId }) {
           <div
             style={{ textAlign: "center", padding: "20px", marginTop: "6.5vw" }}
           >
-            {type === "followers"
+            {type === "follower"
               ? "팔로워가 없습니다."
               : "팔로잉하는 유저가 없습니다."}
           </div>
@@ -142,17 +153,40 @@ function Follow({ onClose, type, userId }) {
             <FollowItem key={user.loginId}>
               <UserInfo
                 onClick={() =>
-                  (window.location.href = `/user/profile/${user.userId}`)
+                  (window.location.href = `/user/profile/${
+                    type === "follower"
+                      ? user.followerUserId
+                      : user.followingUserId
+                  }`)
                 }
                 style={{ cursor: "pointer" }}
               >
                 <UserImage>
-                  <img src={user.userImg || profilethum} alt="프로필 썸네일" />
+                  <img
+                    src={
+                      type === "follower"
+                        ? user.followerImg || profilethum
+                        : user.followingImg || profilethum
+                    }
+                    alt="프로필 썸네일"
+                  />
                 </UserImage>
-                <UserId>{user.loginId}</UserId>
+                <UserId>
+                  {type === "follower"
+                    ? user.followerLoginId
+                    : user.followingLoginId}
+                </UserId>
               </UserInfo>
-              <FollowButton onClick={handleFollow(user.userId)}>
-                {type === "followers" ? "팔로우" : "언팔로우"}
+              <FollowButton
+                onClick={() =>
+                  handleFollow(
+                    type === "follower"
+                      ? user.followerUserId
+                      : user.followingUserId
+                  )
+                }
+              >
+                {type === "follower" ? "팔로워 끊기" : "언팔로우"}
               </FollowButton>
             </FollowItem>
           ))
