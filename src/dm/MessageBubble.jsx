@@ -81,7 +81,7 @@ export default function MessageBubble({ otherUserImg, messages, userId }) {
               {message.content && <Message isMine={userId === message.senderId} style={{ borderRadius: '50px' }}>
                 {message.content}
               </Message>}
-              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />}
+              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px', marginBottom:'5px'}} />}
               {userId !== message.senderId && (
                 <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
                   <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
