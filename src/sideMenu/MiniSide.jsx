@@ -118,7 +118,8 @@ export default function MiniSide({
             <Liststyle onClick={toggleSideMenuAlarm}>
               <FaRegBell className="icon" />
             </Liststyle>
-            <Liststyle onClick={toggleSideMenuDm}>
+            {/* <Liststyle onClick={toggleSideMenuDm}> */}
+            <Liststyle to={"/dm"}>
               <AiOutlineMessage className="icon" />
             </Liststyle>
             <Liststyle to="/user/profile">

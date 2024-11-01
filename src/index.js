@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       { path: "/user/profile", element: <MyPage /> },
       { path: "/user/join", element: <SignUp /> },
       { path: "/login", element: <Login /> },
-      { path: "/dm/:msgRoomId/detail", element: <ChatRoom /> },
+      { path: "/dm", element: <ChatRoom /> },
       { path: "/*", element: <NotFound /> },
       { path: "/alertLogout", element: <LogoutAlert /> },
       { path: "/alertCouple", element: <CoupleAlert /> },

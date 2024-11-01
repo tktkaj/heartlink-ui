@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { FaPaperPlane } from "react-icons/fa";
 import { MdInsertPhoto } from "react-icons/md";
@@ -8,12 +8,14 @@ const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 1500px;
+  width: 1450px;
+  margin-left: 465px;
   background-color: #fff;
 `;
 
 const ChatHeader = styled.div`
   padding: 10px;
+  padding-left: 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,6 +29,28 @@ const ChatHeader = styled.div`
     border-radius: 50%;
   }
 `;
+
+const BlockButton = styled.button`
+  padding: 2px 10px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  color: #706EF4;
+  cursor: pointer;
+`;
+
+const ProfileContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ProfileImage = styled.img`
+`;
+
+const ProfileName = styled.span`
+  margin-left: 10px;
+  font-size: 1.7rem;
+`;
+
 
 const ChatContent = styled.div`
   padding-right: 20px;
@@ -48,24 +72,46 @@ const MessageInput = styled.input`
 `;
 
 
+const HiddenFileInput = styled.input`
+  display: none;
+`;
 
-export default function ChatBox({ input, handleInputChange, messages, sendMessage, userId, userProfile, user, handleKeyDown }) {
+const PhotoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 2.3rem;
+  margin-left: 15px;
+`;
+
+const SendMessageContainer = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.7rem;
+  margin-left: 15px;
+`;
+
+export default function ChatBox({ input, handleInputChange, handleKeyDown, handleFileChange, sendMessage, chatRoom, userId, setMsgRoomId, messages}) {
+  const fileInputRef = useRef(null);
+
+  const handlePhotoClick = () => {
+    fileInputRef.current.click();
+  };
+
+  setMsgRoomId(chatRoom.msgRoomId);
 
   return (
     <ChatBoxContainer>
       <ChatHeader>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={userProfile} alt="프로필" />
-          <span style={{ marginLeft: '10px', fontSize: '1.7rem' }}>{user}</span>
-        </div>
-        <button style={{ padding: '2px 10px', borderRadius: '5px', fontSize: '1.2rem', color: '#706EF4', cursor: 'pointer' }}>차단</button>
+        <ProfileContainer>
+          <ProfileImage src={chatRoom.otherUserImg} alt="상대방사진" />
+          <ProfileName >{chatRoom.otherLoginId}</ProfileName>
+        </ProfileContainer>
+        <BlockButton>차단</BlockButton>
       </ChatHeader>
       <ChatContent>
-        <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px', fontSize: '1rem', color: '#333' }}>
-          2024년 10월 23일
-        </div>
-        <MessageBubble message={input} messages={messages} userId={userId} userProfile={userProfile}>
-        </MessageBubble>
+        <MessageBubble otherUserImg = {chatRoom.otherUserImg} messages={messages}  userId={userId}/>
       </ChatContent>
       <MessageInputContainer>
         <MessageInput
@@ -76,12 +122,17 @@ export default function ChatBox({ input, handleInputChange, messages, sendMessag
           onKeyPress={handleKeyDown}
           maxLength={1000}
         />
-        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '2.3rem', marginLeft: '15px' }}>
+        <PhotoContainer onClick={handlePhotoClick}>
           <MdInsertPhoto />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '1.7rem', marginLeft: '15px' }} onClick={sendMessage}>
+        </PhotoContainer>
+        <HiddenFileInput
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+        <SendMessageContainer onClick={sendMessage}>
           <FaPaperPlane />
-        </div>
+        </SendMessageContainer>
       </MessageInputContainer>
     </ChatBoxContainer>
   );
