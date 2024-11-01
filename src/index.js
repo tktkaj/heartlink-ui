@@ -28,12 +28,9 @@ const router = createBrowserRouter([
       { path: "/home", element: <MainPage /> },
       { path: "/search", element: <Search /> },
       { path: "/couple", element: <Couple /> },
-<<<<<<< HEAD
       { path: "/dm/:userid", element: <DmListBox /> },
       { path: "/user/profile/:userId", element: <MyPage /> },
-=======
       { path: "/user/profile", element: <MyPage /> },
->>>>>>> master
       { path: "/user/join", element: <SignUp /> },
       { path: "/login", element: <Login /> },
       { path: "/dm", element: <ChatRoom /> },
