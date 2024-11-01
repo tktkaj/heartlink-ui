@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FaPlusCircle } from "react-icons/fa";
 
 const DmListBoxContainer = styled.div`
-    width: 380px;
+    width: 340px;
     height: 100vh;
     margin-left: 80px;
     background-color: white;
@@ -67,13 +67,13 @@ const IconButton = styled.button`
 
 export default function DmListBox({dmList, handleChangeRoom, setUserId}) {
 
-  const { username, chatList } = dmList; 
+  const {  MyLoginId, MyUserId, chatList } = dmList; 
   setUserId(dmList.MyUserId);
 
   return (
     <DmListBoxContainer>
       <DmListHeader>
-        <UserNameLabel>{dmList.MyLoginId}</UserNameLabel>
+        <UserNameLabel>{MyLoginId}</UserNameLabel>
         <IconButton>
           <FaPlusCircle />
         </IconButton>

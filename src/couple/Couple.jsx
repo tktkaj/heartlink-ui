@@ -5,6 +5,8 @@ import downArrow from "../image/couple/arrow.png";
 import Upload from "../layout/Upload";
 import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
+import LinkMatchRecord from "./LinkMatchRecord";
+import { useAuth } from "../api/AuthContext";
 
 const MainContainer = styled.div`
   background-color: #f8f8fa;
@@ -12,7 +14,6 @@ const MainContainer = styled.div`
 `;
 
 const Container = styled.div`
-  width: 100vw;
   height: 100vh;
   display: flex;
   margin-left: 20vw;
@@ -167,25 +168,60 @@ const Graph = styled.div`
 `;
 
 export default function Couple() {
+  const { token, setToken, authAxios } = useAuth();
+  console.log(token);
+
   const [isOpen1, setIsOpen1] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
 
   const toggleDropdown1 = () => setIsOpen1((prev) => !prev);
   const toggleDropdown2 = () => setIsOpen2((prev) => !prev);
 
-  const [mission, setMission] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [mission, setMission] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [years, setYears] = useState([]);
+  const [months, setMonths] = useState([]);
   const [themes, setThemes] = useState([]);
+
   const [selectedMatch, setSelectedMatch] = useState(null);
+
   const [dday, setDday] = useState(null);
+
+  useEffect(() => {
+    const fetchYearMonth = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const response = await authAxios.get(
+          "http://localhost:9090/couple/missionAllList"
+        );
+        const { years, months } = response.data;
+        setYears(years);
+        setMonths(months.map((month) => month.toString()));
+
+        // D-day 조회
+        const ddayResponse = await authAxios.get(
+          "http://localhost:9090/couple/dday"
+        );
+        setDday(ddayResponse.data);
+        console.log("dday", ddayResponse.data);
+      } catch (error) {
+        console.error("연도 및 월 가져오기 중 오류 발생:", error);
+      }
+    };
+
+    fetchYearMonth();
+  }, []);
 
   useEffect(() => {
     const savedMatch = localStorage.getItem("selectedMatch");
     if (savedMatch) {
       setSelectedMatch(Number(savedMatch)); // 저장된 매치를 숫자로 변환
+      console.log(selectedMatch);
     }
 
     const access = localStorage.getItem("access");
@@ -268,17 +304,21 @@ export default function Couple() {
     setSelectedMonth(month);
     setIsOpen2(false);
   };
+
+  const [isLinkMatchOpen, setIsLinkMatchOpen] = useState(false);
+  const openRecord = () => setIsLinkMatchOpen(true);
+  const closeRecord = () => setIsLinkMatchOpen(false);
+
   return (
     <>
       <MainContainer>
-        <SideMenu />
         <Container>
           <FeedBox>
             <LoveHeader>
-              <p>🩷+ 365</p>
+              <p>🩷+ {dday}</p>
               <LinkMatch>Link Match</LinkMatch>
               <ButtonContainer>
-                <RecordButton>기록보기</RecordButton>
+                <RecordButton onClick={openRecord}>기록보기</RecordButton>
                 <ButtonShadow></ButtonShadow>
               </ButtonContainer>
             </LoveHeader>
@@ -324,31 +364,20 @@ export default function Couple() {
                           <img
                             src={downArrow}
                             alt="아래화살표"
-                            style={{
-                              width: "15px",
-                              height: "15px",
-                            }}
+                            style={{ width: "15px", height: "15px" }}
                           />
                         </button>
                       </div>
                       {isOpen1 && (
-                        <div
-                          className="absolute mt-1 w-13 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby="menu-button"
-                          tabIndex="-1"
-                        >
-                          <div className="py-1" role="none">
-                            {["2022", "2023", "2024"].map((year, index) => (
+                        <div className="absolute mt-1 w-13 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <div className="py-1">
+                            {years.map((year, index) => (
                               <a
                                 href="#"
                                 key={index}
                                 onClick={() => handleYearSelect(year)}
                                 className="block px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
-                                tabIndex="-1"
-                                id={`menu-item-${index}`}
                               >
                                 {year}
                               </a>
@@ -367,63 +396,24 @@ export default function Couple() {
                           aria-expanded={isOpen2}
                           aria-haspopup="true"
                         >
-                          {
-                            [
-                              "1",
-                              "2",
-                              "3",
-                              "4",
-                              "5",
-                              "6",
-                              "7",
-                              "8",
-                              "9",
-                              "10",
-                              "11",
-                              "12",
-                            ][selectedMonth - 1]
-                          }
+                          {selectedMonth}
                           <img
                             src={downArrow}
                             alt="아래화살표"
-                            style={{
-                              width: "15px",
-                              height: "15px",
-                            }}
+                            style={{ width: "15px", height: "15px" }}
                           />
                         </button>
                       </div>
                       {isOpen2 && (
-                        <div
-                          className="absolute mt-1 w-13 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby="menu-button"
-                          tabIndex="-1"
-                        >
+                        <div className="absolute mt-1 w-13 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                           <div className="py-1">
-                            {[
-                              "1",
-                              "2",
-                              "3",
-                              "4",
-                              "5",
-                              "6",
-                              "7",
-                              "8",
-                              "9",
-                              "10",
-                              "11",
-                              "12",
-                            ].map((month, index) => (
+                            {months.map((month, index) => (
                               <a
                                 href="#"
                                 key={index}
-                                onClick={() => handleMonthSelect(index + 1)}
+                                onClick={() => handleMonthSelect(month)}
                                 className="block px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
-                                tabIndex="-1"
-                                id={`menu-item-${index}`}
                               >
                                 {month}
                               </a>
@@ -440,7 +430,7 @@ export default function Couple() {
                       key={theme.missionId}
                       image={`url/to/image${theme.missionId}.jpg`}
                     >
-                      {theme.linkTag} {/* linkTag를 출력 */}
+                      {theme.linkTag}
                     </BingoCell>
                   ))}
                 </BingoBoard>
@@ -453,6 +443,7 @@ export default function Couple() {
           </Advert>
         </Container>
         <Upload />
+        {isLinkMatchOpen && <LinkMatchRecord closeRecord={closeRecord} />}
       </MainContainer>
     </>
   );

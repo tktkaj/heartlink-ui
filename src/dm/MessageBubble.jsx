@@ -31,7 +31,6 @@ const ProfileImage = styled.img`
   border-radius: 50%;
 `;
 
-// 빈공간으로 쓰일 div
 const SpaceImage = styled.div`
   margin: 0 15px;
   width: 50px;
@@ -57,7 +56,7 @@ export default function MessageBubble({ otherUserImg, messages, userId }) {
   }, [messages]);
 
   return (
-    <div style={{ maxHeight: '700px', overflowY: 'auto' }}>
+    <div style={{ maxHeight: '780px', overflowY: 'auto' }}>
       {messages.map((message, index) => {
         const currentDate = message.lastMessageTime ? format(message.lastMessageTime, 'yyyy년 MM월 dd일') : null;
         const previousDate = index > 0 && messages[index - 1].lastMessageTime
@@ -79,10 +78,10 @@ export default function MessageBubble({ otherUserImg, messages, userId }) {
                 </div>
               )}
               {userId !== message.senderId && <ProfileImage src={otherUserImg} />}
-              {message.content && <Message isMine={userId === message.senderId} style={{ borderRadius: '50px 50px 50px 50px' }}>
+              {message.content && <Message isMine={userId === message.senderId} style={{ borderRadius: '50px' }}>
                 {message.content}
               </Message>}
-              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />}
+              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px', marginBottom:'5px'}} />}
               {userId !== message.senderId && (
                 <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
                   <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
@@ -100,15 +99,8 @@ export default function MessageBubble({ otherUserImg, messages, userId }) {
 
 
 
+
 // 이미지 메시지인 경우
-<MessageBox>
-<ProfileImage src={null} />
-<img src={null} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px' }} />
-<div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
-  {/* <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox> */}
-  <TimeCheckBox>오전 12:00</TimeCheckBox>
-</div>
-</MessageBox>
 
 // 텍스트 메시지인 경우
 {/* <MessageBox>

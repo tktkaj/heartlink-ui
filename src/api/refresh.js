@@ -10,17 +10,13 @@ export const getNewRefreshToken = async () => {
   }
 
   try {
-    const result = await axios.post(
-      "http://localhost:9090/reissue",
-      null, // 본문은 비워두거나 필요에 따라 수정
-      {
-        headers: {
-          RefreshToken: refreshToken,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log("갱신된 토큰:", result.data);
+    const result = await axios.post("http://localhost:9090/reissue", null, {
+      headers: {
+        RefreshToken: refreshToken,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("갱신된 토큰:", result.data.accessToken);
 
     // 새 토큰을 로컬 스토리지에 저장
     localStorage.setItem("access", result.data.accessToken);

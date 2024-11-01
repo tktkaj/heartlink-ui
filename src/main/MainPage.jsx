@@ -4,6 +4,8 @@ import Feed from "./Feed";
 import profilethum from "../image/sidebar/test.png";
 import Upload from "../layout/Upload";
 import { useAuth } from "../api/AuthContext";
+import AlarmRight from "../alarm/AlarmRight";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   width: 100vw;
@@ -18,7 +20,7 @@ const Container = styled.div`
   scrollbar-width: none;
   padding-bottom: 20vh;
   display: flex;
-  margin-left: 20vw;
+  padding-left: 20vw;
 `;
 
 const MainContainer = styled.div`
@@ -59,56 +61,45 @@ const ProfileThum = styled.div`
   margin-right: 15px;
 `;
 
-const BasicAlarm = styled.div`
-  width: 19vw;
-  height: 6vh;
-  background-color: white;
-  border: rgba(160, 160, 160, 0.2) 1px solid;
-  border-radius: 10px;
-  font-size: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const LoveAlarm = styled.div`
-  width: 19vw;
-  height: 6vh;
-  background-color: #ffebeb;
-  border: rgba(160, 160, 160, 0.2) 1px solid;
-  border-radius: 10px;
-  font-size: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 export default function MainPage() {
   const { token, setToken, authAxios } = useAuth();
   console.log(token);
+  const [partnerInfo, setPartnerInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchPartnerInfo = async () => {
+      try {
+        // 내 파트너 정보를 가져옴
+        const partnerResponse = await authAxios.get(
+          "http://localhost:9090/user/couple"
+        );
+        setPartnerInfo(partnerResponse.data);
+        console.log("짝꿍정보", partnerResponse.data);
+      } catch (error) {
+        console.error("Error fetching partner info:", error);
+      }
+    };
+
+    fetchPartnerInfo();
+  }, [authAxios]);
+
   return (
     <MainContainer>
-      <SideMenu />
       <Container>
         <Feed />
         <StatusContainer>
           <LoveStatus>
             <ProfileThum>
-              <img src={profilethum} alt="" />
+              <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
             </ProfileThum>
             <div>
               <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
-                shinshinjeonghun
+                {partnerInfo?.coupleNickname}
               </p>
               <p style={{ fontSize: "15px" }}>접속중</p>
             </div>
           </LoveStatus>
-          <BasicAlarm>
-            <p>neung._. 님이 좋아요를 눌렀습니다.</p>
-          </BasicAlarm>
-          <LoveAlarm>
-            <p>신닭가슴살님과 링크매치 성공💕 </p>
-          </LoveAlarm>
+          <AlarmRight />
         </StatusContainer>
       </Container>
       <Upload />

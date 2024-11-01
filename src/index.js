@@ -9,7 +9,6 @@ import Search from "./search/Search";
 import ChatRoom from "./dm/ChatRoom";
 import MyPage from "./mypage/MyPage";
 import Login from "./login/Login";
-import DmListBox from "./dm/DmListBox";
 import Couple from "./couple/Couple";
 import NotFound from "./main/NotFound";
 import LogoutAlert from "./alert/LogoutAlert";
@@ -28,7 +27,8 @@ const router = createBrowserRouter([
       { path: "/home", element: <MainPage /> },
       { path: "/search", element: <Search /> },
       { path: "/couple", element: <Couple /> },
-      { path: "/dm/:userid", element: <DmListBox /> },
+      { path: "/dm", element: <ChatRoom /> },
+      { path: "/user/profile/:userId", element: <MyPage /> },
       { path: "/user/profile", element: <MyPage /> },
       { path: "/user/join", element: <SignUp /> },
       { path: "/login", element: <Login /> },
