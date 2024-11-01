@@ -28,7 +28,6 @@ const router = createBrowserRouter([
       { path: "/home", element: <MainPage /> },
       { path: "/search", element: <Search /> },
       { path: "/couple", element: <Couple /> },
-      { path: "/dm/:userid", element: <DmListBox /> },
       { path: "/user/profile", element: <MyPage /> },
       { path: "/user/join", element: <SignUp /> },
       { path: "/login", element: <Login /> },
