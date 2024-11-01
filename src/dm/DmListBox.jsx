@@ -67,13 +67,13 @@ const IconButton = styled.button`
 
 export default function DmListBox({dmList, handleChangeRoom, setUserId}) {
 
-  const { username, chatList } = dmList; 
+  const {  MyLoginId, MyUserId, chatList } = dmList; 
   setUserId(dmList.MyUserId);
 
   return (
     <DmListBoxContainer>
       <DmListHeader>
-        <UserNameLabel>{dmList.MyLoginId}</UserNameLabel>
+        <UserNameLabel>{MyLoginId}</UserNameLabel>
         <IconButton>
           <FaPlusCircle />
         </IconButton>
