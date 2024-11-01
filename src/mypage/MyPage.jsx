@@ -18,7 +18,6 @@ let Content = styled.div`
   width: 100vw;
   overflow-y: auto;
 
-  /* 스크롤바 숨기기 */
   &::-webkit-scrollbar {
     display: none;
   }
@@ -193,6 +192,7 @@ function MyPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [showSettingPopup, setShowSettingPopup] = useState(false);
   const [showBlockUser, setShowBlockUser] = useState(false);
+  const [showFollow, setShowFollow] = useState(false);
   const settingRef = useRef();
   const [Iding, setIding] = useState(null);
 
@@ -256,6 +256,42 @@ function MyPage() {
     setActiveTab(type);
     fetchPosts(type); // 선택된 탭에 맞는 포스트 가져오기
   };
+
+  const handlePrivacyToggle = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+      const response = await authAxios.patch(
+        `http://localhost:9090/user/profile/${userId}/update/${
+          profile.isPrivate ? "public" : "private"
+        }`
+      );
+      if (response.status === 200) {
+        setProfile({
+          ...profile,
+          isPrivate: !profile.isPrivate,
+        });
+        console.log(
+          profile.isPrivate
+            ? "계정이 공개로 변경되었습니다."
+            : "계정이 비공개로 변경되었습니다."
+        );
+      } else if (response.status === 404) {
+        console.error("유저를 찾을 수 없습니다.");
+        alert("유저를 찾을 수 없습니다.");
+      } else if (response.status === 409) {
+        console.error("이미 비공개 계정입니다.");
+        alert("이미 비공개 계정입니다.");
+      } else if (response.status === 403) {
+        console.error("계정 상태 변경 권한이 없습니다.");
+        alert("계정 상태 변경 권한이 없습니다.");
+      }
+    } catch (error) {
+      console.error("계정 상태 변경 실패:", error);
+      alert("계정 상태 변경에 실패했습니다.");
+    }
+  };
+
   console.log("Iding:", Iding, "type:", typeof Iding);
   console.log("userId:", userId, "type:", typeof userId);
 
@@ -279,6 +315,7 @@ function MyPage() {
             {showBlockUser && (
               <BlockUser onClose={() => setShowBlockUser(false)} />
             )}
+
             <NicknameWrap>
               <div>
                 <Nickname> {profile.nickname}</Nickname>
@@ -295,10 +332,17 @@ function MyPage() {
                   />
                   {showSettingPopup && (
                     <SettingPopup>
-                      <SettingOption onClick={() => setShowBlockUser(true)}>
+                      <SettingOption
+                        onClick={() => {
+                          setShowBlockUser(true);
+                          setShowSettingPopup(false);
+                        }}
+                      >
                         차단유저 관리
                       </SettingOption>
-                      <SettingOption>계정 비공개</SettingOption>
+                      <SettingOption onClick={handlePrivacyToggle}>
+                        {profile.isPrivate ? "계정 공개" : "계정 비공개"}
+                      </SettingOption>
                     </SettingPopup>
                   )}
                 </SettingWrap>
@@ -310,14 +354,28 @@ function MyPage() {
               </StatusMessage>
             </StatusMessageWrap>
           </WordWrap>
-
+          {showFollow && (
+            <Follow
+              onClose={() => setShowFollow(false)}
+              type="followers"
+              userId={userId}
+            />
+          )}
           <FollowWrap>
             <Follow>
-              <FollowLi>
+              <FollowLi
+                onClick={() => {
+                  setShowFollow(true);
+                }}
+              >
                 <Nickname style={{ paddingRight: "10px" }}>팔로워</Nickname>
                 <Nickname>{profile.followerCount}</Nickname>
               </FollowLi>
-              <FollowLi>
+              <FollowLi
+                onClick={() => {
+                  setShowFollow(true);
+                }}
+              >
                 <Nickname style={{ paddingLeft: "30px", paddingRight: "10px" }}>
                   팔로잉
                 </Nickname>

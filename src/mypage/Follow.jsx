@@ -17,7 +17,7 @@ const Overlay = styled.div`
   z-index: 1000;
 `;
 
-const BlockUserPopup = styled.div`
+const FollowPopup = styled.div`
   width: 300px;
   height: 300px;
   background: white;
@@ -34,7 +34,7 @@ const BlockUserPopup = styled.div`
   }
 `;
 
-const BlockUserItem = styled.div`
+const FollowItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -74,7 +74,7 @@ const UserId = styled.span`
   font-size: 15px;
 `;
 
-const UnblockButton = styled.button`
+const FollowButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
@@ -86,86 +86,80 @@ const UnblockButton = styled.button`
   }
 `;
 
-function BlockUser({ onClose }) {
-  const [blockedUsers, setBlockedUsers] = useState([]);
+function Follow({ onClose, type, userId }) {
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const fetchBlockedUsers = async () => {
+    const fetchUsers = async () => {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/user/block/list"
-        );
-        setBlockedUsers(response.data);
+        const endpoint =
+          type === "followers"
+            ? `http://localhost:9090/follow/follower/${userId}`
+            : `http://localhost:9090/follow/following/${userId}`;
 
-        console.log("차단 유저 목록", response.data);
+        const response = await authAxios.get(endpoint);
+        setUsers(response.data);
+        console.log(`${type} 목록:`, response.data);
       } catch (error) {
-        console.error("차단 유저 목록을 불러오는데 실패했습니다:", error);
+        console.error(`${type} 목록을 불러오는데 실패했습니다:`, error);
       }
     };
-    fetchBlockedUsers();
-  }, []);
+    fetchUsers();
+  }, [type, userId]);
 
-  const handleUnblock = (blockedUserId) => async () => {
+  const handleFollow = (targetUserId) => async () => {
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
-      const response = await authAxios.delete(
-        `http://localhost:9090/user/block/cancel/${blockedUserId}`
+      const response = await authAxios.post(
+        `http://localhost:9090/user/follow/${targetUserId}`
       );
 
-      if (response.status >= 200 && response.status < 300) {
-        // DB 삭제 성공 시에만 UI 업데이트
-        setBlockedUsers(
-          blockedUsers.filter((user) => user.blockedUserId !== blockedUserId)
-        );
-        console.log("차단 해제 성공");
-      } else {
-        console.error("차단 해제 실패: 서버 응답이 성공이 아님");
-        alert("차단 해제에 실패했습니다. 다시 시도해주세요.");
+      if (response.status === 200) {
+        // UI 업데이트 로직
+        console.log("팔로우/언팔로우 성공");
       }
     } catch (error) {
-      console.error("차단 해제에 실패했습니다:", error);
-      alert("차단 해제에 실패했습니다. 다시 시도해주세요.");
+      console.error("팔로우/언팔로우 실패:", error);
     }
   };
 
   return (
     <Overlay onClick={onClose}>
-      <BlockUserPopup onClick={(e) => e.stopPropagation()}>
-        {blockedUsers.length === 0 ? (
+      <FollowPopup onClick={(e) => e.stopPropagation()}>
+        {users.length === 0 ? (
           <div
             style={{ textAlign: "center", padding: "20px", marginTop: "6.5vw" }}
           >
-            차단된 유저가 없습니다.
+            {type === "followers"
+              ? "팔로워가 없습니다."
+              : "팔로잉하는 유저가 없습니다."}
           </div>
         ) : (
-          blockedUsers.map((user) => (
-            <BlockUserItem key={user.blockedLoginId}>
+          users.map((user) => (
+            <FollowItem key={user.loginId}>
               <UserInfo
                 onClick={() =>
-                  (window.location.href = `/user/profile/${user.blockedUserId}`)
+                  (window.location.href = `/user/profile/${user.userId}`)
                 }
                 style={{ cursor: "pointer" }}
               >
                 <UserImage>
-                  <img
-                    src={user.blockedImg || profilethum}
-                    alt="프로필 썸네일"
-                  />
+                  <img src={user.userImg || profilethum} alt="프로필 썸네일" />
                 </UserImage>
-                <UserId>{user.blockedLoginId}</UserId>
+                <UserId>{user.loginId}</UserId>
               </UserInfo>
-              <UnblockButton onClick={handleUnblock(user.blockedUserId)}>
-                해제
-              </UnblockButton>
-            </BlockUserItem>
+              <FollowButton onClick={handleFollow(user.userId)}>
+                {type === "followers" ? "팔로우" : "언팔로우"}
+              </FollowButton>
+            </FollowItem>
           ))
         )}
-      </BlockUserPopup>
+      </FollowPopup>
     </Overlay>
   );
 }
 
-export default BlockUser;
+export default Follow;
