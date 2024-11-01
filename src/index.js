@@ -18,7 +18,6 @@ import DeleteAlert from "./alert/DeleteAlert";
 import CoupleConnect from "./couple/CoupleConnect";
 import CoupleConnect2 from "./couple/CoupleConnect2";
 import SignUp from "./join/SignUp";
-import Test from './Test'
 
 const router = createBrowserRouter([
   {
@@ -39,7 +38,6 @@ const router = createBrowserRouter([
       { path: "/deleteAlert", element: <DeleteAlert /> },
       { path: "/coupleConnect", element: <CoupleConnect /> },
       { path: "/coupleConnect2", element: <CoupleConnect2 /> },
-      { path: "/test", element: <Test /> },
     ],
   },
 ]);
