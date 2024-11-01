@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import "./App.css";
 import { AuthProvider } from "./api/AuthContext";
 import SideMenu from "./sideMenu/SideMenu";
@@ -12,6 +12,7 @@ function App() {
   };
 
   const [userId, setUserId] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -36,13 +37,16 @@ function App() {
     refreshToken();
   }, []);
 
+  const showSideMenu =
+    location.pathname === "/home" ||
+    location.pathname === "/couple" ||
+    /^\/user\/profile\/\w+$/.test(location.pathname);
+
   return (
     <AuthProvider>
       <div style={{ display: "flex" }}>
-        {" "}
-        <SideMenu userId={userId} />
+        {showSideMenu && <SideMenu userId={userId} />}
         <div style={{ flexGrow: 1 }}>
-          {" "}
           <Outlet />
         </div>
       </div>

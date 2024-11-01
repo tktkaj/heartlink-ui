@@ -23,7 +23,8 @@ export default function Example() {
     try {
       await axios.get("http://localhost:9090/logout");
       localStorage.removeItem("access");
-      window.location.href = "/";
+      setOpen(false);
+      navigate("/");
     } catch (error) {
       console.error("로그아웃 실패:", error);
     }

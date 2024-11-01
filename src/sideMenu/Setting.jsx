@@ -50,10 +50,6 @@ export default function Setting({ closeSetting }) {
     <>
       <SettingBox>
         <ul>
-          <SettingList>
-            <HiMiniEyeSlash className="settingIcon" />
-            <p>차단유저 관리</p>
-          </SettingList>
           <Link to="/alertCouple">
             <SettingList>
               <FaHeartBroken className="settingIcon" />
