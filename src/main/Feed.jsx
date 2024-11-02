@@ -199,7 +199,7 @@ export default function Feed() {
       .catch((e) => {
         switch (e.status) {
           case 404:
-            toast.warn(e.data ,{
+            toast.warn("서버에서 오류가 발생하였습니다." ,{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부
