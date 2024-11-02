@@ -199,7 +199,16 @@ export default function Feed() {
       .catch((e) => {
         switch (e.status) {
           case 404:
-            toast.warn("이미 팔로우중인 회원입니다",{
+            toast.warn(e.data ,{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 409:
+            toast.warn(e.response.data ,{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부
@@ -208,7 +217,7 @@ export default function Feed() {
             });
             break;
           case 500:
-            toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+            toast.warn("서버에 오류가 생겼습니다.",{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부
