@@ -194,6 +194,7 @@ export default function ChatRoom() {
 
   return (
     <div style={{ display: 'flex' }}>
+      <MiniSide/>
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} />
       {chatRoom ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox

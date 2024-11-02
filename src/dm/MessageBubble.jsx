@@ -12,8 +12,8 @@ const Message = styled.div`
   display: flex;
   max-width: 50%;
   padding: 10px 20px;
-  margin-bottom: 5px;
-  background-color: ${(props) => (props.isMine ? '#706EF4' : '#DDDDDD')};
+  margin-bottom: 15px;
+  background-color: ${(props) => (props.isMine ? '#706EF4' : '#eee')};
   color: ${(props) => (props.isMine ? '#FFFFFF' : '#333')};
   position: relative;
 `;
@@ -22,6 +22,7 @@ const TimeCheckBox = styled.div`
   font-size: 0.9rem;
   display: flex;
   align-items: end;
+  padding-bottom: 15px;
 `;
 
 const ProfileImage = styled.img`
@@ -81,7 +82,7 @@ export default function MessageBubble({ otherUserImg, messages, userId }) {
               {message.content && <Message isMine={userId === message.senderId} style={{ borderRadius: '50px' }}>
                 {message.content}
               </Message>}
-              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px', marginBottom:'5px'}} />}
+              {message.imageUrl && <img src={message.imageUrl} style={{ maxWidth: '300px', maxHeight: '100%', borderRadius: '10px', marginBottom:'15px'}} />}
               {userId !== message.senderId && (
                 <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '15px', justifyContent: 'end' }}>
                   <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>

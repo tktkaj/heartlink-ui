@@ -14,6 +14,9 @@ import "slick-carousel/slick/slick-theme.css";
 import FeedModal from "../layout/FeedModal";
 import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
+import { format } from 'date-fns';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const FeedBox = styled.div`
   width: 37vw;
@@ -106,7 +109,7 @@ const FeedImages = styled.div`
   justify-content: center;
   align-items: center;
   img {
-    width: 100%;
+    width: 99.6%;
     height: 100%;
     object-fit: cover;
   }
@@ -154,7 +157,6 @@ export default function Feed() {
             Authorization: access,
           },
         });
-        console.log(result);
         // followingPosts와 nonFollowedPosts를 합쳐서 순서대로 보여주기
         const allPosts = [
           ...(result.data.followingPosts || []),
@@ -170,17 +172,262 @@ export default function Feed() {
     fetchData();
   }, []);
 
+  /*************** 유저 팔로우 ***************/
+  const handleFollow = (userId, e) => {
+
+    const token = localStorage.getItem('access');
+// post, header에 토큰 값
+  axios.post(`http://localhost:9090/follow/${userId}`, 
+  {},
+  {
+    headers: {
+      Authorization: `${token}`
+    }
+  }
+)
+      .then((res) => {
+        if (res.status = 201) {
+          toast.success(res.data,{
+            position: "top-right",  // 위치 설정
+            autoClose: 2000,        // 자동 닫힘 시간
+            hideProgressBar: true, // 진행 바 숨김 여부
+            closeOnClick: true,     // 클릭 시 닫힘 여부
+            pauseOnHover: true,     // 호버 시 일시 정지
+          });
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("서버에서 오류가 발생하였습니다." ,{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 409:
+            toast.warn(e.response.data ,{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다.",{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+        }
+      })
+  }
+
+  /*************** 게시물 삭제 ***************/
+  // 게시물 삭제는 이벤드를 어디에 달아야하는지 얘기가 필요함.
+  const handlePostDelete = (postId, e) =>{
+
+    const token = localStorage.getItem('access');
+// delete, header에 토큰 값
+  axios.delete(`http://localhost:9090/feed/${postId}/delete`, 
+  {},
+  {
+    headers: {
+      Authorization: `${token}`
+    }
+  }
+)
+      .then((res)=>{
+        if (res.status = 201) {
+            toast.success(res.data,{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+        }
+      })
+      .catch((e)=>{
+        switch(e.status){
+          case 404:
+            toast.warn("권한이 존재하지않아요ㅠㅜ",{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+        }
+      })
+  }
+
+  /*************** 게시물 좋아요 ***************/
+
+  const handlePostLike = async (postId, e) =>{
+
+    const token = localStorage.getItem('access');
+
+    // like, header에 토큰 값
+      axios.post("http://localhost:9090/like/toggle", null,
+      {
+        params: {postId: postId},
+        headers: {
+          Authorization: `${token}`
+        }
+ 
+      }
+    )
+          .then((res)=>{
+            if(res.status==200) {
+                toast.success(res.data,{
+                  position: "top-right",  // 위치 설정
+                  autoClose: 2000,        // 자동 닫힘 시간
+                  hideProgressBar: true, // 진행 바 숨김 여부
+                  closeOnClick: true,     // 클릭 시 닫힘 여부
+                  pauseOnHover: true,     // 호버 시 일시 정지
+                });
+            }
+          })
+          .catch((e)=>{
+            switch(e.status){
+              case 404:
+                toast.warn("권한이 존재하지않아요ㅠㅜ",{
+                  position: "top-right",  // 위치 설정
+                  autoClose: 2000,        // 자동 닫힘 시간
+                  hideProgressBar: true, // 진행 바 숨김 여부
+                  closeOnClick: true,     // 클릭 시 닫힘 여부
+                  pauseOnHover: true,     // 호버 시 일시 정지
+                });
+                break;
+              case 500:
+                toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+                  position: "top-right",  // 위치 설정
+                  autoClose: 2000,        // 자동 닫힘 시간
+                  hideProgressBar: true, // 진행 바 숨김 여부
+                  closeOnClick: true,     // 클릭 시 닫힘 여부
+                  pauseOnHover: true,     // 호버 시 일시 정지
+                });
+                break;
+            }
+          })
+
+  }
+
+  /*************** 게시물 공유 ***************/
+
+  const handlePostShare =() =>{
+    const token = localStorage.getItem('access');
+    // 나중에 게시물 상세페이지 주소로 전환할 것.
+    const shareLink = window.location.href;
+    navigator.clipboard.writeText(shareLink)
+    .then(()=>{
+      toast.success("대시보드에 링크가 저장되었습니다.",{
+        position: "top-right",  // 위치 설정
+        autoClose: 2000,        // 자동 닫힘 시간
+        hideProgressBar: true, // 진행 바 숨김 여부
+        closeOnClick: true,     // 클릭 시 닫힘 여부
+        pauseOnHover: true,     // 호버 시 일시 정지
+      });
+    })
+    .catch(()=>{
+      toast.warn("링크 저장을 실패하였습니다.",{
+        position: "top-right",  // 위치 설정
+        autoClose: 2000,        // 자동 닫힘 시간
+        hideProgressBar: true, // 진행 바 숨김 여부
+        closeOnClick: true,     // 클릭 시 닫힘 여부
+        pauseOnHover: true,     // 호버 시 일시 정지
+      });
+    })
+  }
+
+  /*************** 게시물 북마크 ***************/
+
+  const handlePostBookmark = (postId, e) =>{
+
+    const token = localStorage.getItem('access');
+// delete, header에 토큰 값
+  axios.post(`http://localhost:9090/bookmark/${postId}`, 
+  null,
+  {
+    headers: {
+      Authorization: `${token}`
+    }
+  }
+)
+      .then((res)=>{
+        switch (res.status) {
+          case 200:
+            if(res.data=="북마크 추가됨")
+              toast.success("내 북마크 목록에 추가했습니다.",{
+                position: "top-right",  // 위치 설정
+                autoClose: 2000,        // 자동 닫힘 시간
+                hideProgressBar: true, // 진행 바 숨김 여부
+                closeOnClick: true,     // 클릭 시 닫힘 여부
+                pauseOnHover: true,     // 호버 시 일시 정지
+              });
+            else if(res.data=="북마크 삭제됨")
+              toast.error("내 북마크 목록에서 제거했습니다.",{
+                position: "top-right",  // 위치 설정
+                autoClose: 2000,        // 자동 닫힘 시간
+                hideProgressBar: true, // 진행 바 숨김 여부
+                closeOnClick: true,     // 클릭 시 닫힘 여부
+                pauseOnHover: true,     // 호버 시 일시 정지
+              });
+            break;
+        }
+      })
+      .catch((e)=>{
+        switch(e.status){
+          case 404:
+            toast.warn("권한이 존재하지않아요ㅠㅜ",{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+        }
+      })
+  }
+
   return (
     <div>
-      {isModalOpen && (
-        <FeedModal closeModal={closeModal} position={modalPosition} />
-      )}
-
+      <ToastContainer />
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
       {posts.map((post) => (
         <div key={post.postId}>
           <FeedBox>
+            {isModalOpen && (
+              <FeedModal closeModal={closeModal} position={modalPosition}/>
+            )}
             <FeedProfile>
               <ProfileTxt>
                 <a
@@ -214,6 +461,7 @@ export default function Feed() {
                     paddingTop: "3px",
                   }}
                   className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
+                  onClick={(e)=>{handleFollow(post.userId, e)}}
                 >
                   팔로우
                 </button>
@@ -234,14 +482,15 @@ export default function Feed() {
             </SliderContainer>
             <FeedIcons>
               <div style={{ display: "flex", gap: "20px" }}>
-                <IoIosHeartEmpty className="feedIcon" />
-                <FiMessageCircle className="feedIcon" />
-                <IoMdShare className="feedIcon" />
+                <IoIosHeartEmpty className="feedIcon" style={{cursor:'pointer'}} onClick={(e)=>{handlePostLike(post.postId, e)}}/>
+                <FiMessageCircle className="feedIcon" style={{cursor:'pointer'}} />
+                <IoMdShare className="feedIcon" style={{cursor:'pointer'}} onClick={handlePostShare} />
               </div>
-              <FaRegBookmark className="feedIcon" />
+              <FaRegBookmark className="feedIcon" style={{cursor:'pointer'}} onClick={(e)=>{handlePostBookmark(post.postId, e)}} />
             </FeedIcons>
             <FeedInfo>
-              <p>{new Date(post.createdAt).toLocaleString()} </p>
+              {/* <p>{new Date(post.createdAt).toLocaleString()} </p> */}
+              <p>{format(post.createdAt, 'yyyy.MM.dd. a hh:mm').replace('AM', '오전').replace('PM', '오후')} </p>
               <p>좋아요 {post.likeCount}개</p>
               <p>댓글 {post.commentCount}개</p>
             </FeedInfo>
