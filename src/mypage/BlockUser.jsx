@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { IoClose } from "react-icons/io5";
 import profilethum from "../image/sidebar/test.png";
 import { getAuthAxios } from "../api/authAxios";
 import { useEffect, useState } from "react";
