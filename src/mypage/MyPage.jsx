@@ -11,6 +11,7 @@ import { FaRegPenToSquare } from "react-icons/fa6";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { getAuthAxios } from "../api/authAxios";
 import BlockUser from "./BlockUser";
+import Follow from "./Follow";
 
 let Content = styled.div`
   background-color: #f8f8fa;
@@ -120,16 +121,27 @@ let StatusMessageWrap = styled.div``;
 let StatusMessage = styled.span`
   font-size: 16px;
 `;
+let FollowButton = styled.button`
+  padding: 5px 12px;
+  margin-left: 10px;
+  border-radius: 5px;
+  background-color: #706ef4;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+`;
 
 let FollowWrap = styled.div`
   padding-left: 100px;
 `;
 
-let Follow = styled.ul`
+let FollowUl = styled.ul`
   display: flex;
 `;
 
-let FollowLi = styled.li``;
+let FollowLi = styled.li`
+  cursor: pointer;
+`;
 
 let MenuWrap = styled.div`
   width: 830px;
@@ -195,6 +207,9 @@ function MyPage() {
   const [showFollow, setShowFollow] = useState(false);
   const settingRef = useRef();
   const [Iding, setIding] = useState(null);
+  const [followType, setFollowType] = useState("followers");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
@@ -227,6 +242,8 @@ function MyPage() {
         setData(res);
         console.log("API 응답:", res);
         setProfile(res.profile);
+        setIsFollowing(res.profile.isFollowing);
+        setIsPrivate(res.profile.private);
         console.log("프로필 정보:", res.profile);
         setPosts(res.feed); // 초기 데이터로 feed 설정
       } catch (err) {
@@ -257,22 +274,46 @@ function MyPage() {
     fetchPosts(type); // 선택된 탭에 맞는 포스트 가져오기
   };
 
+  const handleFollow = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+
+      console.log("팔로우상태:", isFollowing);
+      if (isFollowing) {
+        // 언팔로우
+        await authAxios.delete(`http://localhost:9090/follow/cancel/${userId}`);
+        setIsFollowing(false);
+      } else {
+        // 팔로우
+        await authAxios.post(`http://localhost:9090/follow/${userId}`);
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      console.error("팔로우/언팔로우 실패:", error);
+      alert("팔로우/언팔로우에 실패했습니다.");
+    }
+  };
+
   const handlePrivacyToggle = async () => {
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const response = await authAxios.patch(
         `http://localhost:9090/user/profile/${userId}/update/${
-          profile.isPrivate ? "public" : "private"
+          isPrivate ? "public" : "private"
         }`
       );
       if (response.status === 200) {
+        setIsPrivate(!isPrivate);
         setProfile({
           ...profile,
-          isPrivate: !profile.isPrivate,
+          private: !isPrivate,
         });
+        console.log("플텍여부:", isPrivate);
+        alert(isPrivate ? "계정 공개성공" : "계정 비공개성공");
         console.log(
-          profile.isPrivate
+          isPrivate
             ? "계정이 공개로 변경되었습니다."
             : "계정이 비공개로 변경되었습니다."
         );
@@ -341,11 +382,16 @@ function MyPage() {
                         차단유저 관리
                       </SettingOption>
                       <SettingOption onClick={handlePrivacyToggle}>
-                        {profile.isPrivate ? "계정 공개" : "계정 비공개"}
+                        {isPrivate ? "계정 공개" : "계정 비공개"}
                       </SettingOption>
                     </SettingPopup>
                   )}
                 </SettingWrap>
+              )}
+              {Iding && userId && String(Iding) !== userId && (
+                <FollowButton onClick={handleFollow}>
+                  {profile.isFollowing ? "언팔로우" : "팔로우"}
+                </FollowButton>
               )}
             </NicknameWrap>
             <StatusMessageWrap>
@@ -357,14 +403,15 @@ function MyPage() {
           {showFollow && (
             <Follow
               onClose={() => setShowFollow(false)}
-              type="followers"
+              type={followType}
               userId={userId}
             />
           )}
           <FollowWrap>
-            <Follow>
+            <FollowUl>
               <FollowLi
                 onClick={() => {
+                  setFollowType("follower");
                   setShowFollow(true);
                 }}
               >
@@ -373,6 +420,7 @@ function MyPage() {
               </FollowLi>
               <FollowLi
                 onClick={() => {
+                  setFollowType("following");
                   setShowFollow(true);
                 }}
               >
@@ -381,7 +429,7 @@ function MyPage() {
                 </Nickname>
                 <Nickname>{profile.followingCount}</Nickname>
               </FollowLi>
-            </Follow>
+            </FollowUl>
           </FollowWrap>
         </Header>
         <MenuWrap>
