@@ -14,6 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import FeedModal from "../layout/FeedModal";
 import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
+import { format } from 'date-fns';
 
 const FeedBox = styled.div`
   width: 37vw;
@@ -106,7 +107,7 @@ const FeedImages = styled.div`
   justify-content: center;
   align-items: center;
   img {
-    width: 100%;
+    width: 99.6%;
     height: 100%;
     object-fit: cover;
   }
@@ -154,7 +155,6 @@ export default function Feed() {
             Authorization: access,
           },
         });
-        console.log(result);
         // followingPosts와 nonFollowedPosts를 합쳐서 순서대로 보여주기
         const allPosts = [
           ...(result.data.followingPosts || []),
@@ -170,17 +170,161 @@ export default function Feed() {
     fetchData();
   }, []);
 
+  /*************** 유저 팔로우 ***************/
+  const handleFollow = (userId, e) => {
+
+    const token = localStorage.getItem('access');
+// post, header에 토큰 값
+  axios.post(`http://localhost:9090/follow/${userId}`, 
+  {},
+  {
+    headers: {
+      Authorization: `${token}`
+    }
+  }
+)
+      .then((res)=>{
+        switch (res.status) {
+          case 201:
+            alert(res.data);
+            break;
+          case 404:
+            alert(res.data);
+            break;
+          case 500:
+            alert("서버에 오류가 생겼어요ㅠㅠ");
+            break;
+        }
+      })
+      .catch((e)=>{
+        console.log(e);
+      })
+  }
+
+  /*************** 게시물 삭제 ***************/
+  // 게시물 삭제는 이벤드를 어디에 달아야하는지 얘기가 필요함.
+  const handlePostDelete = (postId, e) =>{
+
+    const token = localStorage.getItem('access');
+// delete, header에 토큰 값
+  axios.delete(`http://localhost:9090/feed/${postId}/delete`, 
+  {},
+  {
+    headers: {
+      Authorization: `${token}`
+    }
+  }
+)
+      .then((res)=>{
+        if (res.status = 201) {
+            alert(res.data);
+        }
+      })
+      .catch((e)=>{
+        switch(e.status){
+          case 404:
+            alert("권한이 존재하지않아요ㅠㅜ");
+            break;
+          case 500:
+            alert("서버에 오류가 생겼습니다ㅜㅠ");
+            break;
+        }
+      })
+  }
+
+  /*************** 게시물 좋아요 ***************/
+  // 좋아요는 commentId가 계속 null로 나오고 있어 방법이 필요함
+  const handlePostLike = async (postId, e) =>{
+
+    const token = localStorage.getItem('access');
+
+    // like, header에 토큰 값
+      axios.post("http://localhost:9090/like/toggle", null,
+      {
+        params: {postId: postId, commentId: 5},
+        headers: {
+          Authorization: `${token}`
+        }
+ 
+      }
+    )
+          .then((res)=>{
+            if(res.status==200) {
+                alert(res.data);
+            }
+          })
+          .catch((e)=>{
+            switch(e.status){
+              case 404:
+                alert("권한이 존재하지않아요ㅠㅜ");
+                break;
+              case 500:
+                alert("서버에 오류가 생겼습니다ㅜㅠ");
+                break;
+            }
+          })
+
+  }
+
+  /*************** 게시물 공유 ***************/
+
+  const handlePostShare =() =>{
+    const token = localStorage.getItem('access');
+    // 나중에 게시물 상세페이지 주소로 전환할 것.
+    const shareLink = window.location.href;
+    navigator.clipboard.writeText(shareLink)
+    .then(()=>{
+      console.log("성공");
+    })
+    .catch(()=>{
+      console.log("복사 실패!");
+    })
+  }
+
+  /*************** 게시물 북마크 ***************/
+
+  const handlePostBookmark = (postId, e) =>{
+
+    const token = localStorage.getItem('access');
+// delete, header에 토큰 값
+  axios.post(`http://localhost:9090/bookmark/${postId}`, 
+  {},
+  {
+    headers: {
+      Authorization: `${token}`
+    }
+  }
+)
+      .then((res)=>{
+        switch (res.status) {
+          case 201:
+            alert(res.data);
+            break;
+        }
+      })
+      .catch((e)=>{
+        switch(e.status){
+          case 404:
+            alert("권한이 존재하지않아요ㅠㅜ");
+            break;
+          case 500:
+            alert("서버에 오류가 생겼습니다ㅜㅠ");
+            break;
+        }
+      })
+  }
+
   return (
     <div>
-      {isModalOpen && (
-        <FeedModal closeModal={closeModal} position={modalPosition} />
-      )}
-
+  
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
       {posts.map((post) => (
         <div key={post.postId}>
           <FeedBox>
+            {isModalOpen && (
+              <FeedModal closeModal={closeModal} position={modalPosition}/>
+            )}
             <FeedProfile>
               <ProfileTxt>
                 <a
@@ -214,6 +358,7 @@ export default function Feed() {
                     paddingTop: "3px",
                   }}
                   className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
+                  onClick={(e)=>{handleFollow(post.userId, e)}}
                 >
                   팔로우
                 </button>
@@ -234,11 +379,11 @@ export default function Feed() {
             </SliderContainer>
             <FeedIcons>
               <div style={{ display: "flex", gap: "20px" }}>
-                <IoIosHeartEmpty className="feedIcon" />
-                <FiMessageCircle className="feedIcon" />
-                <IoMdShare className="feedIcon" />
+                <IoIosHeartEmpty className="feedIcon" style={{cursor:'pointer'}} onClick={(e)=>{handlePostLike(post.postId, e)}}/>
+                <FiMessageCircle className="feedIcon" style={{cursor:'pointer'}} />
+                <IoMdShare className="feedIcon" style={{cursor:'pointer'}} onClick={handlePostShare} />
               </div>
-              <FaRegBookmark className="feedIcon" />
+              <FaRegBookmark className="feedIcon" style={{cursor:'pointer'}} />
             </FeedIcons>
             <FeedInfo>
               <p>{new Date(post.createdAt).toLocaleString()} </p>
