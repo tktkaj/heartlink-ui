@@ -174,7 +174,7 @@ export default function Login() {
     setPw(e.target.value);
   };
 
-  const onClick = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("loginId:", loginId, "password:", password);
     try {
@@ -194,9 +194,16 @@ export default function Login() {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // 기본 엔터 동작 방지
+      handleSubmit(e);
+    }
+  };
+
   return (
     <LoginBox>
-      <LoginBoxRight>
+      <LoginBoxRight onSubmit={handleSubmit}>
         <LoginTitleAndIntroContainer>
           <LoginTitle>LOGIN</LoginTitle>
           <LoginIntro>
@@ -207,9 +214,20 @@ export default function Login() {
           </LoginIntro>
         </LoginTitleAndIntroContainer>
         <IdLabel>아이디</IdLabel>
-        <Input value={loginId} placeholder="ID" onChange={onChangeId} />
+        <Input
+          value={loginId}
+          placeholder="ID"
+          onChange={onChangeId}
+          onKeyDown={handleKeyPress}
+        />
         <PassLabel>비밀번호</PassLabel>
-        <Input value={password} placeholder="비밀번호" onChange={onChangePw} />
+        <Input
+          type="password"
+          value={password}
+          placeholder="비밀번호"
+          onChange={onChangePw}
+          onKeyDown={handleKeyPress}
+        />
 
         <SignUpAndFindIdContainer>
           <Link to="/user/join">
@@ -219,7 +237,7 @@ export default function Login() {
           </Link>
           <FindIdButton>아이디 찾기</FindIdButton>
         </SignUpAndFindIdContainer>
-        <LoginButton onClick={onClick}>LOGIN</LoginButton>
+        <LoginButton type="submit">LOGIN</LoginButton>
         <div style={{ display: "flex", gap: "15px" }}>
           <OAuthButton>
             <a
