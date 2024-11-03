@@ -20,11 +20,11 @@ export default function ChatRoom() {
   const [dmList, setDmList] = useState([]); // dmList
   const [input, setInput] = useState(''); // 입력된 값
   const [messages, setMessages] = useState([]); // 보여질 메세지들
-  const [msgRoomId, setMsgRoomId] = useState();
+  const [msgRoomId, setMsgRoomId] = useState(); //  msgRoomId 정보
   const [userId, setUserId] = useState(); // 나의 LoginId
   const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
-  const [otherLoginId, setOtherLoginId] = useState(); // 상대방 유저 아이디
-  const [otherUserId, setOtherUserId] = useState();
+  const [otherLoginId, setOtherLoginId] = useState(); // 상대방 로그인 아이디
+  const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
 
 
   // 웹 소켓 연결
