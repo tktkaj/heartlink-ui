@@ -7,7 +7,7 @@ import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
 import LinkMatchRecord from "./LinkMatchRecord";
 import { useAuth } from "../api/AuthContext";
-
+import CoupleGraph from "./CoupleGraph";
 const MainContainer = styled.div`
   background-color: #f8f8fa;
   display: flex;
@@ -435,7 +435,7 @@ export default function Couple() {
                   ))}
                 </BingoBoard>
               </LinkMission>
-              <Graph></Graph>
+              <CoupleGraph></CoupleGraph>
             </div>
           </FeedBox>
           <Advert>
