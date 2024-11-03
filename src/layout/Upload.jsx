@@ -13,15 +13,16 @@ const UploadButton = styled.div`
     position: fixed;
     bottom: 40px;
     right: 40px;
+    cursor: pointer;
 `
 
 
 
-export default function Upload() {
+export default function Upload({ onClick }) {
 
     return (
         <>
-            <UploadButton>
+            <UploadButton onClick={onClick}>
                 <FaPen style={{margin:'auto', marginTop:'17px', width:'22px', height:'22px'}}/>
             </UploadButton>
         </>
