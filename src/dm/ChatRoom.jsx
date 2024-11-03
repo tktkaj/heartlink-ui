@@ -18,12 +18,10 @@ export default function ChatRoom() {
   const [dmList, setDmList] = useState([]); // dmList
   const [input, setInput] = useState(''); // 입력된 값
   const [messages, setMessages] = useState([]); // 보여질 메세지들
-  const [chatRoom, setChatRoom] = useState(); // 메세지방 하나의 정보가 들어있는 변수
+  const [msgRoomId, setMsgRoomId] = useState();
   const [userId, setUserId] = useState(); // 나의 LoginId
-  const [lastMessage, setLastMessage] = useState();
-  const [msgRoomId, setMsgRoomId] = useState(); //
-  const [user, setUser] = useState();
-  const [userProfile, setUserProfile] = useState();
+  const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
+  const [otherLoginId, setOtherLoginId] = useState();
 
 
   // 웹 소켓 연결
@@ -79,7 +77,6 @@ export default function ChatRoom() {
   // 대화중인 상대방 리스트 불러오는 axios 
   useEffect(() => {
     const token = localStorage.getItem('access');
-
     axios.get("http://localhost:9090/dm"
       , {
         headers: {
@@ -90,7 +87,7 @@ export default function ChatRoom() {
       .then((response) => {
         // 서버로부터 받은 데이터를 상태로 설정
         setDmList(response.data);
-        setMessages(response.data.chatList[0].messages);
+
       })
       .catch((error) => {
         console.error('Error fetching the direct message:', error);
@@ -100,7 +97,34 @@ export default function ChatRoom() {
 
   // 상대방 클릭시 채팅방이 바뀌도록
   const handleChangeRoom = (chat) => {
-    setChatRoom(chat);
+    
+    const token = localStorage.getItem('access');
+    setOtherProfile(chat.otherUserImg);
+    setOtherLoginId(chat.otherLoginId);
+    setMsgRoomId(chat.msgRoomId);
+
+    axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
+      {
+        headers:{
+          Authorization : `${token}`
+        }
+      }
+    )
+    .then((response)=>{
+      if(response.status==200)
+        setMessages(response.data);
+    })
+    .catch((error)=>{
+      switch(error.response.status){
+          case 404:
+            console.log("잘못된 접근입니다.");
+            break;
+          case 500:
+            console.log("서버오류입니다.")
+            break;
+      }
+    }
+    )
   }
 
   // 메세지 입력을 받아서 input에 저장하는 함수
@@ -196,18 +220,16 @@ export default function ChatRoom() {
     <div style={{ display: 'flex' }}>
       <MiniSide/>
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} />
-      {chatRoom ? ( // messages가 존재하면 ChatBox를 보여줌
+      {messages ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
           handleInputChange={handleInputChange}
           handleKeyDown={handleKeyDown}
           sendMessage={sendMessage}
           setMessages={setMessages}
-          setMsgRoomId={setMsgRoomId}
-          chatRoom={chatRoom}
-          userProfile={userProfile}
+          otherProfile={otherProfile}
+          otherLoginId={otherLoginId}
           messages={messages}
-          user={user}
           handleFileChange={handleFileChange}
           msgRoomId={msgRoomId}
           userId={userId}

@@ -92,26 +92,24 @@ const SendMessageContainer = styled.div`
   margin-left: 15px;
 `;
 
-export default function ChatBox({ input, handleInputChange, handleKeyDown, handleFileChange, sendMessage, chatRoom, userId, setMsgRoomId, messages}) {
+export default function ChatBox({ input, handleInputChange, handleKeyDown, handleFileChange, sendMessage, userId, messages, otherProfile, otherLoginId}) {
   const fileInputRef = useRef(null);
 
   const handlePhotoClick = () => {
     fileInputRef.current.click();
   };
 
-  setMsgRoomId(chatRoom.msgRoomId);
-
   return (
     <ChatBoxContainer>
       <ChatHeader>
         <ProfileContainer>
-          <ProfileImage src={chatRoom.otherUserImg} alt="상대방사진" />
-          <ProfileName >{chatRoom.otherLoginId}</ProfileName>
+          <ProfileImage src={otherProfile} alt="상대방사진" />
+          <ProfileName >{otherLoginId}</ProfileName>
         </ProfileContainer>
         <BlockButton>차단</BlockButton>
       </ChatHeader>
       <ChatContent>
-        <MessageBubble otherUserImg = {chatRoom.otherUserImg} messages={messages}  userId={userId}/>
+        <MessageBubble otherProfile = {otherProfile} messages={messages}  userId={userId}/>
       </ChatContent>
       <MessageInputContainer>
         <MessageInput

@@ -46,7 +46,7 @@ const TimeBox = styled.div`
   color : #333;
 `;
 
-export default function MessageBubble({ otherUserImg, messages, userId }) {
+export default function MessageBubble({ otherProfile, messages, userId }) {
   const messagesEndRef = useRef(null);
 
   // messages가 업데이트될 때마다 스크롤을 최신 메시지로 이동
@@ -78,7 +78,7 @@ export default function MessageBubble({ otherUserImg, messages, userId }) {
                   <TimeCheckBox>{format(message.lastMessageTime, 'a hh:mm').replace('AM', '오전').replace('PM', '오후')}</TimeCheckBox>
                 </div>
               )}
-              {userId !== message.senderId && <ProfileImage src={otherUserImg} />}
+              {userId !== message.senderId && <ProfileImage src={otherProfile} />}
               {message.content && <Message isMine={userId === message.senderId} style={{ borderRadius: '50px' }}>
                 {message.content}
               </Message>}
