@@ -78,7 +78,9 @@ const ProfileThum = styled.div`
 
 export default function SideMenu() {
   const { token, setToken, authAxios } = useAuth();
-  console.log(token);
+  const refreshToken = localStorage.getItem("refresh");
+  console.log("토큰", token);
+  console.log("리프레시 토큰", refreshToken);
 
   const [isSettingOpen, setIsSettingOpen] = useState(false);
   const openSetting = () => {
@@ -123,12 +125,13 @@ export default function SideMenu() {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         const res = await authAxios.get("http://localhost:9090/user/profile");
-        console.log("로그인한 유저아이디", res);
+        console.log("로그인한 유저아이디", res.data);
         if (res.data) {
           setUserId(res.data);
           const profileResult = await authAxios.get(
             `http://localhost:9090/user/profile/${res.data}`
           );
+          console.log("프로필 데이터!!!", profileResult.data);
           setProfile(profileResult.data);
         }
       } catch (error) {
