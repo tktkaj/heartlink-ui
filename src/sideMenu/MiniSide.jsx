@@ -9,6 +9,7 @@ import { LuSearch } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import Setting from "./Setting";
 import { Link } from "react-router-dom";
+import { getAuthAxios } from "../api/authAxios";
 
 const MiniContainer = styled.div`
   width: 82px;
@@ -76,15 +77,35 @@ const ProfileThum = styled.div`
   }
 `;
 
-export default function MiniSide({
-  toggleSideMenuSearch,
-  toggleSideMenuAlarm,
-  toggleSideMenuDm,
-}) {
+export default function MiniSide() {
   const [isSettingOpen, setIsSettingOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   const openSetting = () => setIsSettingOpen(true);
   const closeSetting = () => setIsSettingOpen(false);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const res = await authAxios.get("http://localhost:9090/user/profile");
+        console.log("로그인한 유저아이디", res.data);
+        if (res.data) {
+          setUserId(res.data);
+          const profileResult = await authAxios.get(
+            `http://localhost:9090/user/profile/${res.data}`
+          );
+          setProfile(profileResult.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   return (
     <>
@@ -99,7 +120,7 @@ export default function MiniSide({
             <Liststyle to="/home">
               <IoHomeOutline className="icon" />
             </Liststyle>
-            <Liststyle onClick={toggleSideMenuSearch}>
+            <Liststyle to="/search">
               <LuSearch className="icon" />
             </Liststyle>
             <Liststyle to="/couple">
@@ -108,29 +129,28 @@ export default function MiniSide({
                 width="25"
                 height="25"
                 fill="currentColor"
-                class="bi bi-box2-heart"
+                className="bi bi-box2-heart"
                 viewBox="0 0 16 16"
               >
                 <path d="M8 7.982C9.664 6.309 13.825 9.236 8 13 2.175 9.236 6.336 6.31 8 7.982" />
                 <path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zm0 1H7.5v3h-6zM8.5 4V1h3.75l2.25 3zM15 5v10H1V5z" />
               </svg>
             </Liststyle>
-            <Liststyle onClick={toggleSideMenuAlarm}>
+            <Liststyle to="/notifications">
               <FaRegBell className="icon" />
             </Liststyle>
-            {/* <Liststyle onClick={toggleSideMenuDm}> */}
-            <Liststyle to={"/dm"}>
+            <Liststyle to="/dm">
               <AiOutlineMessage className="icon" />
             </Liststyle>
-            <Liststyle to="/user/profile">
+            <Liststyle to={`/user/profile/${userId}`}>
               <ProfileThum>
-                <img src={profilethum} alt="" />
+                <img src={profile ? profile.userimg : profilethum} alt="" />
               </ProfileThum>
               <p style={{ fontFamily: "SokchoBadaBatang" }}></p>
             </Liststyle>
           </div>
           <div>
-            <Liststyle onClick={openSetting}>
+            <Liststyle as="div" onClick={openSetting}>
               <IoSettingsOutline className="icon" />
             </Liststyle>
           </div>
