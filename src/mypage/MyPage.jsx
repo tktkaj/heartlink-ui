@@ -76,7 +76,7 @@ let WordWrap = styled.div`
 `;
 
 let NicknameWrap = styled.div`
-  width: 25vw;
+  width: 29vw;
   justify-content: space-between;
   padding-bottom: 5px;
   display: flex;
@@ -174,11 +174,25 @@ let StatusMessage = styled.span`
   font-size: 16px;
 `;
 
+let ButtonWrap = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
 let FollowButton = styled.button`
   padding: 5px 12px;
   margin-left: 10px;
   border-radius: 5px;
   background-color: #706ef4;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+`;
+
+let BlockButton = styled.button`
+  padding: 5px 12px;
+  border-radius: 5px;
+  background-color: #ff4444;
   color: white;
   cursor: pointer;
   font-size: 14px;
@@ -268,6 +282,7 @@ function MyPage() {
   const [followType, setFollowType] = useState("followers");
   const [isFollowing, setIsFollowing] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
@@ -304,6 +319,7 @@ function MyPage() {
         setEditBio(res.profile.bio);
         setIsFollowing(res.profile.followed);
         setIsPrivate(res.profile.private);
+        setIsBlocked(res.profile.blocked);
         console.log("프로필 정보:", res.profile);
         setPosts(res.feed);
       } catch (err) {
@@ -315,6 +331,26 @@ function MyPage() {
 
     fetchData();
   }, []);
+
+  // const handleBlock = async () => {
+  //   try {
+  //     const access = localStorage.getItem("access");
+  //     const authAxios = getAuthAxios(access);
+
+  //     if (isBlocked) {
+  //       await authAxios.delete(
+  //         `http://localhost:9090/user/block/cancel/${userId}`
+  //       );
+  //       setIsBlocked(false);
+  //     } else {
+  //       await authAxios.post(`http://localhost:9090/user/block/${userId}`);
+  //       setIsBlocked(true);
+  //     }
+  //   } catch (error) {
+  //     console.error("차단/차단해제 실패:", error);
+  //     alert("차단/차단해제에 실패했습니다.");
+  //   }
+  // };
 
   const handleEditProfile = async () => {
     try {
@@ -573,13 +609,18 @@ function MyPage() {
                 </SettingWrap>
               )}
               {Iding && userId && String(Iding) !== userId && (
-                <FollowButton onClick={handleFollow}>
-                  {profile.followStatus
-                    ? "요청중"
-                    : profile.followed
-                    ? "언팔로우"
-                    : "팔로우"}
-                </FollowButton>
+                <ButtonWrap>
+                  <FollowButton onClick={handleFollow}>
+                    {profile.followStatus
+                      ? "요청중"
+                      : profile.followed
+                      ? "언팔로우"
+                      : "팔로우"}
+                  </FollowButton>
+                  {/* <BlockButton onClick={handleBlock}>
+                    {isBlocked ? "차단 풀기" : "차단하기"}
+                  </BlockButton> */}
+                </ButtonWrap>
               )}
             </NicknameWrap>
             <StatusMessageWrap>

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+let hasAlerted = false;
+
 export const getNewRefreshToken = async () => {
   console.log("토큰 갱신해야됨");
   const refreshToken = localStorage.getItem("refresh");
@@ -29,6 +31,16 @@ export const getNewRefreshToken = async () => {
       "토큰 갱신 실패:",
       error.response ? error.response.data : error.message
     );
+    if (
+      error.response &&
+      error.response.data.error === "invalid refresh token" &&
+      !hasAlerted
+    ) {
+      hasAlerted = true; // 알림 표시 상태 업데이트
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+    }
     throw error;
   }
 };
