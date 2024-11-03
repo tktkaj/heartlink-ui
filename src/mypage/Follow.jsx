@@ -87,6 +87,23 @@ const FollowButton = styled.button`
 
 function Follow({ onClose, type, userId }) {
   const [users, setUsers] = useState([]);
+  const [loggedInUserId, setLoggedInUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const response = await authAxios.get(
+          "http://localhost:9090/user/profile"
+        );
+        setLoggedInUserId(response.data);
+      } catch (error) {
+        console.error("로그인 유저 정보 불러오기 실패:", error);
+      }
+    };
+    fetchLoggedInUser();
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -183,17 +200,19 @@ function Follow({ onClose, type, userId }) {
                   </div>
                 </div>
               </UserInfo>
-              <FollowButton
-                onClick={() =>
-                  handleFollow(
-                    type === "follower"
-                      ? user.followerUserId
-                      : user.followingUserId
-                  )
-                }
-              >
-                {type === "follower" ? "팔로워 끊기" : "언팔로우"}
-              </FollowButton>
+              {String(loggedInUserId) === userId && (
+                <FollowButton
+                  onClick={() =>
+                    handleFollow(
+                      type === "follower"
+                        ? user.followerUserId
+                        : user.followingUserId
+                    )
+                  }
+                >
+                  {type === "follower" ? "팔로워 끊기" : "언팔로우"}
+                </FollowButton>
+              )}
             </FollowItem>
           ))
         )}

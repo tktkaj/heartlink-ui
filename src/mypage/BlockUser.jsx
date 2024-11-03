@@ -96,7 +96,7 @@ function BlockUser({ onClose }) {
         const response = await authAxios.get(
           "http://localhost:9090/user/block/list"
         );
-        setBlockedUsers(response.data);
+        setBlockedUsers(response.data.content);
 
         console.log("차단 유저 목록", response.data);
       } catch (error) {
@@ -154,7 +154,12 @@ function BlockUser({ onClose }) {
                     alt="프로필 썸네일"
                   />
                 </UserImage>
-                <UserId>{user.blockedLoginId}</UserId>
+                <div>
+                  <UserId>{user.blockedLoginId}</UserId>
+                  <div style={{ fontSize: "0.9em", color: "#666" }}>
+                    {user.blockedBio}
+                  </div>
+                </div>
               </UserInfo>
               <UnblockButton onClick={handleUnblock(user.blockedUserId)}>
                 해제
