@@ -92,7 +92,7 @@ export default function ChatRoom() {
       .catch((error) => {
         console.error('Error fetching the direct message:', error);
       });
-  }, []);
+  }, [messages]);
 
 
   // 상대방 클릭시 채팅방이 바뀌도록
@@ -220,7 +220,7 @@ export default function ChatRoom() {
     <div style={{ display: 'flex' }}>
       <MiniSide/>
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} />
-      {messages ? ( // messages가 존재하면 ChatBox를 보여줌
+      {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
           handleInputChange={handleInputChange}
