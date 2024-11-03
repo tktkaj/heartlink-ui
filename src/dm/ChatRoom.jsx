@@ -224,6 +224,27 @@ export default function ChatRoom() {
   // 채팅방을 만드는 함수
   const handleNewRoom = () => {
     const token = localStorage.getItem('access');
+    
+    axios.post(`http://localhost:9090/dm/new/${otherUserId}`,null,
+      {
+        headers:{
+          Authorization : `${token}`
+        }
+      }
+    ).then((response)=>{
+    }).catch((error)=>{
+      switch(error.response.status){
+        case 404:
+          toast.error(error.response.data);
+          break;
+        case 409:
+          toast.error(error.response.data);
+          break;
+        case 500:
+          toast.error("서버에서 오류가 생겼습니다.");
+          break;
+      }
+    })
   };
 
   // 유저 차단 함수
