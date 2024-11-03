@@ -330,7 +330,7 @@ function MyPage() {
     };
 
     fetchData();
-  }, []);
+  }, [userId]);
 
   // const handleBlock = async () => {
   //   try {
