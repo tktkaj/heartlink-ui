@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { FaHeartBroken } from "react-icons/fa";
-import { HiMiniEyeSlash } from "react-icons/hi2";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoLogOut } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import Password from "./Password";
 
 const SettingBox = styled.div`
   background-color: white;
@@ -46,6 +47,14 @@ const Canvas = styled.div`
 `;
 
 export default function Setting({ closeSetting }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handlePasswordClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPassword(true);
+  };
+
   return (
     <>
       <SettingBox>
@@ -56,7 +65,7 @@ export default function Setting({ closeSetting }) {
               <p>커플 해제</p>
             </SettingList>
           </Link>
-          <SettingList>
+          <SettingList onClick={handlePasswordClick}>
             <RiLockPasswordFill className="settingIcon" />
             <p>비밀번호 변경</p>
           </SettingList>
@@ -69,6 +78,7 @@ export default function Setting({ closeSetting }) {
         </ul>
       </SettingBox>
       <Canvas onClick={closeSetting} />
+      {showPassword && <Password onClose={() => setShowPassword(false)} />}
     </>
   );
 }

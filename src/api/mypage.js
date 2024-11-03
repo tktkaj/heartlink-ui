@@ -20,9 +20,9 @@ export const getMyPage = async (userId) => {
 
     return {
       profile: profileResult.data,
-      feed: feedResult.data,
-      likes: likesResult.data,
-      bookmarks: bookmarksResult.data,
+      feed: feedResult.data.data,
+      likes: likesResult.data.data,
+      bookmarks: bookmarksResult.data.data,
     };
   } catch (error) {
     console.error("Error fetching my page:", error);
