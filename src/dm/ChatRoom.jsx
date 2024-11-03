@@ -21,7 +21,8 @@ export default function ChatRoom() {
   const [msgRoomId, setMsgRoomId] = useState();
   const [userId, setUserId] = useState(); // 나의 LoginId
   const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
-  const [otherLoginId, setOtherLoginId] = useState();
+  const [otherLoginId, setOtherLoginId] = useState(); // 상대방 유저 아이디
+  const [otherUserId, setOtherUserId] = useState();
 
 
   // 웹 소켓 연결
@@ -102,6 +103,7 @@ export default function ChatRoom() {
     setOtherProfile(chat.otherUserImg);
     setOtherLoginId(chat.otherLoginId);
     setMsgRoomId(chat.msgRoomId);
+    setOtherUserId(chat.otherUserId);
 
     axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
       {
@@ -152,13 +154,14 @@ export default function ChatRoom() {
         }
       })
         .then((response) => {
+          // 새로운 메시지를 이전 messages 배열에 추가하여 상태 업데이트
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
         })
         .catch((error) => {
           console.error('Error sending the message:', error);
         });
 
-      // 새로운 메시지를 이전 messages 배열에 추가하여 상태 업데이트
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
     }
 
     setInput(''); // 메시지 전송 후 초기화
@@ -216,6 +219,39 @@ export default function ChatRoom() {
     }
   };
 
+  // 채팅방을 만드는 함수
+  const handleNewRoom = () => {
+    const token = localStorage.getItem('access');
+  };
+
+  // 유저 차단 함수
+  const handleBlockUser = () => {
+    const token = localStorage.getItem('access');
+    axios.post(`http://localhost:9090/user/block/${otherUserId}`, null,
+      {
+        headers: {
+          Authorization: `${token}`
+        }
+      }
+    ).then((response) => {
+      if(response.status==201)
+        alert(`${otherLoginId}님을 차단했습니다.`);
+    })
+      .catch((error) => {
+          switch(error.response.status){
+            case 404:
+              alert(error.response.data);
+              break;
+            case 403:
+              alert(error.response.data);
+              break;
+            case 500:
+              alert("서버에서 에러가 발생했습니다.");
+              break;
+          }
+      })
+  }
+
   return (
     <div style={{ display: 'flex' }}>
       <MiniSide/>
@@ -233,6 +269,7 @@ export default function ChatRoom() {
           handleFileChange={handleFileChange}
           msgRoomId={msgRoomId}
           userId={userId}
+          handleBlockUser={handleBlockUser}
         />
       ) : ( // messages가 null일 경우 공백을 표시
         <NoChatContainer>채팅이 없습니다.</NoChatContainer>

@@ -67,7 +67,7 @@ const IconButton = styled.button`
 
 export default function DmListBox({ dmList, handleChangeRoom, setUserId }) {
 
-  const { myLoginId, myUserId, msgRoomId, chatUsers } = dmList;
+  const { myLoginId, myUserId, chatUsers } = dmList;
   setUserId(myUserId);
 
   return (
