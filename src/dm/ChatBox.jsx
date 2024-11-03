@@ -92,7 +92,7 @@ const SendMessageContainer = styled.div`
   margin-left: 15px;
 `;
 
-export default function ChatBox({ input, handleInputChange, handleKeyDown, handleFileChange, sendMessage, userId, messages, otherProfile, otherLoginId}) {
+export default function ChatBox({ input, handleInputChange, handleKeyDown, handleFileChange, sendMessage, userId, messages, otherProfile, otherLoginId, handleBlockUser}) {
   const fileInputRef = useRef(null);
 
   const handlePhotoClick = () => {
@@ -106,7 +106,7 @@ export default function ChatBox({ input, handleInputChange, handleKeyDown, handl
           <ProfileImage src={otherProfile} alt="상대방사진" />
           <ProfileName >{otherLoginId}</ProfileName>
         </ProfileContainer>
-        <BlockButton>차단</BlockButton>
+        <BlockButton onClick={handleBlockUser}>차단</BlockButton>
       </ChatHeader>
       <ChatContent>
         <MessageBubble otherProfile = {otherProfile} messages={messages}  userId={userId}/>

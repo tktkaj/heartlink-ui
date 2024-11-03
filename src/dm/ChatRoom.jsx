@@ -3,7 +3,9 @@ import ChatBox from './ChatBox';
 import { useEffect, useState } from 'react';
 import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NoChatContainer = styled.div`
   display: flex;
@@ -18,10 +20,11 @@ export default function ChatRoom() {
   const [dmList, setDmList] = useState([]); // dmList
   const [input, setInput] = useState(''); // 입력된 값
   const [messages, setMessages] = useState([]); // 보여질 메세지들
-  const [msgRoomId, setMsgRoomId] = useState();
+  const [msgRoomId, setMsgRoomId] = useState(); //  msgRoomId 정보
   const [userId, setUserId] = useState(); // 나의 LoginId
   const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
-  const [otherLoginId, setOtherLoginId] = useState();
+  const [otherLoginId, setOtherLoginId] = useState(); // 상대방 로그인 아이디
+  const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
 
 
   // 웹 소켓 연결
@@ -92,7 +95,7 @@ export default function ChatRoom() {
       .catch((error) => {
         console.error('Error fetching the direct message:', error);
       });
-  }, []);
+  }, [messages]);
 
 
   // 상대방 클릭시 채팅방이 바뀌도록
@@ -102,6 +105,7 @@ export default function ChatRoom() {
     setOtherProfile(chat.otherUserImg);
     setOtherLoginId(chat.otherLoginId);
     setMsgRoomId(chat.msgRoomId);
+    setOtherUserId(chat.otherUserId);
 
     axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
       {
@@ -152,13 +156,14 @@ export default function ChatRoom() {
         }
       })
         .then((response) => {
+          // 새로운 메시지를 이전 messages 배열에 추가하여 상태 업데이트
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
         })
         .catch((error) => {
           console.error('Error sending the message:', error);
         });
 
-      // 새로운 메시지를 이전 messages 배열에 추가하여 상태 업데이트
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
     }
 
     setInput(''); // 메시지 전송 후 초기화
@@ -216,11 +221,90 @@ export default function ChatRoom() {
     }
   };
 
+  // 채팅방을 만드는 함수
+  const handleNewRoom = () => {
+    const token = localStorage.getItem('access');
+    
+    axios.post(`http://localhost:9090/dm/new/${otherUserId}`,null,
+      {
+        headers:{
+          Authorization : `${token}`
+        }
+      }
+    ).then((response)=>{
+    }).catch((error)=>{
+      switch(error.response.status){
+        case 404:
+          toast.error(error.response.data);
+          break;
+        case 409:
+          toast.error(error.response.data);
+          break;
+        case 500:
+          toast.error("서버에서 오류가 생겼습니다.");
+          break;
+      }
+    })
+  };
+
+  // 유저 차단 함수
+  const handleBlockUser = () => {
+    const token = localStorage.getItem('access');
+    axios.post(`http://localhost:9090/user/block/${otherUserId}`, null,
+      {
+        headers: {
+          Authorization: `${token}`
+        }
+      }
+    ).then((response) => {
+      if(response.status==201)
+        toast.success(`${otherLoginId}님을 차단했습니다.`, {
+          position: "top-right",  
+          autoClose: 2000,       
+          hideProgressBar: true, 
+          closeOnClick: true,     
+          pauseOnHover: true,     
+        });
+    })
+      .catch((error) => {
+        switch (error.response.status) {
+          case 404:
+            toast.error(error.response.data, {
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 403:
+            toast.error(error.response.data, {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+            break;
+          case 500:
+            toast.info("이미 차단한 유저입니다.", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+            break;
+        }
+      })
+  }
+
   return (
     <div style={{ display: 'flex' }}>
+      <ToastContainer/>
       <MiniSide/>
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} />
-      {messages ? ( // messages가 존재하면 ChatBox를 보여줌
+      {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
           handleInputChange={handleInputChange}
@@ -233,6 +317,7 @@ export default function ChatRoom() {
           handleFileChange={handleFileChange}
           msgRoomId={msgRoomId}
           userId={userId}
+          handleBlockUser={handleBlockUser}
         />
       ) : ( // messages가 null일 경우 공백을 표시
         <NoChatContainer>채팅이 없습니다.</NoChatContainer>
