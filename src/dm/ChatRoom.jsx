@@ -3,7 +3,9 @@ import ChatBox from './ChatBox';
 import { useEffect, useState } from 'react';
 import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NoChatContainer = styled.div`
   display: flex;
@@ -235,25 +237,50 @@ export default function ChatRoom() {
       }
     ).then((response) => {
       if(response.status==201)
-        alert(`${otherLoginId}님을 차단했습니다.`);
+        toast.success(`${otherLoginId}님을 차단했습니다.`, {
+          position: "top-right",  
+          autoClose: 2000,       
+          hideProgressBar: true, 
+          closeOnClick: true,     
+          pauseOnHover: true,     
+        });
     })
       .catch((error) => {
-          switch(error.response.status){
-            case 404:
-              alert(error.response.data);
-              break;
-            case 403:
-              alert(error.response.data);
-              break;
-            case 500:
-              alert("서버에서 에러가 발생했습니다.");
-              break;
-          }
+        switch (error.response.status) {
+          case 404:
+            toast.error(error.response.data, {
+              position: "top-right",  // 위치 설정
+              autoClose: 2000,        // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true,     // 클릭 시 닫힘 여부
+              pauseOnHover: true,     // 호버 시 일시 정지
+            });
+            break;
+          case 403:
+            toast.error(error.response.data, {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+            break;
+          case 500:
+            toast.info("이미 차단한 유저입니다.", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+            break;
+        }
       })
   }
 
   return (
     <div style={{ display: 'flex' }}>
+      <ToastContainer/>
       <MiniSide/>
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} />
       {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
