@@ -218,7 +218,7 @@ export default function Login() {
           value={loginId}
           placeholder="ID"
           onChange={onChangeId}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
         />
         <PassLabel>비밀번호</PassLabel>
         <Input
@@ -226,7 +226,7 @@ export default function Login() {
           value={password}
           placeholder="비밀번호"
           onChange={onChangePw}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
         />
 
         <SignUpAndFindIdContainer>
