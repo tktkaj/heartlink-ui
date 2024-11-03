@@ -65,34 +65,34 @@ const IconButton = styled.button`
   justify-content: center;
 `;
 
-export default function DmListBox({dmList, handleChangeRoom, setUserId}) {
+export default function DmListBox({ dmList, handleChangeRoom, setUserId }) {
 
-  const {  MyLoginId, MyUserId, chatList } = dmList; 
-  setUserId(dmList.MyUserId);
+  const { myLoginId, myUserId, chatUsers } = dmList;
+  setUserId(myUserId);
 
   return (
     <DmListBoxContainer>
       <DmListHeader>
-        <UserNameLabel>{MyLoginId}</UserNameLabel>
+        <UserNameLabel>{myLoginId}</UserNameLabel>
         <IconButton>
           <FaPlusCircle />
         </IconButton>
       </DmListHeader>
-      {chatList && chatList.length > 0 ? (
-        chatList.map((chat, index) => (
-            <DmItem 
-              key={index} 
-              onClick={() => handleChangeRoom(chat)}
-            >
-              <img src={chat.otherUserImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
-              <div>
-                <div style={{ marginBottom: '1px' }}>{chat.otherLoginId}</div>
-                <div style={{ fontSize: '0.8rem' }}>{chat.lastMessage}</div>
-              </div>
-            </DmItem>
+      {chatUsers && chatUsers.length > 0 ? (
+        chatUsers.map((chatUser, index) => (
+          <DmItem
+            key={index}
+            onClick={() => handleChangeRoom(chatUser)}
+          >
+            <img src={chatUser.otherUserImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+            <div>
+              <div style={{ marginBottom: '1px' }}>{chatUser.otherLoginId}</div>
+              <div style={{ fontSize: '0.8rem' }}>{chatUser.lastMessage}</div>
+            </div>
+          </DmItem>
         ))
       ) : (
-        <div style={{paddingLeft:"30px"}}>채팅방이 없습니다.</div>
+        <div style={{ paddingLeft: "30px" }}>채팅방이 없습니다.</div>
       )}
     </DmListBoxContainer>
   );
