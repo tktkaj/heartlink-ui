@@ -141,7 +141,6 @@ export default function ChatRoom() {
     const token = localStorage.getItem('access');
 
     if (ws && input) {
-      ws.send(`txt:${input}`); // WebSocket을 통해 메시지 전송
 
       let newMessage = {
         msgRoomId: msgRoomId,
@@ -154,13 +153,30 @@ export default function ChatRoom() {
         headers: {
           Authorization: `${token}`
         }
+        ,params: {
+          otherUserId: otherUserId  // 쿼리 파라미터로 otherUserId 추가
+        }
       })
         .then((response) => {
+          ws.send(`txt:${input}`); // WebSocket을 통해 메시지 전송
           // 새로운 메시지를 이전 messages 배열에 추가하여 상태 업데이트
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         })
         .catch((error) => {
-          console.error('Error sending the message:', error);
+          switch(error.response.status){
+            case 400:
+              toast.error(error.response.data, {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+              break;
+            case 500:
+              toast.warn("서버에 오류가 발생하였습니다.");
+              break;
+          }
         });
 
 
@@ -188,6 +204,7 @@ export default function ChatRoom() {
     formData.append("file", file)
     formData.append("msgRoomId", msgRoomId)
     formData.append("senderId", userId);
+    formData.append("otherUserId", otherUserId);
 
     // api를 통해 db에 저장
     if (file) {
@@ -215,7 +232,20 @@ export default function ChatRoom() {
 
         })
         .catch((error) => {
-          console.log("Error uploading file", error);
+          switch(error.response.status){
+            case 400:
+              toast.error(error.response.data, {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+              break;
+            case 500:
+              toast.warn("서버에 오류가 발생하였습니다.");
+              break;
+          }
         })
 
     }
