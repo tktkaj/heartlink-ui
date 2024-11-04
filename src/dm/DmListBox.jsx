@@ -65,7 +65,7 @@ const IconButton = styled.button`
   justify-content: center;
 `;
 
-export default function DmListBox({ dmList, handleChangeRoom, setUserId }) {
+export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleOpenModal, newChatModal }) {
 
   const { myLoginId, myUserId, chatUsers } = dmList;
   setUserId(myUserId);
@@ -75,7 +75,7 @@ export default function DmListBox({ dmList, handleChangeRoom, setUserId }) {
       <DmListHeader>
         <UserNameLabel>{myLoginId}</UserNameLabel>
         <IconButton>
-          <FaPlusCircle />
+          <FaPlusCircle onClick={()=>{handleOpenModal(newChatModal)}} />
         </IconButton>
       </DmListHeader>
       {chatUsers && chatUsers.length > 0 ? (

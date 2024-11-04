@@ -1,5 +1,6 @@
 import DmListBox from './DmListBox';
 import ChatBox from './ChatBox';
+import ChatListModal from '../layout/ChatListModal'
 import { useEffect, useState } from 'react';
 import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
@@ -25,6 +26,7 @@ export default function ChatRoom() {
   const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
   const [otherLoginId, setOtherLoginId] = useState(); // 상대방 로그인 아이디
   const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
+  const [newChatModal, setNewChatModal] = useState(false);
 
 
   // 웹 소켓 연결
@@ -329,11 +331,19 @@ export default function ChatRoom() {
       })
   }
 
+  const handleOpenModal = (newChatModal) => {
+    if (newChatModal == false)
+      setNewChatModal(true);
+    else if(newChatModal==true)
+      setNewChatModal(false);
+  }
+
   return (
     <div style={{ display: 'flex' }}>
+      {newChatModal==true && <ChatListModal />}
       <ToastContainer/>
       <MiniSide/>
-      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} />
+      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal}/>
       {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
