@@ -6,6 +6,7 @@ import googleLogo from "../image/sns/google_logo_icon_147282.png";
 import MainLogo from "../image/logo/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
+import FindId from "./FindId";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -149,6 +150,7 @@ const FindIdButton = styled.button`
   color: #333;
   cursor: pointer;
   font-size: 0.8rem;
+  type: button;
 `;
 
 const logs = { kakaoLogo, googleLogo, naverLogo };
@@ -157,6 +159,7 @@ export default function Login() {
   const [loginId, setId] = useState("");
   const [password, setPw] = useState("");
   const navigate = useNavigate();
+  const [showFindId, setShowFindId] = useState(false);
 
   useEffect(() => {
     // 로그인 상태 확인
@@ -201,6 +204,11 @@ export default function Login() {
     }
   };
 
+  const handleFindId = (e) => {
+    e.preventDefault();
+    setShowFindId(true);
+  };
+
   return (
     <LoginBox>
       <LoginBoxRight onSubmit={handleSubmit}>
@@ -235,7 +243,9 @@ export default function Login() {
               회원가입 |
             </SignUpButton>
           </Link>
-          <FindIdButton>아이디 찾기</FindIdButton>
+          <FindIdButton type="button" onClick={handleFindId}>
+            아이디/비밀번호 찾기
+          </FindIdButton>
         </SignUpAndFindIdContainer>
         <LoginButton type="submit">LOGIN</LoginButton>
         <div style={{ display: "flex", gap: "15px" }}>
@@ -273,6 +283,7 @@ export default function Login() {
           />
         </div>
       </LoginBanner>
+      {showFindId && <FindId onClose={() => setShowFindId(false)} />}
     </LoginBox>
   );
 }
