@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Logo from "../image/logo/Logo.png";
 import downArrow from "../image/couple/arrow.png";
+import { getAuthAxios } from "../api/authAxios";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const SignUpBox = styled.form`
   background-color: white;
@@ -67,9 +70,32 @@ const StyledButton = styled.button`
 `;
 
 export default function CoupleConnect2() {
+  const navigate = useNavigate();
   const [isOpen1, setIsOpen1] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const [isOpen3, setIsOpen3] = useState(false);
+  const [partnerInfo, setPartnerInfo] = useState(null);
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedMonth, setSelectedMonth] = useState("01");
+  const [selectedDay, setSelectedDay] = useState("01");
+
+  useEffect(() => {
+    const fetchPartnerInfo = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const response = await authAxios.get(
+          "http://localhost:9090/user/couple"
+        );
+        setPartnerInfo(response.data);
+        console.log("파트너 정보:", response.data);
+      } catch (error) {
+        console.error("파트너 정보 가져오기 실패:", error);
+      }
+    };
+
+    fetchPartnerInfo();
+  }, []);
 
   const toggleDropdown1 = () => {
     setIsOpen1((prev) => !prev);
@@ -81,14 +107,32 @@ export default function CoupleConnect2() {
     setIsOpen3((prev) => !prev);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+      const date = `${selectedYear}-${selectedMonth.padStart(
+        2,
+        "0"
+      )}-${selectedDay.padStart(2, "0")}`;
+
+      await authAxios.post(`http://localhost:9090/couple/dday?date=${date}`);
+      toast.success("D-day 설정에 성공했습니다!");
+      navigate("/home");
+    } catch (error) {
+      console.error("D-day 설정 실패:", error);
+    }
+  };
+
   return (
     <>
-      <SignUpBox>
+      <SignUpBox onSubmit={handleSubmit}>
         <LogoImage>
           <img src={Logo} alt="로고" />
         </LogoImage>
         <CoupleTxt>
-          <p>신닭가슴살 님과 매칭되었습니다.</p>
+          <p>{partnerInfo?.coupleNickname} 님과 매칭되었습니다.</p>
           <p>D-DAY를 설정해보세요.</p>
         </CoupleTxt>
         <LinkMatchDrop>
@@ -102,7 +146,7 @@ export default function CoupleConnect2() {
                 aria-expanded="true"
                 aria-haspopup="true"
               >
-                2024
+                {selectedYear}
                 <img
                   src={downArrow}
                   alt="아래화살표"
@@ -141,6 +185,10 @@ export default function CoupleConnect2() {
                         role="menuitem"
                         tabIndex="-1"
                         id={`menu-item-${index}`}
+                        onClick={() => {
+                          setSelectedYear(year);
+                          setIsOpen1(false);
+                        }}
                       >
                         {year}
                       </a>
@@ -161,7 +209,7 @@ export default function CoupleConnect2() {
                   aria-expanded="true"
                   aria-haspopup="true"
                 >
-                  10
+                  {selectedMonth}
                   <img
                     src={downArrow}
                     alt="아래화살표"
@@ -183,15 +231,15 @@ export default function CoupleConnect2() {
                   <div className="py-1" role="none">
                     <div className="max-h-48 overflow-y-auto">
                       {[
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                        "8",
-                        "9",
+                        "01",
+                        "02",
+                        "03",
+                        "04",
+                        "05",
+                        "06",
+                        "07",
+                        "08",
+                        "09",
                         "10",
                         "11",
                         "12",
@@ -203,6 +251,10 @@ export default function CoupleConnect2() {
                           role="menuitem"
                           tabIndex="-1"
                           id={`menu-item-${index}`}
+                          onClick={() => {
+                            setSelectedMonth(month);
+                            setIsOpen2(false);
+                          }}
                         >
                           {month}
                         </a>
@@ -222,7 +274,7 @@ export default function CoupleConnect2() {
                   aria-expanded="true"
                   aria-haspopup="true"
                 >
-                  10
+                  {selectedDay}
                   <img
                     src={downArrow}
                     alt="아래화살표"
@@ -243,8 +295,8 @@ export default function CoupleConnect2() {
                 >
                   <div className="py-1" role="none">
                     <div className="max-h-48 overflow-y-auto">
-                      {Array.from({ length: 31 }, (_, index) =>
-                        (index + 1).toString()
+                      {Array.from({ length: 31 }, (_, i) =>
+                        (i + 1).toString().padStart(2, "0")
                       ).map((day, index) => (
                         <a
                           href="#"
@@ -253,6 +305,10 @@ export default function CoupleConnect2() {
                           role="menuitem"
                           tabIndex="-1"
                           id={`menu-item-${index}`}
+                          onClick={() => {
+                            setSelectedDay(day);
+                            setIsOpen3(false);
+                          }}
                         >
                           {day}
                         </a>
