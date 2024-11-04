@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 
 const ModalOverlay = styled.div`
@@ -98,6 +100,7 @@ const PreviewContent = styled.div`
 const LeftSection = styled.div`
   flex: 1;
   display: flex;
+  overflow: hidden;
   justify-content: center;
   align-items: center;
   padding: 20px;
@@ -111,9 +114,17 @@ const RightSection = styled.div`
 `;
 
 const PreviewImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  overflow: hidden;
+`;
+
+const PreviewVideo = styled.video`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  overflow: hidden;
 `;
 
 const TextInput = styled.textarea`
@@ -148,7 +159,7 @@ const UploadButton = styled.button`
 `;
 
 export default function UploadModal({ isOpen, onClose }) {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [text, setText] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [isCoupleOnly, setIsCoupleOnly] = useState(false);
@@ -163,7 +174,7 @@ export default function UploadModal({ isOpen, onClose }) {
   };
 
   const resetForm = () => {
-    setFile(null);
+    setFiles([]);
     setText('');
     setShowPreview(false);
     setIsCoupleOnly(false);
@@ -176,12 +187,36 @@ export default function UploadModal({ isOpen, onClose }) {
   };
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      setFile(URL.createObjectURL(selectedFile)); // 미리보기 URL 생성
-      setShowPreview(true); // 두 번째 모달 표시
-    }
+    const selectedFiles = Array.from(event.target.files); // 여러 파일을 배열로 변환
+
+    // 파일 개수 제한
+    if (selectedFiles.length > 10) {
+    alert("최대 10개의 파일만 업로드할 수 있습니다.");
+    return;
+  }
+
+  // 동영상 개수 제한
+  const videoFiles = selectedFiles.filter(file => file.type.startsWith('video/'));
+  if (videoFiles.length > 1) {
+    alert("동영상은 1개만 업로드할 수 있습니다.");
+    return;
+  }
+
+  const fileURLs = selectedFiles.map((file) => ({
+    url: URL.createObjectURL(file),
+    type: file.type
+  }));
+
+  setFiles(fileURLs);
+  if (fileURLs.length > 0) setShowPreview(true);
+};
+
+React.useEffect(() => {
+  return () => {
+    files.forEach(file => URL.revokeObjectURL(file.url));
   };
+}, [files]);
+
 
   return (
     <>
@@ -197,7 +232,13 @@ export default function UploadModal({ isOpen, onClose }) {
                 <Title>사진과 동영상을 선택하세요.</Title>
                 <Explanation>동영상은 1개만 추가할 수 있습니다.</Explanation>
                 <Explanation>최대 10개의 파일을 추가할 수 있습니다.</Explanation>
-                <FileInput type="file" accept="image/*,video/*" id="file-input" onChange={handleFileChange} />
+                <FileInput
+                  type="file"
+                  accept="image/*,video/*"
+                  id="file-input"
+                  onChange={handleFileChange}
+                  multiple
+                />
                 <Label htmlFor="file-input">첨부하기</Label>
               </ModalContent>
             </ModalContainer>
@@ -205,7 +246,19 @@ export default function UploadModal({ isOpen, onClose }) {
             <PreviewModalContainer>
               <PreviewContent>
                 <LeftSection>
-                  {file ? <PreviewImage src={file} alt="Preview" /> : <StyledIcon />}
+                  <Carousel showThumbs={false}>
+                    {files.map((file, index) => (
+                      <div key={index}>
+                        {file.type.startsWith('image/') ? (
+                          <PreviewImage src={file.url} alt={`Preview ${index + 1}`} />
+                        ) : (
+                          <PreviewVideo controls>
+                            <source src={file.url} type={file.type} />
+                          </PreviewVideo>
+                        )}
+                      </div>
+                    ))}
+                  </Carousel>
                 </LeftSection>
                 <RightSection>
                   <TextInput
