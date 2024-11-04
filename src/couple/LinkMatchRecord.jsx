@@ -150,7 +150,7 @@ function LinkMatchRecord({ closeRecord }) {
                   </Answer>
                 </AnswerWrapper>
               </QuestionWrapper>
-              <Date>{mission?.myAnswer.myDate}</Date>
+              <Date>{mission?.myAnswer?.myDate}</Date>
             </MissionItem>
           ))}
         </MissionList>

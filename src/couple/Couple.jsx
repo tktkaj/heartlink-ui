@@ -157,7 +157,7 @@ const BingoBoard = styled.div`
 
 const BingoCell = styled.div`
   background-color: #dcdcdc;
-  height: 160px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,25 +229,24 @@ export default function Couple() {
     const access = localStorage.getItem("access");
     const authAxios = getAuthAxios(access);
 
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       await fetchMissionTags(selectedYear, selectedMonth);
-  //       const match = await authAxios.get(
-  //         "http://localhost:9090/couple/missionmatch/questions"
-  //       );
-  //       console.log(match);
-  //       setMission(match.data);
-  //     } catch (err) {
-  //       setError("API 호출 중 오류 발생: " + err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // 
-  // }, [selectedYear, selectedMonth]);
-}, []);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await fetchMissionTags(selectedYear, selectedMonth);
+        const match = await authAxios.get(
+          "http://localhost:9090/couple/missionmatch/questions"
+        );
+        console.log(match);
+        setMission(match.data);
+      } catch (err) {
+        setError("API 호출 중 오류 발생: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  
+  }, [selectedYear, selectedMonth]);
 
 
   const handleMatchSelect = async (couple) => {
@@ -281,24 +280,24 @@ export default function Couple() {
     setSelectedMatch(couple);
   };
 
-  // const fetchMissionTags = async (year, month) => {
-  //   try {
-  //     const access = localStorage.getItem("access");
-  //     const response = await axios.get(
-  //       "http://localhost:9090/couple/missionslink",
-  //       { params: { year, month } },
-  //       {
-  //         headers: {
-  //           Authorization: access,
-  //         },
-  //       }
-  //     );
-  //     console.log(response.data);
-  //     setThemes(response.data);
-  //   } catch (error) {
-  //     console.error("미션 태그 가져오는 중 오류 발생:", error);
-  //   }
-  // };
+  const fetchMissionTags = async (year, month) => {
+    try {
+      const access = localStorage.getItem("access");
+      const response = await axios.get(
+        "http://localhost:9090/couple/missionslink",
+        { params: { year, month } },
+        {
+          headers: {
+            Authorization: access,
+          },
+        }
+      );
+      console.log(response.data);
+      setThemes(response.data);
+    } catch (error) {
+      console.error("미션 태그 가져오는 중 오류 발생:", error);
+    }
+  };
 
   // const fetchMyMissionTags = async (year, month) => {
   //   try {

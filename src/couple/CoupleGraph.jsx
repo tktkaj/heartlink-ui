@@ -102,14 +102,14 @@ export default function CoupleGraph() {
         <GraphStyle>
             <div className='coupleGraph'>
                 <StatisticsTitle>Today's Answer</StatisticsTitle>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={230}>
                     <PieChart>
                         <Pie
                             data={femaleData}
                             dataKey="value"
                             nameKey="name"
                             cx="50%"
-                            cy="60%"
+                            cy="50%"
                             outerRadius={60}
                             innerRadius={40} 
                             // label={(props) => renderCustomLabel({ ...props, isMale: false })}
@@ -125,7 +125,7 @@ export default function CoupleGraph() {
                         <image
                             href={여자아이콘}
                             x="50%"
-                            y="60%"
+                            y="50%"
                             width="50"
                             height="50"
                             transform="translate(-25,-25)" // 중앙 정렬을 위한 변환
@@ -133,7 +133,7 @@ export default function CoupleGraph() {
                         {/* <Legend /> */}
                     </PieChart>
                 </ResponsiveContainer>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={230}>
                     <PieChart>
                         <Pie
                             data={maleData}

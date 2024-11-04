@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import SideMenu from '../sideMenu/SideMenu';
+import MiniSide from '../sideMenu/MiniSide';
+import SearchMenu from '../sideMenu/SearchMenu';
 
 let Content = styled.div`
     width: 100vw;
@@ -64,7 +66,9 @@ function Search() {
 
     return (
         <div style={{ display: 'flex' }}>
-            <SideMenu />
+            {/* <SideMenu /> */}
+            <MiniSide />
+            <SearchMenu />
             <Content>
                 <ContentWrap>
                     <SearchResultWrap>
