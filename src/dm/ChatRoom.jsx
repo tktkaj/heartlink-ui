@@ -114,7 +114,7 @@ export default function ChatRoom() {
     setOtherUserId(chat.otherUserId);
     setMsgRoomType(chat.msgRoomType);
     setOpenUser(chat.openUser);
- 
+
     axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
       {
         headers: {
@@ -282,7 +282,7 @@ export default function ChatRoom() {
           // 서버로부터 받은 데이터를 상태로 설정
           setDmList(response.data);
           setNewChatModal(false);
-  
+
         })
         .catch((error) => {
           console.error('Error fetching the direct message:', error);
@@ -355,26 +355,26 @@ export default function ChatRoom() {
   }
 
   //  채팅유저 검색 함수
-  const handleSearchUser = (searchName) =>{
+  const handleSearchUser = (searchName) => {
 
     const token = localStorage.getItem('access');
     axios.get("http://localhost:9090/dm/friends"
-      ,{
-        headers:{
+      , {
+        headers: {
           Authorization: `${token}`
         }
-        ,params:{
+        , params: {
           searchName: searchName
         }
       }
     )
-    .then((response)=>{
-        if(response.status==200){
+      .then((response) => {
+        if (response.status == 200) {
           setSearchlist(response.data);
         }
-    })
-    .catch((error)=>{
-    })
+      })
+      .catch((error) => {
+      })
   }
 
   // 모달 on/off 함수
@@ -387,13 +387,64 @@ export default function ChatRoom() {
 
   // 비공개 사용자 메시지 요청 수락 함수
 
+  const handleMessageAgree = () => {
+
+    const token = localStorage.getItem('access')
+
+    axios.put(`http://localhost:9090/dm/message/accept/${msgRoomId}`
+      , {
+        headers: {
+          Authorization: `${token}`
+        }
+      })
+      .then((response) => {
+        setMsgRoomType('PUBLIC');
+      })
+      .catch((error) => {
+      })
+  }
+
   // 비공개 사용자 메시지 요청 거부 함수
+
+  const handleMessageReject = () => {
+    const token = localStorage.getItem('access')
+
+    axios.delete(`http://localhost:9090/dm/message/rejection/${msgRoomId}`
+      , {
+        headers: {
+          Authorization: `${token}`
+        }
+      })
+      .then((response) => {
+        setMsgRoomType('PUBLIC');
+        setMsgRoomId(null);
+
+        axios.get("http://localhost:9090/dm"
+          , {
+            headers: {
+              Authorization: `${token}`
+            }
+          }
+        )
+          .then((response) => {
+            // 서버로부터 받은 데이터를 상태로 설정
+            setDmList(response.data);
+
+          })
+          .catch((error) => {
+            console.error('Error fetching the direct message:', error);
+          });
+
+      })
+      .catch((error) => {
+      })
+  }
 
   return (
     <div style={{ display: 'flex' }}>
       {newChatModal == true && <ChatListModal newChatModal={newChatModal} handleOpenModal={handleOpenModal} handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
-      {msgRoomType=='PRIVATE' && !openUser && <MessageApplyModal />}
-     <ToastContainer />
+      {msgRoomType == 'PRIVATE' && !openUser && <MessageApplyModal handleMessageAgree={handleMessageAgree} handleMessageReject={handleMessageReject} />}
+      <ToastContainer />
       <MiniSide />
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />
       {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌

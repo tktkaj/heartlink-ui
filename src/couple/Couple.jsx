@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import SideMenu from "../sideMenu/SideMenu";
 import downArrow from "../image/couple/arrow.png";
 import Upload from "../layout/Upload";
 import axios from "axios";
@@ -8,6 +7,8 @@ import { getAuthAxios } from "../api/authAxios";
 import LinkMatchRecord from "./LinkMatchRecord";
 import { useAuth } from "../api/AuthContext";
 import CoupleGraph from "./CoupleGraph";
+import Dday from "./Dday";
+
 const MainContainer = styled.div`
   background-color: #f8f8fa;
   display: flex;
@@ -174,6 +175,7 @@ export default function Couple() {
 
   const [isOpen1, setIsOpen1] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
+  const [isDdayOpen, setIsDdayOpen] = useState(false);
 
   const toggleDropdown1 = () => setIsOpen1((prev) => !prev);
   const toggleDropdown2 = () => setIsOpen2((prev) => !prev);
@@ -373,7 +375,33 @@ export default function Couple() {
         <Container>
           <FeedBox>
             <LoveHeader>
-              <p>🩷+ {dday}</p>
+              <p
+                onClick={() => setIsDdayOpen(true)}
+                style={{ cursor: "pointer" }}
+              >
+                🩷+ {dday}
+              </p>
+              {isDdayOpen && (
+                <div
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    zIndex: 1000,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onClick={() => setIsDdayOpen(false)}
+                >
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Dday />
+                  </div>
+                </div>
+              )}
               <LinkMatch>Link Match</LinkMatch>
               <ButtonContainer>
                 <RecordButton onClick={openRecord}>기록보기</RecordButton>
