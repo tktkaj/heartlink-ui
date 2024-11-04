@@ -238,7 +238,7 @@ export default function Login() {
         />
 
         <SignUpAndFindIdContainer>
-          <Link to="/user/join">
+          <Link to="/condition">
             <SignUpButton style={{ marginRight: "4px" }}>
               회원가입 |
             </SignUpButton>

@@ -123,6 +123,57 @@ const CheckButton = styled.button`
   cursor: pointer;
 `;
 
+const VerificationOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const VerificationContainer = styled.div`
+  width: 400px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const VerificationTitle = styled.h2`
+  margin-bottom: 20px;
+`;
+
+const VerificationInput = styled.input`
+  width: 200px;
+  height: 40px;
+  margin: 20px 0;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const VerificationButton = styled.button`
+  width: 100px;
+  height: 40px;
+  background-color: #706ef4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
 const SignUp = () => {
   // 입력값 상태관리, 이메일은 axios사용시 합쳐서 사용할 것
   const [loginId, setLoginId] = useState("");
@@ -135,6 +186,9 @@ const SignUp = () => {
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
   const [isIdChecked, setIsIdChecked] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
 
   // 경고 및 검증 문구 관련 상태관리
   const [passwordError, setPasswordError] = useState("");
@@ -202,6 +256,11 @@ const SignUp = () => {
       return;
     }
 
+    if (!isPhoneVerified) {
+      toast.error("휴대폰 인증이 필요합니다.");
+      return;
+    }
+
     if (
       !loginId ||
       !name ||
@@ -256,7 +315,74 @@ const SignUp = () => {
         setIsIdChecked(false);
       }
     } catch (error) {
-      toast.error("아이디 중복 확인 중 오류가 발생했습니다.");
+      toast.error("이미 가입된 회원이 있습니다.");
+      console.error(error);
+    }
+  };
+
+  // 휴대폰 번호 포맷팅
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneLength = phoneNumber.length;
+
+    if (phoneLength <= 3) return phoneNumber;
+    if (phoneLength <= 7) {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    }
+    if (phoneLength <= 11) {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(
+        3,
+        7
+      )}-${phoneNumber.slice(7)}`;
+    }
+  };
+
+  // 휴대폰 번호 입력 핸들러
+  const handlePhoneChange = (e) => {
+    const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+    setPhone(formattedPhoneNumber);
+  };
+
+  // 휴대폰 인증하기
+  const handlePhoneVerification = async () => {
+    if (phone.length !== 13) {
+      toast.error("올바른 휴대폰 번호를 입력해주세요.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:9090/user/sms/send?phoneNumber=${phone}`
+      );
+      console.log("인증번호 전송", response.data);
+      if (response.status === 200) {
+        toast.success("인증번호가 전송되었습니다.");
+        setShowVerification(true);
+      }
+    } catch (error) {
+      toast.error("인증번호 전송에 실패했습니다.");
+      console.error(error);
+    }
+  };
+
+  // 인증번호 확인
+  const validateVerificationCode = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9090/user/sms/validate",
+        {
+          phone: phone,
+          code: verificationCode,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("인증이 완료되었습니다.");
+        setIsPhoneVerified(true);
+        setShowVerification(false);
+      }
+    } catch (error) {
+      toast.error("인증번호가 일치하지 않습니다.");
       console.error(error);
     }
   };
@@ -300,8 +426,14 @@ const SignUp = () => {
       return;
     }
 
-    if (phone.length != 11) {
+    const phoneNumber = phone.replace(/-/g, "");
+    if (phoneNumber.length !== 11) {
       toast.error("핸드폰번호를 올바르게 입력해주세요");
+      return;
+    }
+
+    if (!isPhoneVerified) {
+      toast.error("휴대폰 인증이 필요합니다.");
       return;
     }
 
@@ -324,7 +456,7 @@ const SignUp = () => {
         console.log(data);
         console.log(response.status);
         alert("회원가입 성공");
-        window.location.href = "/coupleConnect";
+        window.location.href = "/login";
       } else if (response.status === 400) {
         alert("회원가입 실패: 잘못된 요청입니다.");
       }
@@ -347,6 +479,30 @@ const SignUp = () => {
         autoClose={1500}
         hideProgressBar
       />
+      {showVerification && (
+        <VerificationOverlay>
+          <VerificationContainer>
+            <VerificationTitle>인증번호 입력</VerificationTitle>
+            <VerificationInput
+              type="text"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              placeholder="인증번호를 입력하세요"
+            />
+            <ButtonContainer>
+              <VerificationButton
+                type="button"
+                onClick={validateVerificationCode}
+              >
+                인증
+              </VerificationButton>
+              <VerificationButton onClick={() => setShowVerification(false)}>
+                취소
+              </VerificationButton>
+            </ButtonContainer>
+          </VerificationContainer>
+        </VerificationOverlay>
+      )}
       <SignUpTitle>회원정보 입력</SignUpTitle>
       <SignUpForm>
         <SignUpLabel>
@@ -454,13 +610,22 @@ const SignUp = () => {
           <SignUpInput
             type="text"
             value={phone}
-            maxLength={11}
-            placeholder="숫자만 입력해주세요."
+            maxLength={13}
+            placeholder="010-0000-0000"
             style={{ width: "270px" }}
-            onChange={(e) => setPhone(e.target.value)}
+            required
+            onChange={handlePhoneChange}
           />
           <div style={{ paddingBottom: "8px" }}>
-            <CheckButton type="button">인증하기</CheckButton>
+            <CheckButton
+              type="button"
+              onClick={handlePhoneVerification}
+              style={{
+                backgroundColor: isPhoneVerified ? "#ffd6d3" : "#706ef4",
+              }}
+            >
+              {isPhoneVerified ? "인증완료" : "인증하기"}
+            </CheckButton>
           </div>
         </div>
         <SignUpLabel>
@@ -478,7 +643,6 @@ const SignUp = () => {
             {passwordError}
           </div>
         </SignUpLabel>
-        {/* 정규식 검증 통과 못할 시 에러나오는 곳 */}
         <SignUpInput
           type="password"
           value={password}

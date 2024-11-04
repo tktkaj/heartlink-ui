@@ -3,10 +3,11 @@ import styled from "styled-components";
 import Feed from "./Feed";
 import profilethum from "../image/sidebar/test.png";
 import Upload from "../layout/Upload";
-import UploadModal from '../layout/UploadModal';
+import UploadModal from "../layout/UploadModal";
 import { useAuth } from "../api/AuthContext";
 import AlarmRight from "../alarm/AlarmRight";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100vw;
@@ -64,26 +65,31 @@ const ProfileThum = styled.div`
 
 export default function MainPage() {
   const { token, setToken, authAxios } = useAuth();
+  const navigate = useNavigate();
   console.log(token);
   const [partnerInfo, setPartnerInfo] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // 게시글 작성 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPartnerInfo = async () => {
       try {
-        // 내 파트너 정보를 가져옴
         const partnerResponse = await authAxios.get(
           "http://localhost:9090/user/couple"
         );
+        if (!partnerResponse.data) {
+          navigate("/coupleConnect");
+          return;
+        }
         setPartnerInfo(partnerResponse.data);
         console.log("짝꿍정보", partnerResponse.data);
       } catch (error) {
         console.error("Error fetching partner info:", error);
+        navigate("/coupleConnect");
       }
     };
 
     fetchPartnerInfo();
-  }, [authAxios]);
+  }, [authAxios, navigate]);
 
   return (
     <MainContainer>

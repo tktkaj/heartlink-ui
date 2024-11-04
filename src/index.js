@@ -17,7 +17,7 @@ import DeleteAlert from "./alert/DeleteAlert";
 import CoupleConnect from "./couple/CoupleConnect";
 import CoupleConnect2 from "./couple/CoupleConnect2";
 import SignUp from "./join/SignUp";
-
+import Condition from "./join/Condition";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +37,7 @@ const router = createBrowserRouter([
       { path: "/alertLogout", element: <LogoutAlert /> },
       { path: "/alertCouple", element: <CoupleAlert /> },
       { path: "/deleteAlert", element: <DeleteAlert /> },
+      { path: "/condition", element: <Condition /> },
       { path: "/coupleConnect", element: <CoupleConnect /> },
       { path: "/coupleConnect2", element: <CoupleConnect2 /> },
     ],
