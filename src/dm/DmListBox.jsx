@@ -75,7 +75,7 @@ export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleO
       <DmListHeader>
         <UserNameLabel>{myLoginId}</UserNameLabel>
         <IconButton>
-          <FaPlusCircle onClick={()=>{handleOpenModal(newChatModal)}} />
+          <FaPlusCircle onClick={() => { handleOpenModal(newChatModal) }} />
         </IconButton>
       </DmListHeader>
       {chatUsers && chatUsers.length > 0 ? (
@@ -87,7 +87,7 @@ export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleO
             <img src={chatUser.otherUserImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
             <div>
               <div style={{ marginBottom: '1px' }}>{chatUser.otherLoginId}</div>
-              <div style={{ fontSize: '0.8rem' }}>{chatUser.lastMessage}</div>
+              <div style={{ fontSize: '0.8rem' }}>{chatUser.lastMessage.length > 18 ? chatUser.lastMessage.substring(0, 18) + "..." : chatUser.lastMessage}</div>
             </div>
           </DmItem>
         ))

@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 
-export default function ChatListModal({handleNewRoom, handleSearchUser, searchList, setSearchlist}) {
+export default function ChatListModal({handleNewRoom, handleSearchUser, searchList, setSearchlist, handleOpenModal, newChatModal}) {
 
     const [x, setX] = useState([]);
     const [otherUserId, setOtherUserId] = useState();
@@ -44,7 +44,7 @@ export default function ChatListModal({handleNewRoom, handleSearchUser, searchLi
    
     return (
         <div>
-            <div className="fixed bg-slate-500 top-0 left-0 bottom-0 right-0 opacity-80">
+            <div className="fixed bg-slate-500 top-0 left-0 bottom-0 right-0 opacity-80" onClick={()=>{handleOpenModal(newChatModal)}}>
             </div>
             <div className="absolute top-1/2 right-1/4 transform -translate-x-1/4 -translate-y-1/2 border-solid border-2 border-slate-300 w-96 rounded-3xl pt-2 bg-white">
                 <div className="flex justify-center border-solid  border-b-2 border-slate-300 pb-2"><p className="text-xl">새로운 메시지</p></div>

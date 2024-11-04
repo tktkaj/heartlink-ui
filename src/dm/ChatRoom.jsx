@@ -382,9 +382,10 @@ export default function ChatRoom() {
       setNewChatModal(false);
   }
 
+
   return (
     <div style={{ display: 'flex' }}>
-      {newChatModal == true && <ChatListModal handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
+      {newChatModal == true && <ChatListModal newChatModal={newChatModal} handleOpenModal={handleOpenModal} handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
       <ToastContainer />
       <MiniSide />
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />
