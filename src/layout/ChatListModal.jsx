@@ -1,14 +1,34 @@
-import React from 'react'
-import TestImg from '../image/mypage/bono.jpg'
-import { useState } from 'react'
+import React from 'react';
+import TestImg from '../image/mypage/bono.jpg';
+import { useState, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 
-export default function ChatListModal({handleNewRoom, handleSearchUser, searchList}) {
+export default function ChatListModal({handleNewRoom, handleSearchUser, searchList, setSearchlist}) {
 
     const [x, setX] = useState([]);
     const [otherUserId, setOtherUserId] = useState();
 
+    useEffect(()=>{
+        const token = localStorage.getItem('access');
+
+        axios.get("http://localhost:9090/dm/friends",
+            {
+                headers:{
+                    Authorization : `${token}`
+                }
+            }
+        )
+        .then((response)=>{
+            console.log('연결굿')
+            if(response.status==200)
+                setSearchlist(response.data);
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    },[])
 
     //  radio버튼 누를시 해당되는 유저의 userId 가져오기
     const handleClickRadioButton = (e, userId) => {
