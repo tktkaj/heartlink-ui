@@ -26,7 +26,9 @@ export default function ChatRoom() {
   const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
   const [otherLoginId, setOtherLoginId] = useState(); // 상대방 로그인 아이디
   const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
-  const [newChatModal, setNewChatModal] = useState(false);
+  const [newChatModal, setNewChatModal] = useState(false);  //  모달 상태
+  const [searchList, setSearchlist] = useState([]);
+
 
 
   // 웹 소켓 연결
@@ -348,6 +350,31 @@ export default function ChatRoom() {
       })
   }
 
+  //  채팅유저 검색 함수
+  const handleSearchUser = (searchName) =>{
+
+    const token = localStorage.getItem('access');
+    axios.get("http://localhost:9090/dm/friends"
+      ,{
+        headers:{
+          Authorization: `${token}`
+        }
+        ,params:{
+          searchName: searchName
+        }
+      }
+    )
+    .then((response)=>{
+        if(response.status==200){
+          setSearchlist(response.data);
+        }
+    })
+    .catch((error)=>{
+      // alert(error);
+    })
+  }
+
+  // 모달 on/off 함수
   const handleOpenModal = (newChatModal) => {
     if (newChatModal == false)
       setNewChatModal(true);
@@ -357,7 +384,7 @@ export default function ChatRoom() {
 
   return (
     <div style={{ display: 'flex' }}>
-      {newChatModal == true && <ChatListModal handleNewRoom={handleNewRoom} />}
+      {newChatModal == true && <ChatListModal handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} />}
       <ToastContainer />
       <MiniSide />
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />
