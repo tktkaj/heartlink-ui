@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function MessageApplyModal() {
+export default function MessageApplyModal({handleMessageAgree, handleMessageReject}) {
     return (
         <div>
             <div className="fixed bg-slate-500 top-0 left-0 bottom-0 right-0 opacity-96" >
@@ -11,10 +11,10 @@ export default function MessageApplyModal() {
                 </div>
                 <div className='flex justify-center items-center pb-10 gap-10'>
                     <div>
-                        <button className='bg-purple-300 px-5 py-2 rounded-lg text-white'>수락</button>
+                        <button className='bg-purple-300 px-5 py-2 rounded-lg text-white' onClick={handleMessageAgree}>수락</button>
                     </div>
                     <div>
-                        <button className='bg-gray-300 px-5 py-2 rounded-lg'>거절</button>
+                        <button className='bg-gray-300 px-5 py-2 rounded-lg' onClick={handleMessageReject}>거절</button>
                     </div>
                 </div>
             </div>
