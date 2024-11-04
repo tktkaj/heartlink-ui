@@ -7,6 +7,7 @@ import MainLogo from "../image/logo/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
 import FindId from "./FindId";
+import axios from "axios";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -150,7 +151,6 @@ const FindIdButton = styled.button`
   color: #333;
   cursor: pointer;
   font-size: 0.8rem;
-  type: button;
 `;
 
 const logs = { kakaoLogo, googleLogo, naverLogo };
@@ -209,6 +209,34 @@ export default function Login() {
     setShowFindId(true);
   };
 
+  const handleOAuthLogin = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9090/login/oauth2/code/google"
+      );
+      // 로그인 성공 처리
+    } catch (error) {
+      if (error.response) {
+        const errorMessage = error.response.data; // 오류 메시지 가져오기
+
+        // 오류 메시지에서 providerId 추출
+        const providerId = errorMessage.match(/\[error: (\w+)\]/)?.[1];
+
+        // 오류 메시지에서 전화번호와 아이디에 대한 체크
+        if (errorMessage.includes("전화번호를 입력받아야 합니다.")) {
+          console.log("전화번호를 입력받아야 합니다.");
+        } else if (errorMessage.includes("아이디를 입력받아야 합니다.")) {
+          console.log("아이디를 입력받아야 합니다.");
+        } else {
+          // 다른 오류 처리
+          alert("로그인 실패: " + errorMessage);
+        }
+      } else {
+        // 요청이 이루어지지 않았거나 다른 오류가 발생한 경우
+        alert("서버에 연결할 수 없습니다.");
+      }
+    }
+  };
   return (
     <LoginBox>
       <LoginBoxRight onSubmit={handleSubmit}>
@@ -268,7 +296,7 @@ export default function Login() {
           <OAuthButton>
             <a
               href="http://localhost:9090/oauth2/authorization/google"
-              target="_blank"
+              onClick={handleOAuthLogin}
             >
               <img src={logs.googleLogo} alt="구글 로그인" />
             </a>
