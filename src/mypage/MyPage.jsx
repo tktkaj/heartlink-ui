@@ -282,7 +282,8 @@ function MyPage() {
   const [followType, setFollowType] = useState("followers");
   const [isFollowing, setIsFollowing] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
-  const [isBlocked, setIsBlocked] = useState(false);
+  const [isBlocker, setIsBlocker] = useState();
+  const [isBlocked, setIsBlocked] = useState();
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
@@ -319,9 +320,16 @@ function MyPage() {
         setEditBio(res.profile.bio);
         setIsFollowing(res.profile.followed);
         setIsPrivate(res.profile.private);
-        setIsBlocked(res.profile.blocked);
+        setIsBlocker(res.isBlocker);
+        setIsBlocked(res.isBlocked);
         console.log("프로필 정보:", res.profile);
-        setPosts(res.feed);
+        console.log("차단상태:", res.isBlocker);
+        console.log("차단당함상태:", res.isBlocked);
+        if (Array.isArray(res.feed)) {
+          setPosts(res.feed);
+        } else {
+          setPosts([]); // 빈 배열로 설정
+        }
       } catch (err) {
         setError(err);
       } finally {
@@ -332,25 +340,25 @@ function MyPage() {
     fetchData();
   }, [userId]);
 
-  // const handleBlock = async () => {
-  //   try {
-  //     const access = localStorage.getItem("access");
-  //     const authAxios = getAuthAxios(access);
+  const handleBlock = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
 
-  //     if (isBlocked) {
-  //       await authAxios.delete(
-  //         `http://localhost:9090/user/block/cancel/${userId}`
-  //       );
-  //       setIsBlocked(false);
-  //     } else {
-  //       await authAxios.post(`http://localhost:9090/user/block/${userId}`);
-  //       setIsBlocked(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("차단/차단해제 실패:", error);
-  //     alert("차단/차단해제에 실패했습니다.");
-  //   }
-  // };
+      if (isBlocked) {
+        await authAxios.delete(
+          `http://localhost:9090/user/block/cancel/${userId}`
+        );
+        setIsBlocked(false);
+      } else {
+        await authAxios.post(`http://localhost:9090/user/block/${userId}`);
+        setIsBlocked(true);
+      }
+    } catch (error) {
+      console.error("차단/차단해제 실패:", error);
+      alert("차단/차단해제에 실패했습니다.");
+    }
+  };
 
   const handleEditProfile = async () => {
     try {
@@ -617,9 +625,9 @@ function MyPage() {
                       ? "언팔로우"
                       : "팔로우"}
                   </FollowButton>
-                  {/* <BlockButton onClick={handleBlock}>
+                  <BlockButton onClick={handleBlock}>
                     {isBlocked ? "차단 풀기" : "차단하기"}
-                  </BlockButton> */}
+                  </BlockButton>
                 </ButtonWrap>
               )}
             </NicknameWrap>
@@ -725,7 +733,11 @@ function MyPage() {
         </MenuWrap>
 
         <PostList>
-          {shouldShowPosts ? (
+          {isBlocked ? (
+            <div>차단한 유저의 피드는 볼 수 없습니다.</div>
+          ) : isBlocker ? (
+            <div>차단당한 상대의 피드는 볼 수 없습니다.</div>
+          ) : shouldShowPosts ? (
             posts.length > 0 ? (
               posts.map((post, index) => (
                 <Post key={index}>
