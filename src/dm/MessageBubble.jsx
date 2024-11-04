@@ -15,7 +15,6 @@ const Message = styled.div`
   margin-bottom: 15px;
   background-color: ${(props) => (props.isMine ? '#706EF4' : '#eee')};
   color: ${(props) => (props.isMine ? '#FFFFFF' : '#333')};
-  position: relative;
 `;
 
 const TimeCheckBox = styled.div`
