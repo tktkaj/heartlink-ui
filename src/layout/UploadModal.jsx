@@ -211,12 +211,6 @@ export default function UploadModal({ isOpen, onClose }) {
   if (fileURLs.length > 0) setShowPreview(true);
 };
 
-React.useEffect(() => {
-  return () => {
-    files.forEach(file => URL.revokeObjectURL(file.url));
-  };
-}, [files]);
-
 
   return (
     <>
