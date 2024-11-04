@@ -217,22 +217,16 @@ export default function Login() {
       // 로그인 성공 처리
     } catch (error) {
       if (error.response) {
-        const errorMessage = error.response.data; // 오류 메시지 가져오기
+        const { message, providerId } = JSON.parse(error.response.data);
 
-        // 오류 메시지에서 providerId 추출
-        const providerId = errorMessage.match(/\[error: (\w+)\]/)?.[1];
-
-        // 오류 메시지에서 전화번호와 아이디에 대한 체크
-        if (errorMessage.includes("전화번호를 입력받아야 합니다.")) {
-          console.log("전화번호를 입력받아야 합니다.");
-        } else if (errorMessage.includes("아이디를 입력받아야 합니다.")) {
-          console.log("아이디를 입력받아야 합니다.");
+        if (message.includes("전화번호를 입력받아야 합니다.")) {
+          console.log(message, providerId);
+        } else if (message.includes("아이디를 입력받아야 합니다.")) {
+          console.log(message, providerId);
         } else {
-          // 다른 오류 처리
-          alert("로그인 실패: " + errorMessage);
+          alert("로그인 실패: " + message);
         }
       } else {
-        // 요청이 이루어지지 않았거나 다른 오류가 발생한 경우
         alert("서버에 연결할 수 없습니다.");
       }
     }
