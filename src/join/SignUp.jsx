@@ -50,6 +50,7 @@ const SignUpInput = styled.input`
     color: #333;
   }
 `;
+
 const SignUpSelect = styled.select`
   width: 350px;
   height: 40px;
@@ -111,6 +112,17 @@ const GenderRadioBox = styled.div`
   gap: 230px;
 `;
 
+const CheckButton = styled.button`
+  width: 80px;
+  background-color: #706ef4;
+  padding: 9px 5px;
+  border-radius: 5px;
+  color: white;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+`;
+
 const SignUp = () => {
   // 입력값 상태관리, 이메일은 axios사용시 합쳐서 사용할 것
   const [loginId, setLoginId] = useState("");
@@ -122,6 +134,7 @@ const SignUp = () => {
   const [passwordChk, setPasswordChk] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
+  const [isIdChecked, setIsIdChecked] = useState(false);
 
   // 경고 및 검증 문구 관련 상태관리
   const [passwordError, setPasswordError] = useState("");
@@ -184,6 +197,11 @@ const SignUp = () => {
 
   // 입력창 빈칸 check하는 함수
   const checkForm = () => {
+    if (!isIdChecked) {
+      toast.error("아이디 중복확인을 해주세요.");
+      return;
+    }
+
     if (
       !loginId ||
       !name ||
@@ -204,6 +222,7 @@ const SignUp = () => {
   // id길이 체크
   const checkIdLength = (e) => {
     let str = e;
+    setIsIdChecked(false);
 
     if (str.length === 0) {
       setIdError("");
@@ -212,6 +231,33 @@ const SignUp = () => {
       setIdError("5~15자 이내의 아이디만 가능합니다.");
     } else {
       setIdError("");
+    }
+  };
+
+  // 아이디 중복 체크
+  const checkIdDuplicate = async () => {
+    if (loginId.length < 5) {
+      toast.error("아이디는 5자 이상이어야 합니다.");
+      return;
+    }
+
+    try {
+      console.log(loginId);
+      const response = await axios.post("http://localhost:9090/user/idcheck", {
+        loginId: loginId,
+      });
+      console.log("response", response);
+
+      if (response.status === 200) {
+        toast.success("사용 가능한 아이디입니다.");
+        setIsIdChecked(true);
+      } else if (response.status === 400) {
+        toast.error("이미 가입된 회원이 있습니다.");
+        setIsIdChecked(false);
+      }
+    } catch (error) {
+      toast.error("아이디 중복 확인 중 오류가 발생했습니다.");
+      console.error(error);
     }
   };
 
@@ -318,18 +364,26 @@ const SignUp = () => {
             {idError}
           </div>
         </SignUpLabel>
-        <SignUpInput
-          type="text"
-          minLength={5}
-          maxLength={15}
-          value={loginId}
-          onChange={(e) => {
-            setLoginId(e.target.value);
-            checkIdLength(e.target.value);
-          }}
-          placeholder="5~15자 이내의 아이디를 입력해주세요"
-          required
-        />
+        <div style={{ display: "flex", gap: "9px", alignItems: "center" }}>
+          <SignUpInput
+            type="text"
+            minLength={5}
+            maxLength={15}
+            value={loginId}
+            onChange={(e) => {
+              setLoginId(e.target.value);
+              checkIdLength(e.target.value);
+            }}
+            placeholder="5~15자 이내의 아이디를 입력해주세요"
+            required
+            style={{ width: "270px" }}
+          />
+          <div style={{ paddingBottom: "8px" }}>
+            <CheckButton type="button" onClick={checkIdDuplicate}>
+              중복확인
+            </CheckButton>
+          </div>
+        </div>
         <SignUpLabel>
           <RequiredMark>*</RequiredMark>이메일
         </SignUpLabel>
@@ -406,19 +460,7 @@ const SignUp = () => {
             onChange={(e) => setPhone(e.target.value)}
           />
           <div style={{ paddingBottom: "8px" }}>
-            <button
-              type="button"
-              style={{
-                width: "80px",
-                backgroundColor: "#706EF4",
-                padding: "9px 5px",
-                borderRadius: "5px",
-                color: "white",
-                fontSize: "0.9rem",
-              }}
-            >
-              인증하기
-            </button>
+            <CheckButton type="button">인증하기</CheckButton>
           </div>
         </div>
         <SignUpLabel>
