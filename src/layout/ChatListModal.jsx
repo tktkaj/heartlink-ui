@@ -1,22 +1,25 @@
 import React from 'react'
 import TestImg from '../image/mypage/bono.jpg'
 import { useState } from 'react'
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function ChatListModal() {
+
+export default function ChatListModal({handleNewRoom}) {
 
     // const list = [];
-    const list = [{ img: "img1", name: "tktkaj", userId: 1 }, { img: "img2", name: "heehee", userId: 2 }, { img: "img2", name: "heehee", userId: 3 }, { img: "img2", name: "heehee", userId: 4 }, { img: "img2", name: "heehee", userId: 5 }]
+    const list = [{ img: "img1", name: "tktkaj", userId: 7 }, { img: "img2", name: "heehee", userId: 8 }, { img: "img2", name: "heehee", userId: 9 }, { img: "img2", name: "heehee", userId: 4 }, { img: "img2", name: "heehee", userId: 5 }]
     const [x, setX] = useState([]);
-    const [userId, setUserId] = useState();
+    const [otherUserId, setOtherUserId] = useState();
 
     //  radio버튼 누를시 해당되는 유저의 userId 가져오기
     const handleClickRadioButton = (e, userId) => {
         setX(e.target.value);
-        setUserId(userId);
+        setOtherUserId(userId);
     }
 
     // 리스트 가져오는 함수 작성
 
+   
     return (
         <div>
             <div className="fixed bg-slate-500 top-0 left-0 bottom-0 right-0 opacity-80">
@@ -42,7 +45,7 @@ export default function ChatListModal() {
                     }
                 </div>
                 <div className="flex justify-center pt-4 pb-4">
-                    <button className="bg-indigo-400 rounded-md p-1 w-52 decoration-slate-500 text-white">채팅하기</button>
+                    <button className="bg-indigo-400 rounded-md p-1 w-52 decoration-slate-500 text-white" onClick={()=>{handleNewRoom(otherUserId)}}>채팅하기</button>
                 </div>
             </div>
         </div>

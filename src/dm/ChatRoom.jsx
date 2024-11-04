@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import MiniSide from '../sideMenu/MiniSide'
 import axios from 'axios';
 import styled from 'styled-components';
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const NoChatContainer = styled.div`
@@ -47,7 +47,7 @@ export default function ChatRoom() {
       let newMessage = null;
       if (type[0] === 'txt') {
         console.log("텍스트")
-        newMessage = {  
+        newMessage = {
           senderId: userId + 1,
           content: type[1],
           lastMessageTime: new Date()
@@ -102,7 +102,7 @@ export default function ChatRoom() {
 
   // 상대방 클릭시 채팅방이 바뀌도록
   const handleChangeRoom = (chat) => {
-    
+
     const token = localStorage.getItem('access');
     setOtherProfile(chat.otherUserImg);
     setOtherLoginId(chat.otherLoginId);
@@ -111,26 +111,26 @@ export default function ChatRoom() {
 
     axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
       {
-        headers:{
-          Authorization : `${token}`
+        headers: {
+          Authorization: `${token}`
         }
       }
     )
-    .then((response)=>{
-      if(response.status==200)
-        setMessages(response.data);
-    })
-    .catch((error)=>{
-      switch(error.response.status){
+      .then((response) => {
+        if (response.status == 200)
+          setMessages(response.data);
+      })
+      .catch((error) => {
+        switch (error.response.status) {
           case 404:
             console.log("잘못된 접근입니다.");
             break;
           case 500:
             console.log("서버오류입니다.")
             break;
+        }
       }
-    }
-    )
+      )
   }
 
   // 메세지 입력을 받아서 input에 저장하는 함수
@@ -155,7 +155,7 @@ export default function ChatRoom() {
         headers: {
           Authorization: `${token}`
         }
-        ,params: {
+        , params: {
           otherUserId: otherUserId  // 쿼리 파라미터로 otherUserId 추가
         }
       })
@@ -165,15 +165,15 @@ export default function ChatRoom() {
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         })
         .catch((error) => {
-          switch(error.response.status){
+          switch (error.response.status) {
             case 400:
               toast.error(error.response.data, {
-              position: "top-right",
-              autoClose: 2000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-            });
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+              });
               break;
             case 500:
               toast.warn("서버에 오류가 발생하였습니다.");
@@ -220,7 +220,7 @@ export default function ChatRoom() {
           }
         }).then((response) => {
           ws.send(`img:${response.data}`);
-          console.log("이건",image);
+          console.log("이건", image);
 
           const newMessage = {
             msgRoomId: msgRoomId,
@@ -229,20 +229,20 @@ export default function ChatRoom() {
             lastMessageTime: new Date()
           }
 
-      // 이거는 내 화면에 출력되게 message에 저장
+          // 이거는 내 화면에 출력되게 message에 저장
           setMessages(prevMessages => [...prevMessages, newMessage]);
 
         })
         .catch((error) => {
-          switch(error.response.status){
+          switch (error.response.status) {
             case 400:
               toast.error(error.response.data, {
-              position: "top-right",
-              autoClose: 2000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-            });
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+              });
               break;
             case 500:
               toast.warn("서버에 오류가 발생하였습니다.");
@@ -254,18 +254,35 @@ export default function ChatRoom() {
   };
 
   // 채팅방을 만드는 함수
-  const handleNewRoom = () => {
+  const handleNewRoom = (otherUserId) => {
+    console.log("click");
     const token = localStorage.getItem('access');
-    
-    axios.post(`http://localhost:9090/dm/new/${otherUserId}`,null,
+
+    axios.post(`http://localhost:9090/dm/new/${otherUserId}`, null,
       {
-        headers:{
-          Authorization : `${token}`
+        headers: {
+          Authorization: `${token}`
         }
       }
-    ).then((response)=>{
-    }).catch((error)=>{
-      switch(error.response.status){
+    ).then((response) => {
+      axios.get("http://localhost:9090/dm"
+        , {
+          headers: {
+            Authorization: `${token}`
+          }
+        }
+      )
+        .then((response) => {
+          // 서버로부터 받은 데이터를 상태로 설정
+          setDmList(response.data);
+          setNewChatModal(false);
+  
+        })
+        .catch((error) => {
+          console.error('Error fetching the direct message:', error);
+        });
+    }).catch((error) => {
+      switch (error.response.status) {
         case 404:
           toast.error(error.response.data);
           break;
@@ -289,13 +306,13 @@ export default function ChatRoom() {
         }
       }
     ).then((response) => {
-      if(response.status==201)
+      if (response.status == 201)
         toast.success(`${otherLoginId}님을 차단했습니다.`, {
-          position: "top-right",  
-          autoClose: 2000,       
-          hideProgressBar: true, 
-          closeOnClick: true,     
-          pauseOnHover: true,     
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
         });
     })
       .catch((error) => {
@@ -334,16 +351,16 @@ export default function ChatRoom() {
   const handleOpenModal = (newChatModal) => {
     if (newChatModal == false)
       setNewChatModal(true);
-    else if(newChatModal==true)
+    else if (newChatModal == true)
       setNewChatModal(false);
   }
 
   return (
     <div style={{ display: 'flex' }}>
-      {newChatModal==true && <ChatListModal />}
-      <ToastContainer/>
-      <MiniSide/>
-      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal}/>
+      {newChatModal == true && <ChatListModal handleNewRoom={handleNewRoom} />}
+      <ToastContainer />
+      <MiniSide />
+      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />
       {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
