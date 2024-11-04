@@ -4,12 +4,11 @@ import { useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 
 
-export default function ChatListModal({handleNewRoom}) {
+export default function ChatListModal({handleNewRoom, handleSearchUser, searchList}) {
 
-    // const list = [];
-    const list = [{ img: "img1", name: "tktkaj", userId: 7 }, { img: "img2", name: "heehee", userId: 8 }, { img: "img2", name: "heehee", userId: 9 }, { img: "img2", name: "heehee", userId: 4 }, { img: "img2", name: "heehee", userId: 5 }]
     const [x, setX] = useState([]);
     const [otherUserId, setOtherUserId] = useState();
+
 
     //  radio버튼 누를시 해당되는 유저의 userId 가져오기
     const handleClickRadioButton = (e, userId) => {
@@ -17,7 +16,10 @@ export default function ChatListModal({handleNewRoom}) {
         setOtherUserId(userId);
     }
 
-    // 리스트 가져오는 함수 작성
+    // input 변화 감지 함수
+    const handleInput = (e) =>{
+        handleSearchUser(e.target.value);
+    }
 
    
     return (
@@ -28,16 +30,16 @@ export default function ChatListModal({handleNewRoom}) {
                 <div className="flex justify-center border-solid  border-b-2 border-slate-300 pb-2"><p className="text-xl">새로운 메시지</p></div>
                 <div className="flex justify-start border-solid pl-5 border-b-2 border-slate-300 gap-1 pt-2 pb-2">
                     <div className="flex items-center text-sm w-16"><p>친구 검색: </p></div>
-                    <div className="flex items-center"><input type='text' className="text-sm w-48 outline-none cursor-pointer" placeholder='채팅할 사람을 입력해주세요'></input></div>
+                    <div className="flex items-center"><input type='text' className="text-sm w-48 outline-none cursor-pointer" placeholder='채팅할 사람을 입력해주세요' onChange={(e)=>{handleInput(e)}}></input></div>
                 </div>
                 <div className="overflow-y-scroll h-60 border-solid border-b-2 border-slate-300">
-                    {list && list.map((ele, index) => {
+                    {searchList && searchList.map((search, index) => {
                         return (
                             <div className="flex  pt-2 pb-2 border-solid border-b-2 border-slate-300" key={index}>
-                                <div className="pl-5 pr-5"><img src={TestImg} className='rounded-full w-14 h-14'></img></div>
-                                <div className="flex justify-start items-center w-60"><p className="text-xl">{ele.name}</p></div>
+                                <div className="pl-5 pr-5"><img src={search.friendImg} className='rounded-full w-14 h-14'></img></div>
+                                <div className="flex justify-start items-center w-60"><p className="text-xl">{search.friendName}</p></div>
                                 <div className="flex justify-center items-center">
-                                    <input type='radio' value={index} checked={x === `${index}`} onChange={(e) => { handleClickRadioButton(e, ele.userId) }} className=""></input>
+                                    <input type='radio' value={index} checked={x === `${index}`} onChange={(e) => { handleClickRadioButton(e, search.friendId) }} className=""></input>
                                 </div>
                             </div>
                         )
