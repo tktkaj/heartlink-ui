@@ -7,6 +7,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import MessageApplyModal from '../layout/MessageApplyModal';
 
 const NoChatContainer = styled.div`
   display: flex;
@@ -28,7 +29,8 @@ export default function ChatRoom() {
   const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
   const [newChatModal, setNewChatModal] = useState(false);  //  모달 상태
   const [searchList, setSearchlist] = useState([]);
-
+  const [msgRoomType, setMsgRoomType] = useState('PUBLIC');
+  const [openUser, setOpenUser] = useState(false);
 
 
   // 웹 소켓 연결
@@ -102,7 +104,7 @@ export default function ChatRoom() {
   }, [messages]);
 
 
-  // 상대방 클릭시 채팅방이 바뀌도록
+  // 상대방 클릭시 채팅방 내역 불러오는 함수
   const handleChangeRoom = (chat) => {
 
     const token = localStorage.getItem('access');
@@ -110,7 +112,9 @@ export default function ChatRoom() {
     setOtherLoginId(chat.otherLoginId);
     setMsgRoomId(chat.msgRoomId);
     setOtherUserId(chat.otherUserId);
-
+    setMsgRoomType(chat.msgRoomType);
+    setOpenUser(chat.openUser);
+ 
     axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
       {
         headers: {
@@ -370,7 +374,6 @@ export default function ChatRoom() {
         }
     })
     .catch((error)=>{
-      // alert(error);
     })
   }
 
@@ -382,10 +385,15 @@ export default function ChatRoom() {
       setNewChatModal(false);
   }
 
+  // 비공개 사용자 메시지 요청 수락 함수
+
+  // 비공개 사용자 메시지 요청 거부 함수
+
   return (
     <div style={{ display: 'flex' }}>
-      {newChatModal == true && <ChatListModal handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} />}
-      <ToastContainer />
+      {newChatModal == true && <ChatListModal newChatModal={newChatModal} handleOpenModal={handleOpenModal} handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
+      {msgRoomType=='PRIVATE' && !openUser && <MessageApplyModal />}
+     <ToastContainer />
       <MiniSide />
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />
       {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
