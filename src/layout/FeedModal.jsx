@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import EditPostModal from "./EditModal";
+
 
 const SettingBox = styled.div`
   background-color: white;
@@ -43,15 +45,23 @@ const Canvas = styled.div`
   z-index: 53;
 `;
 
+
 export default function FeedModal({
   closeModal,
   position = { top: 0, left: 0 },
 }) {
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const post = { content: "Sample post content", files: [] };
+
+  const handleEditClick = () => {
+    setIsEditModalOpen(true);
+  };
   return (
     <>
       <SettingBox position={position}>
         <ul>
-          <SettingList>
+        <SettingList onClick={handleEditClick}>
             <p>게시글 수정</p>
           </SettingList>
           <Link to="/deleteAlert">
@@ -62,6 +72,15 @@ export default function FeedModal({
         </ul>
       </SettingBox>
       <Canvas onClick={closeModal} />
+      <EditPostModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        post={post} // 수정할 게시글 정보 전달
+        onSave={(updatedPost) => {
+          console.log("Updated Post: ", updatedPost);
+          setIsEditModalOpen(false);
+        }}
+      />
     </>
   );
 }
