@@ -23,6 +23,8 @@ export const getMyPage = async (userId) => {
       feed: feedResult.data.data,
       likes: likesResult.data.data,
       bookmarks: bookmarksResult.data.data,
+      isBlocker: feedResult.data.isBlocker,
+      isBlocked: feedResult.data.isBlocked,
     };
   } catch (error) {
     console.error("Error fetching my page:", error);
