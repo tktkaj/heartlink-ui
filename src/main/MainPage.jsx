@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Feed from "./Feed";
 import profilethum from "../image/sidebar/test.png";
 import Upload from "../layout/Upload";
+import UploadModal from '../layout/UploadModal';
 import { useAuth } from "../api/AuthContext";
 import AlarmRight from "../alarm/AlarmRight";
 import { useEffect, useState } from "react";
@@ -65,6 +66,7 @@ export default function MainPage() {
   const { token, setToken, authAxios } = useAuth();
   console.log(token);
   const [partnerInfo, setPartnerInfo] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // 게시글 작성 모달 상태 관리
 
   useEffect(() => {
     const fetchPartnerInfo = async () => {
@@ -102,7 +104,8 @@ export default function MainPage() {
           <AlarmRight />
         </StatusContainer>
       </Container>
-      <Upload />
+      <Upload onClick={() => setIsModalOpen(true)} />
+      <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </MainContainer>
   );
 }
