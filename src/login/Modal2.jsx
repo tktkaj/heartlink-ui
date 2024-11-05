@@ -86,12 +86,13 @@ const Modal2 = ({ providerId, onSubmit }) => {
     }
     try {
       // 서버에 loginId와 providerId를 전송
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:9090/user/auth/loginId",
         { loginId },
         { params: { providerId } }
       );
       setError("");
+      alert("아이디가 성공적으로 등록되었습니다!");
       handleLoginRedirect(providerId);
     } catch (err) {
       setError("아이디 등록 중 오류가 발생했습니다.");
