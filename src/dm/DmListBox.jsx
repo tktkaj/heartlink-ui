@@ -19,7 +19,7 @@ const DmListBoxContainer = styled.div`
     }
 }
     animation: slideIn 0.4s forwards;
-    padding-top: 3vh;
+    padding-top: 3.8vh;
 `;
 
 const DmListHeader = styled.div`
