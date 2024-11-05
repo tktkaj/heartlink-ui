@@ -442,6 +442,7 @@ export default function ChatRoom() {
       })
   }
 
+  //  채팅방 삭제 모달 on/off
   const handleDeleteMessageModal = (deleteRoom, msgRoomId) =>{
     if (deleteRoom == false){
       setMsgRoomId(msgRoomId);
@@ -451,6 +452,7 @@ export default function ChatRoom() {
       setDeleteRomm(false);
   }
 
+  // 채팅방을 삭제하는 함수
   const handleDeleteMsgRoom = () =>{
     const token = localStorage.getItem('access');
     
@@ -517,7 +519,7 @@ export default function ChatRoom() {
           handleBlockUser={handleBlockUser}
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <NoChatContainer>채팅이 없습니다.</NoChatContainer>
+        <NoChatContainer></NoChatContainer>
       )}
     </div>
   );
