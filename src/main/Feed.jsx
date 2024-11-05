@@ -109,7 +109,7 @@ const FeedImages = styled.div`
   justify-content: center;
   align-items: center;
   img {
-    width: 99.6%;
+    width: 99.7%;
     height: 100%;
     object-fit: cover;
   }
@@ -257,7 +257,7 @@ export default function Feed() {
       .catch((e)=>{
         switch(e.status){
           case 404:
-            toast.warn("권한이 존재하지않아요ㅠㅜ",{
+            toast.warn("권한이 존재하지않습니다.",{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부
@@ -266,7 +266,7 @@ export default function Feed() {
             });
             break;
           case 500:
-            toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+            toast.warn("서버에 오류가 생겼습니다.",{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부
@@ -308,7 +308,7 @@ export default function Feed() {
           .catch((e)=>{
             switch(e.status){
               case 404:
-                toast.warn("권한이 존재하지않아요ㅠㅜ",{
+                toast.warn("권한이 존재하지않습니다.",{
                   position: "top-right",  // 위치 설정
                   autoClose: 2000,        // 자동 닫힘 시간
                   hideProgressBar: true, // 진행 바 숨김 여부
@@ -317,7 +317,7 @@ export default function Feed() {
                 });
                 break;
               case 500:
-                toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+                toast.warn("서버에 오류가 생겼습니다.",{
                   position: "top-right",  // 위치 설정
                   autoClose: 2000,        // 자동 닫힘 시간
                   hideProgressBar: true, // 진행 바 숨김 여부
@@ -396,7 +396,7 @@ export default function Feed() {
       .catch((e)=>{
         switch(e.status){
           case 404:
-            toast.warn("권한이 존재하지않아요ㅠㅜ",{
+            toast.warn("권한이 존재하지않습니다.",{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부
@@ -405,7 +405,7 @@ export default function Feed() {
             });
             break;
           case 500:
-            toast.warn("서버에 오류가 생겼습니다ㅜㅠ",{
+            toast.warn("서버에 오류가 생겼습니다.",{
               position: "top-right",  // 위치 설정
               autoClose: 2000,        // 자동 닫힘 시간
               hideProgressBar: true, // 진행 바 숨김 여부

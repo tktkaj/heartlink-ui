@@ -49,6 +49,7 @@ export default function AlarmRight() {
 
   const [notifications, setNotifications] = useState([]);
 
+  // 내 userId를 가져오는 axios
   useEffect(()=>{
     const token = localStorage.getItem('access');
 
