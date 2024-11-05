@@ -200,6 +200,8 @@ let BlockButton = styled.button`
 
 let FollowWrap = styled.div`
   padding-left: 100px;
+  display: flex;
+  gap: 35px;
 `;
 
 let FollowUl = styled.ul`
@@ -589,44 +591,18 @@ function MyPage() {
                   {profile.loginId}
                 </Nickname>
               </div>
-              {Iding && userId && String(Iding) === userId && (
-                <SettingWrap ref={settingRef}>
-                  <FaRegPenToSquare
-                    className="icon"
-                    onClick={() => setShowEditPopup(true)}
-                  />
-                  <RiUserSettingsLine
-                    className="icon"
-                    onClick={() => setShowSettingPopup(!showSettingPopup)}
-                  />
-                  {showSettingPopup && (
-                    <SettingPopup>
-                      <SettingOption
-                        onClick={() => {
-                          setShowBlockUser(true);
-                          setShowSettingPopup(false);
-                        }}
-                      >
-                        차단유저 관리
-                      </SettingOption>
-                      <SettingOption onClick={handlePrivacyToggle}>
-                        {isPrivate ? "계정 공개" : "계정 비공개"}
-                      </SettingOption>
-                    </SettingPopup>
-                  )}
-                </SettingWrap>
-              )}
+              
               {Iding && userId && String(Iding) !== userId && (
                 <ButtonWrap>
                   <FollowButton onClick={handleFollow}>
                     {profile.followStatus
                       ? "요청중"
                       : profile.followed
-                      ? "언팔로우"
+                      ? "팔로잉"
                       : "팔로우"}
                   </FollowButton>
                   <BlockButton onClick={handleBlock}>
-                    {isBlocked ? "차단 풀기" : "차단하기"}
+                    {isBlocked ? "차단해제" : "차단하기"}
                   </BlockButton>
                 </ButtonWrap>
               )}
@@ -684,6 +660,33 @@ function MyPage() {
             </EditPopup>
           )}
           <FollowWrap>
+          {Iding && userId && String(Iding) === userId && (
+                <SettingWrap ref={settingRef}>
+                  <FaRegPenToSquare
+                    className="icon"
+                    onClick={() => setShowEditPopup(true)}
+                  />
+                  <RiUserSettingsLine
+                    className="icon"
+                    onClick={() => setShowSettingPopup(!showSettingPopup)}
+                  />
+                  {showSettingPopup && (
+                    <SettingPopup>
+                      <SettingOption
+                        onClick={() => {
+                          setShowBlockUser(true);
+                          setShowSettingPopup(false);
+                        }}
+                      >
+                        차단유저 관리
+                      </SettingOption>
+                      <SettingOption onClick={handlePrivacyToggle}>
+                        {isPrivate ? "계정 공개" : "계정 비공개"}
+                      </SettingOption>
+                    </SettingPopup>
+                  )}
+                </SettingWrap>
+              )}
             <FollowUl>
               <FollowLi
                 onClick={() => {
