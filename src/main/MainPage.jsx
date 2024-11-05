@@ -135,7 +135,6 @@ export default function MainPage() {
               </div>
             </LoveStatus>
           )}
-          <AlarmRight />
           <LoveStatus>
             <ProfileThum>
               <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
