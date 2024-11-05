@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import kakaoLogo from "../image/sns/free-icon-kakao-talk-4494622.png";
 import naverLogo from "../image/sns/pngwing.com.png";
@@ -213,29 +213,25 @@ export default function Login() {
     setShowFindId(true);
   };
 
-
-
   const location = useLocation();
   const [errorType, setErrorType] = useState(null);
   const [providerId, setProviderId] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const error = params.get('errorType');
-    const provider = params.get('providerId');
+    const error = params.get("errorType");
+    const provider = params.get("providerId");
 
     setErrorType(error);
     setProviderId(provider);
-
   }, [location]);
-
 
   return (
     <LoginBox>
-      {errorType === 'phone' && providerId && (
+      {errorType === "phone" && providerId && (
         <Modal1 providerId={providerId} />
       )}
-      {errorType === 'loginId' && providerId && (
+      {errorType === "loginId" && providerId && (
         <Modal2 providerId={providerId} />
       )}
       <LoginBoxRight onSubmit={handleSubmit}>
@@ -280,8 +276,8 @@ export default function Login() {
             <a
               href="javascript:void(0);"
               onClick={() =>
-              (window.location.href =
-                "http://localhost:9090/oauth2/authorization/kakao")
+                (window.location.href =
+                  "http://localhost:9090/oauth2/authorization/kakao")
               }
             >
               <img src={logs.kakaoLogo} alt="카카오 로그인" />
@@ -291,8 +287,8 @@ export default function Login() {
             <a
               href="javascript:void(0);"
               onClick={() =>
-              (window.location.href =
-                "http://localhost:9090/oauth2/authorization/naver")
+                (window.location.href =
+                  "http://localhost:9090/oauth2/authorization/naver")
               }
             >
               <img src={logs.naverLogo} alt="네이버 로그인" />
@@ -302,8 +298,8 @@ export default function Login() {
             <a
               href="javascript:void(0);"
               onClick={() =>
-              (window.location.href =
-                "http://localhost:9090/oauth2/authorization/google")
+                (window.location.href =
+                  "http://localhost:9090/oauth2/authorization/google")
               }
             >
               <img src={logs.googleLogo} alt="구글 로그인" />
