@@ -146,10 +146,23 @@ const Modal1 = ({ providerId }) => {
       setResult(response.data);
       console.log("인증번호 확인", response);
       setError("");
+      await axios.post(
+        "http://localhost:9090/user/auth/phone",
+        { phone }, 
+        { params: { providerId } } 
+      );
+      handleLoginRedirect(providerId);
     } catch (err) {
       setError("인증번호가 일치하지 않습니다.");
+      setVerificationCode("");
       console.error(err);
     }
+  };
+
+  const handleLoginRedirect = (providerId) => {
+    const provider = providerId.split(' ')[0];
+    const redirectUrl = `http://localhost:9090/oauth2/authorization/${provider}`;
+    window.location.href = redirectUrl;
   };
 
   const handleOverlayClick = (e) => {
@@ -157,6 +170,8 @@ const Modal1 = ({ providerId }) => {
       window.location.href = "/login";
     }
   };
+
+  
 
   return (
     <PopupOverlay onClick={handleOverlayClick}>
