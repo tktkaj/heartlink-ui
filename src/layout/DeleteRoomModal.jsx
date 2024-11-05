@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function DeleteRoomModal({handleDeleteMessageModal, deleteRoom }) {
+export default function DeleteRoomModal({handleDeleteMessageModal, deleteRoom, handleDeleteMsgRoom }) {
     return (
         <div>
             <div className="fixed bg-white top-0 left-0 bottom-0 right-0 opacity-10" onClick={()=>{handleDeleteMessageModal(deleteRoom)}}>
@@ -10,8 +10,8 @@ export default function DeleteRoomModal({handleDeleteMessageModal, deleteRoom })
                     <div><p>이 유저와의 채팅을 종료하시겠습니까?</p></div>
                 </div>
                 <div className='flex justify-center items-center gap-16 pb-5'>
-                    <button className='bg-indigo-400 px-4 py-2 text-white rounded-lg'>나가기</button>
-                    <button className='bg-slate-300 px-4 py-2 rounded-lg' >취소</button>
+                    <button className='bg-indigo-400 px-4 py-2 text-white rounded-lg' onClick={handleDeleteMsgRoom}>나가기</button>
+                    <button className='bg-slate-300 px-4 py-2 rounded-lg' onClick={()=>{handleDeleteMessageModal(deleteRoom)}}>취소</button>
                 </div>
             </div>
         </div>

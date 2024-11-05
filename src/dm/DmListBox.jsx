@@ -92,7 +92,7 @@ export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleO
               <div style={{ marginBottom: '1px' }}>{chatUser.otherLoginId}</div>
               <div style={{ fontSize: '0.8rem' }}>{chatUser.lastMessage && chatUser.lastMessage.length > 18 ? chatUser.lastMessage.substring(0, 18) + "..." : chatUser.lastMessage}</div>
             </div>
-            <div style={{marginLeft:'0px'}}><MdCancel style={{fontSize: '1.5rem'}} onClick={()=>{handleDeleteMessageModal(deleteRoom)}}/></div>
+            <div style={{marginLeft:'0px'}}><MdCancel style={{fontSize: '1.5rem'}} onClick={()=>{handleDeleteMessageModal(deleteRoom, chatUser.msgRoomId)}}/></div>
           </DmItem>
         ))
       ) : (

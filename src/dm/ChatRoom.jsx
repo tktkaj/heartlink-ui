@@ -264,7 +264,6 @@ export default function ChatRoom() {
 
   // 채팅방을 만드는 함수
   const handleNewRoom = (otherUserId) => {
-    console.log("click");
     const token = localStorage.getItem('access');
 
     axios.post(`http://localhost:9090/dm/new/${otherUserId}`, null,
@@ -443,11 +442,48 @@ export default function ChatRoom() {
       })
   }
 
-  const handleDeleteMessageModal = (deleteRoom) =>{
-    if (deleteRoom == false)
+  const handleDeleteMessageModal = (deleteRoom, msgRoomId) =>{
+    if (deleteRoom == false){
+      setMsgRoomId(msgRoomId);
       setDeleteRomm(true);
+    }
     else if (deleteRoom == true)
       setDeleteRomm(false);
+  }
+
+  const handleDeleteMsgRoom = () =>{
+    const token = localStorage.getItem('access');
+    
+    axios.delete(`http://localhost:9090/dm/${msgRoomId}`,
+      {
+        headers: {
+          Authorization : `${token}`
+        }
+      }
+    )
+    .then((response)=>{
+      setMsgRoomId();
+      setDeleteRomm(false);
+
+      axios.get("http://localhost:9090/dm"
+        , {
+          headers: {
+            Authorization: `${token}`
+          }
+        }
+      )
+        .then((response) => {
+          // 서버로부터 받은 데이터를 상태로 설정
+          setDmList(response.data);
+  
+        })
+        .catch((error) => {
+          console.error('Error fetching the direct message:', error);
+        });
+    })
+    .catch((error)=>{
+
+    })
   }
 
 
@@ -458,7 +494,7 @@ export default function ChatRoom() {
       {/* 모달 */}
       {newChatModal == true && <ChatListModal newChatModal={newChatModal} handleOpenModal={handleOpenModal} handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
       {msgRoomType == 'PRIVATE' && !openUser && <MessageApplyModal handleMessageAgree={handleMessageAgree} handleMessageReject={handleMessageReject} />}
-      {deleteRoom && <DeleteRoomModal handleDeleteMessageModal={handleDeleteMessageModal} deleteRoom={deleteRoom}/>}
+      {deleteRoom && <DeleteRoomModal handleDeleteMessageModal={handleDeleteMessageModal} deleteRoom={deleteRoom} handleDeleteMsgRoom={handleDeleteMsgRoom}/>}
 
       {/* 알람 toastify*/}
       <ToastContainer />
