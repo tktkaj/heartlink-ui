@@ -185,7 +185,7 @@ export default function UploadModal({ isOpen, onClose }) {
     }
   
     const formData = new FormData();
-    
+  
     // 파일을 FormData에 추가
     files.forEach((file) => {
       formData.append('files', file.file); // 'files' 키로 파일 추가
@@ -199,11 +199,6 @@ export default function UploadModal({ isOpen, onClose }) {
   
     formData.append('post', JSON.stringify(postDTO)); // JSON 데이터는 문자열로 추가
   
-    // FormData 내용 로그로 출력 (디버깅 용)
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ':', pair[1]);
-    }
-  
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
@@ -211,16 +206,26 @@ export default function UploadModal({ isOpen, onClose }) {
       // 서버에 FormData 보내기
       const response = await authAxios.post('http://localhost:9090/feed/write', formData);
   
-      if (!response.ok) {
+      // 응답이 정상적으로 오면
+      if (response.status === 201) {
+        alert('업로드 하였습니다.'); 
+        resetForm();
+        onClose();
+      } else {
         throw new Error('업로드에 실패했습니다.');
       }
-  
-      console.log('업로드 성공:', await response.json());
     } catch (error) {
-      console.error('업로드 중 오류 발생:', error);
-      alert('업로드 중 오류가 발생했습니다.');
+      // 서버에서 반환한 오류 메시지를 출력
+      if (error.response) {
+        console.error('서버 오류:', error.response.data); // 서버 오류 응답 확인
+        alert('서버 오류: ' + error.response.data);
+      } else {
+        console.error('업로드 중 오류 발생:', error.message); // 네트워크 오류 등
+        alert('업로드 중 오류가 발생했습니다.');
+      }
     }
   };
+  
   
 
   const handleFileChange = (event) => {
