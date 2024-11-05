@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Password from "./Password";
 import { getAuthAxios } from "../api/authAxios";
+import { BsHeartPulseFill } from "react-icons/bs";
 
 const SettingBox = styled.div`
   background-color: white;
@@ -49,7 +50,7 @@ const Canvas = styled.div`
 
 export default function Setting({ closeSetting }) {
   const [showPassword, setShowPassword] = useState(false);
-  const [isSoonBreak, setIsSoonBreak] = useState(false);
+  const [isSoonBreak, setIsSoonBreak] = useState();
 
   const handlePasswordClick = (e) => {
     e.preventDefault();
@@ -57,59 +58,82 @@ export default function Setting({ closeSetting }) {
     setShowPassword(true);
   };
 
-  const handleBreakCouple = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const access = localStorage.getItem("access");
-      const authAxios = getAuthAxios(access);
-      await authAxios.post("http://localhost:9090/couple/checkSoonBreak");
-      setIsSoonBreak(true);
-    } catch (error) {
-      console.error("Error breaking couple:", error);
-    }
-  };
-
-  const handleImmediateBreak = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const access = localStorage.getItem("access");
-      const authAxios = getAuthAxios(access);
-      await authAxios.post("http://localhost:9090/couple/checkSoonBreak");
-      setIsSoonBreak(false);
-    } catch (error) {
-      console.error("Error immediate breaking couple:", error);
-    }
-  };
-
   useEffect(() => {
-    const checkSoonBreak = async () => {
+    const coupleCheck = async () => {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
+        const res = await authAxios.get(
           "http://localhost:9090/couple/checkSoonBreak"
         );
-        setIsSoonBreak(response.data);
+        setIsSoonBreak(res.data);
+        console.log("커플유예?", res.data);
       } catch (error) {
-        console.error("Error checking soon break status:", error);
+        console.error("Error breaking couple:", error);
       }
     };
+    coupleCheck();
+  }, [isSoonBreak]);
 
-    checkSoonBreak();
-  }, []);
+  const handleCancelBreak = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (window.confirm("커플 해지를 취소하시겠습니까?")) {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        await authAxios.put("http://localhost:9090/couple/unlink/cancel");
+        setIsSoonBreak(false);
+        window.location.reload();
+        console.log("해지취소?", isSoonBreak);
+      } catch (error) {
+        console.error("Error canceling break:", error);
+      }
+    }
+  };
+
+  const handleFinalBreak = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (window.confirm("커플을 즉시 해지하시겠습니까? 되돌릴 수 없습니다.")) {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        await authAxios.delete("http://localhost:9090/couple/finalNowUnlink");
+        setIsSoonBreak(false);
+        window.location.reload();
+      } catch (error) {
+        console.error("Error immediate breaking couple:", error);
+      }
+    }
+  };
 
   return (
     <>
       <SettingBox>
         <ul>
-          <SettingList
-            onClick={isSoonBreak ? handleImmediateBreak : handleBreakCouple}
-          >
-            <FaHeartBroken className="settingIcon" />
-            <p>{isSoonBreak ? "커플 즉시 해지" : "커플 해지"}</p>
-          </SettingList>
+          {isSoonBreak && (
+            <SettingList onClick={handleCancelBreak}>
+              <BsHeartPulseFill className="settingIcon" />
+              <p>커플해지 취소</p>
+            </SettingList>
+          )}
+          {!isSoonBreak && (
+            <Link to="/alertCouple">
+              <SettingList>
+                <FaHeartBroken className="settingIcon" />
+                <p>커플 해제</p>
+              </SettingList>
+            </Link>
+          )}
+          {isSoonBreak && (
+            <SettingList onClick={handleFinalBreak}>
+              <FaHeartBroken className="settingIcon" />
+              <p>커플 즉시해제</p>
+            </SettingList>
+          )}
           <SettingList onClick={handlePasswordClick}>
             <RiLockPasswordFill className="settingIcon" />
             <p>비밀번호 변경</p>
