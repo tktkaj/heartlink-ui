@@ -138,20 +138,14 @@ function LinkMatchRecord({ closeRecord }) {
                 </QuestionTitle>
                 <AnswerWrapper>
                   <Answer>
-                    내 답변:{" "}
-                    {mission?.myAnswer?.myChoice === 0
-                      ? mission?.match1
-                      : mission?.match2}
+                    내 답변 : {mission.myChoice==-1? "아직 답변하지 않음":(mission.myChoice==0?mission.match1:mission.match2)}
                   </Answer>
                   <Answer>
-                    짝꿍 답변:{" "}
-                    {mission?.partnerAnswer?.partnerChoice === 0
-                      ? mission?.match1
-                      : mission?.match2}
+                    짝꿍 답변 : {mission.partnerChoice==-1? "아직 답변하지 않음":(mission.partnerChoice==0?mission.match1:mission.match2)}
                   </Answer>
                 </AnswerWrapper>
               </QuestionWrapper>
-              <Date>{mission?.myAnswer?.myDate}</Date>
+              <Date>{mission.date}</Date>
             </MissionItem>
           ))}
         </MissionList>

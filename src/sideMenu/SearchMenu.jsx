@@ -71,7 +71,7 @@ const [keyword, setKeyword] = useState('');
 const [searchResults, setSearchResults] = useState([]);
 const [isSearched, setIsSearched] = useState(false);
 const [searchHistory, setSearchHistory] = useState([]);
-
+const [isSearchedHistory, setIsSearchedHistory] = useState(false);
 const handleSearch = (e) => {
     e.preventDefault();
     onSearchResults(keyword);
@@ -80,6 +80,7 @@ const handleSearch = (e) => {
 
 const handleTagClick = (tagName) => {
     console.log(`태그 클릭됨: ${tagName}`);
+    onKeywordChange('&' + tagName);
     onTagClick(tagName);
 };
 
@@ -104,7 +105,7 @@ useEffect(() => {
             console.error('API 요청 실패:', error.message);
         }
     }  finally {
-            setIsSearched(true);
+            setIsSearched(false);
         }
     };
     getSearchHistory();
@@ -126,9 +127,10 @@ useEffect(() => {
                     },
                 }
             );
-            console.log('키워드 검색 결과:', response.data);
+            console.log('검색 결과:', response.data);
             setSearchResults([response.data]);
-            onSearchResults([response.data]);
+            console.log('setSearchResults 결과:', searchResults);
+            onSearchResults(response.data);
             onKeywordChange(keyword);
              if (typeof response.data === 'string') {
                 setSearchResults(response.data);
@@ -174,19 +176,19 @@ useEffect(() => {
         switch (history.type) {
             case 'id':
                 return (
-                    <Liststyle key={history.loginId} onClick={() => historyClick('@' + history.keyword)}>
+                    <Liststyle key={history.keyword} onClick={() => historyClick('@' + history.keyword)}>
                         <p style={{ fontFamily: 'SokchoBadaBatang' }}>@{history.keyword}</p>
                     </Liststyle>
                 );
             case 'tag':
                 return (
-                    <Liststyle key={history.tagName} onClick={() => historyClick('&' + history.keyword)}>
+                    <Liststyle key={history.keyword} onClick={() => historyClick('&' + history.keyword)}>
                         <p style={{ fontFamily: 'SokchoBadaBatang' }}>&{history.keyword}</p>
                     </Liststyle>
                 );
             case 'content':
                 return (
-                    <Liststyle key={history.tagName} onClick={() => historyClick(history.keyword)}>
+                    <Liststyle key={history.keyword} onClick={() => historyClick(history.keyword)}>
                         <p style={{ fontFamily: 'SokchoBadaBatang' }}>{history.keyword}</p>
                     </Liststyle>
                 );
@@ -216,7 +218,7 @@ useEffect(() => {
     Array.isArray(searchResults) && searchResults.length > 0 ? (
         <div>
             {searchResults.map((result, index) => (
-                <div key={result.id}>
+                <div key={index}>
                     {renderResult(result)}
                 </div>
             ))}
@@ -229,7 +231,9 @@ useEffect(() => {
 
 
                 {/* 검색기록 */}
-                <div style={{ fontSize: '1.2rem', marginBottom: '20px', paddingLeft: '2vw' }}>
+                {isSearched? null:(
+                    <>
+                    <div style={{ fontSize: '1.2rem', marginBottom: '20px', paddingLeft: '2vw', marginTop:'20px' }}>
                     <h1>검색기록</h1>
                 </div>
                 <SearchList>
@@ -245,6 +249,9 @@ useEffect(() => {
     ) : (
         <div style={{ paddingLeft: '2vw' }}>검색 기록이 없습니다.</div>
     )}</SearchList>
+                    </>
+                )}
+                
             </MenuContainer>
         </>
     )

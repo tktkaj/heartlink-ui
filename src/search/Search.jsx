@@ -83,7 +83,7 @@ function Search() {
     const [isPopular, setIsPopular] = useState(false);
 
     useEffect(() => {
-        getPopularPosts();
+        // getPopularPosts();
         // getAllPosts();
     }, []);
 
@@ -116,6 +116,8 @@ function Search() {
     const handleSearchResults = (results) => {
         setIsTagView(false);
         setIsPopular(false);
+        console.log('Search의 검색 결과다ㅏㅏㅏㅏ : ', results);
+        console.log('Search의 keyword : ', keyword);
         const extractedResults = results.map((result) => result);
         setSearchResults(extractedResults);
     };
@@ -163,7 +165,7 @@ function Search() {
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
-                        {setIsPopular? (
+                        {/* {searchResults && searchResults.length > 0 ? (
                         chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
@@ -173,11 +175,13 @@ function Search() {
                                 ))}
                             </PostList>
                         ))
-                    ):''}
+                    ):''} */}
 
 
 
-                    {!setIsPopular ? (isTagView ? 
+                    {/* {!isPopular ? (isTagView ?  */}
+                                        {isTagView ? 
+
                 // 태그 검색 결과 뷰
                 (
                     searchResults && searchResults.length > 0 ? (
@@ -197,8 +201,8 @@ function Search() {
              : (
                 // 기존 검색 결과 뷰
                 !keyword.startsWith('&') && !keyword.startsWith('@') ? (
-                    searchResults[0] && searchResults[0].length > 0 ? (
-                        chunkArray(searchResults[0], 3).map((chunk, chunkIndex) => (
+                    searchResults && searchResults.length > 0 ? (
+                        chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
                                     <Post key={result.id} background={result.img}>
@@ -211,7 +215,7 @@ function Search() {
                         <div>검색 결과가 없습니다.</div>
                     )
                 ) : ''
-            )):''}
+            )}
                     </PostWrap>
                 </ContentWrap>
             </Content>
