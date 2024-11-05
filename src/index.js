@@ -18,6 +18,9 @@ import CoupleConnect from "./couple/CoupleConnect";
 import CoupleConnect2 from "./couple/CoupleConnect2";
 import SignUp from "./join/SignUp";
 import Condition from "./join/Condition";
+import Modal1 from "./login/Modal1";
+import Modal2 from "./login/Modal2";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -40,6 +43,8 @@ const router = createBrowserRouter([
       { path: "/condition", element: <Condition /> },
       { path: "/coupleConnect", element: <CoupleConnect /> },
       { path: "/coupleConnect2", element: <CoupleConnect2 /> },
+      { path: "/modal1", element: <Modal1 /> },
+      { path: "/modal2", element: <Modal2 /> },
     ],
   },
 ]);

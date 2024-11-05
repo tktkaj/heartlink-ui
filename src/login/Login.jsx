@@ -7,7 +7,6 @@ import MainLogo from "../image/logo/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
 import FindId from "./FindId";
-import axios from "axios";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -209,7 +208,6 @@ export default function Login() {
     setShowFindId(true);
   };
 
-
   return (
     <LoginBox>
       <LoginBoxRight onSubmit={handleSubmit}>
@@ -251,17 +249,35 @@ export default function Login() {
         <LoginButton type="submit">LOGIN</LoginButton>
         <div style={{ display: "flex", gap: "15px" }}>
           <OAuthButton>
-            <a href="javascript:void(0);" onClick={() => window.location.href = "http://localhost:9090/oauth2/authorization/kakao"}>
+            <a
+              href="javascript:void(0);"
+              onClick={() =>
+                (window.location.href =
+                  "http://localhost:9090/oauth2/authorization/kakao")
+              }
+            >
               <img src={logs.kakaoLogo} alt="카카오 로그인" />
             </a>
           </OAuthButton>
           <OAuthButton>
-            <a href="javascript:void(0);" onClick={() => window.location.href = "http://localhost:9090/oauth2/authorization/naver"}>
+            <a
+              href="javascript:void(0);"
+              onClick={() =>
+                (window.location.href =
+                  "http://localhost:9090/oauth2/authorization/naver")
+              }
+            >
               <img src={logs.naverLogo} alt="네이버 로그인" />
             </a>
           </OAuthButton>
           <OAuthButton>
-            <a href="javascript:void(0);" onClick={() => window.location.href = "http://localhost:9090/oauth2/authorization/google"}>
+            <a
+              href="javascript:void(0);"
+              onClick={() =>
+                (window.location.href =
+                  "http://localhost:9090/oauth2/authorization/google")
+              }
+            >
               <img src={logs.googleLogo} alt="구글 로그인" />
             </a>
           </OAuthButton>
