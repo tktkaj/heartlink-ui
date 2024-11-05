@@ -8,10 +8,15 @@ export const login = async (loginId, password) => {
       password,
     });
     console.log(response);
+
+    // 헤더에서 토큰 저장
     const authorization = response.headers.authorization;
     const refreshToken = response.headers.refreshtoken;
-    //const userId = response.data.userId;
     const headers = { authorization, refreshToken };
+
+    // 쿠키에서 리프레시 토큰을 읽기
+    const refreshTokenFromCookie = Cookies.get("refreshToken");
+    console.log(refreshTokenFromCookie);
 
     return headers;
   } catch (error) {
