@@ -3,7 +3,7 @@ import Feed from "./Feed";
 import profilethum from "../image/sidebar/test.png";
 import Upload from "../layout/Upload";
 import UploadModal from "../layout/UploadModal";
-import { useAuth } from "../api/AuthContext";
+import AdPlease from "./AdPlease";
 import AlarmRight from "../alarm/AlarmRight";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -41,8 +41,8 @@ const StatusContainer = styled.div`
 `;
 
 const LoveStatus = styled.div`
-  width: 19vw;
-  height: 15vh;
+  width: 21vw;
+  height: 14.8vh;
   background-color: white;
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 15px;
@@ -50,6 +50,7 @@ const LoveStatus = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
 `;
 const ProfileThum = styled.div`
   width: 60px;
@@ -63,6 +64,20 @@ const ProfileThum = styled.div`
   }
   margin-right: 15px;
 `;
+
+const ProfileTxt = styled.div`
+  width: 11vw;
+`;
+const formatBio = (bio) => {
+
+  const lines = bio.split('\n');
+
+  if (lines.length > 2) {
+    return `${lines[0]}\n${lines[1]}…`;
+  }
+
+  return lines.join('\n');
+};
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -163,23 +178,24 @@ export default function MainPage() {
               <ProfileThum>
                 <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
               </ProfileThum>
-              <div>
-                <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
+              <ProfileTxt>
+                <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "18px" }}>
                   {partnerInfo?.coupleNickname}
                 </p>
-                <p style={{ fontSize: "15px" }}>접속중</p>
-              </div>
+                <p style={{ fontSize: "14px" }}>  {partnerInfo?.coupleBio ? formatBio(partnerInfo?.coupleBio) : ''} </p>
+              </ProfileTxt>
             </LoveStatus>
           ) : (
             <LoveStatus>
-              <div>
+              <ProfileTxt>
                 <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
                   커플 없음
                 </p>
-              </div>
+              </ProfileTxt>
             </LoveStatus>
           )}
           <AlarmRight />
+        <AdPlease />
         </StatusContainer>
       </Container>
       <Upload onClick={() => setIsModalOpen(true)} />

@@ -4,6 +4,7 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { FiMessageCircle } from 'react-icons/fi'; // FiMessageCircle 추가
 
 
 const ModalOverlay = styled.div`
@@ -57,7 +58,6 @@ const ModalContent = styled.div`
   align-items: center;
   padding: 20px;
 `;
-
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -120,16 +120,21 @@ const UploadButton = styled.button`
   }
 `;
 
-export default function EditPostModal({ isOpen, onClose, post, onSave }) {
-  console.log(`나야 포스트 ${post.postId}`);
-  const [files, setFiles] = useState(post.files || []);
-  const [text, setText] = useState(post.content || '');
-  console.log("post확인 : ", post);
+const FiMessageCircleButton = styled(FiMessageCircle)`
+  font-size: 40px;
+  cursor: pointer;
+`;
+
+export default function FeedDetail({ isOpen, onClose, post, onSave }) {
+  console.log("EditPostModal 실행!");
+  console.log(`나야 포스트 ${post?.postId}`); // null 체크 추가
+  const [files, setFiles] = useState(post?.files || []);
+  const [text, setText] = useState(post?.content || '');
 
   useEffect(() => {
     if (isOpen) {
-      setFiles(post.files || []);
-      setText(post.content || '');
+      setFiles(post?.files || []);
+      setText(post?.content || '');
     }
   }, [isOpen, post]);
 
@@ -141,60 +146,65 @@ export default function EditPostModal({ isOpen, onClose, post, onSave }) {
     }
   };
 
-
-
   const handleFileChange = (postId, e) => {
     const selectedFiles = Array.from(e.target.files);
-    // const access = localStorage.getItem("access");
-    // const axios = getAuthAxios(access);
-    // const response = axios.put('http://localhost:9090/feed/${postId}/update');
-
     const fileURLs = selectedFiles.map((file) => ({
       url: URL.createObjectURL(file),
       type: file.type,
     }));
-    setFiles((prevFiles) => [...prevFiles, ...fileURLs])
+    setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
   };
 
   const handleSave = () => {
-    // 수정된 내용 저장 로직을 추가
     const updatedPost = { ...post, content: text, files: files };
     onSave(updatedPost);
     onClose();
   };
+  
 
   return (
-    <ModalOverlay onClick={handleOverlayClick}>
-      <CloseButton onClick={onClose}>
-        <IoClose />
-      </CloseButton>
-      <PreviewModalContainer>
-        <PreviewContent>
-          <LeftSection>
-            <Carousel showThumbs={false}>
-              {files.map((file, index) => (
-                <div key={index}>
-                  {file.type.startsWith('image/') ? (
-                    <PreviewImage src={file.url} alt={`Preview ${index + 1}`} />
-                  ) : (
-                    <PreviewVideo controls>
-                      <source src={file.url} type={file.type} />
-                    </PreviewVideo>
-                  )}
-                </div>
-              ))}
-            </Carousel>
-          </LeftSection>
-          <RightSection>
-            <TextInput
-              placeholder="내용을 입력하세요..."
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            />
-            <UploadButton onClick={handleSave}>수정</UploadButton>
-          </RightSection>
-        </PreviewContent>
-      </PreviewModalContainer>
-    </ModalOverlay>
+    <div>
+      {/* FiMessageCircle 클릭 시 모달 열기 */}
+      
+      <ModalOverlay onClick={handleOverlayClick}>
+        <CloseButton onClick={onClose}>
+          <IoClose />
+        </CloseButton>
+        <PreviewModalContainer>
+          <PreviewContent>
+            <LeftSection>
+              <Carousel showThumbs={false}>
+                {files.length === 0 ? (
+                  <div>선택된 파일이 없습니다.</div>
+                ) : (
+                  files.map((file, index) => (
+                    <div key={index}>
+                      {file.type && file.type.startsWith('image/') ? (
+                        <PreviewImage src={file.url} alt={`Preview ${index + 1}`} />
+                      ) : file.type && file.type.startsWith('video/') ? (
+                        <PreviewVideo controls>
+                          <source src={file.url} type={file.type} />
+                        </PreviewVideo>
+                      ) : (
+                        <div>미리보기가 지원되지 않는 파일입니다.</div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </Carousel>
+            </LeftSection>
+            <RightSection>
+              <TextInput
+                placeholder="내용을 입력하세요..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              />
+              <UploadButton onClick={handleSave}>수정</UploadButton>
+            </RightSection>
+          </PreviewContent>
+        </PreviewModalContainer>
+      </ModalOverlay>
+    </div>
   );
 }
+
