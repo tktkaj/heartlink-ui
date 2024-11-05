@@ -77,42 +77,39 @@ function Search() {
     const PostImage = require('../image/search/ping.jpg');
     const [searchResults, setSearchResults] = useState([]);
     const [keyword, setKeyword] = useState('');
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
-    const navigate = useNavigate(); // useNavigate를 컴포넌트 최상단에서 호출
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const [isTagView, setIsTagView] = useState(false);
+
 
     useEffect(() => {
         getPopularPosts();
+
+        
     }, []);
 
     const getPopularPosts = async () => {
         try {
             const access = localStorage.getItem("access");
-            const authAxios = getAuthAxios(access); // 함수 호출로 인스턴스를 반환
+            const authAxios = getAuthAxios(access);
             const response = await authAxios.get("http://localhost:9090/search/getSearchPost");
-            console.log("fffffresponse : ", response);
             const popularPosts = response.data;
             setSearchResults(popularPosts);
-            console.log("인기글 가져온거다 : ", popularPosts); // 여기서 로그를 찍어야 함
         } catch (error) {
             console.error("Error fetching popular posts:", error);
         }
     };
 
     const handleSearchResults = (results) => {
+        setIsTagView(false);
         const extractedResults = results.map((result) => result);
         setSearchResults(extractedResults);
-
-        console.log("search의 searchResults : ", searchResults);
     };
-
-    useEffect(() => {
-    }, [searchResults, keyword]);
 
     const handleKeywordChange = (newKeyword) => {
         setKeyword(newKeyword);
     };
 
-      // 배열을 주어진 크기로 잘라내는 함수
       const chunkArray = (arr, chunkSize) => {
         const result = [];
         for (let i = 0; i < arr.length; i += chunkSize) {
@@ -121,36 +118,72 @@ function Search() {
         return result;
     };
 
+    const handleTagClick = (tagName) => {
+        setIsTagView(true); // 태그 뷰로 변경
+        
+        const getTagPosts = async () => {
+            try {
+                const access = localStorage.getItem("access");
+                const authAxios = getAuthAxios(access);
+                const response = await authAxios.get(`http://localhost:9090/search/tag?keyword=${tagName}`);
+                console.log("tag검색인데 search다 : ", response.data);
+                setSearchResults(response.data);
+            } catch (error) {
+                console.error("Error fetching tag posts:", error);
+            }
+        };
+        getTagPosts(tagName);
+    };
+
     return (
         <div style={{ display: 'flex' }}>
             {/* <SideMenu /> */}
             <MiniSide />
-            <SearchMenu onSearchResults={handleSearchResults} onKeywordChange={handleKeywordChange} />
+            <SearchMenu onTagClick={handleTagClick} onSearchResults={handleSearchResults} onKeywordChange={handleKeywordChange} />
 
             <Content>
                 <ContentWrap>
                     <SearchResultWrap>
                         <SearchResult>
-                            {keyword ? (keyword.charAt(0) === '@' || keyword.charAt(0) === '&' ? '인기글 리스트' : keyword) : '인기글 리스트'}
+                            {isTagView? keyword :( keyword ? (keyword.charAt(0) === '@' || keyword.charAt(0) === '&' ? '인기글 리스트' : keyword) : '인기글 리스트')}
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
-                    {!keyword.startsWith('&') && !keyword.startsWith('@') ? (
+                    {isTagView ? 
+                // 태그 검색 결과 뷰
+                (
+                    searchResults && searchResults.length > 0 ? (
+                        chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
+                            <PostList key={chunkIndex}>
+                                {chunk.map((result) => (
+                                    <Post key={result.postId} background={result.fileUrl || PostImage}>
+                                        <PostLink href={`/feed/details/${result.postId}`}></PostLink>
+                                    </Post>
+                                ))}
+                            </PostList>
+                        ))
+                    ) : (
+                        <div>검색 결과가 없습니다.</div>
+                    )
+                )
+             : (
+                // 기존 검색 결과 뷰
+                !keyword.startsWith('&') && !keyword.startsWith('@') ? (
                     searchResults[0] && searchResults[0].length > 0 ? (
-        // searchResults[0] 배열을 3개씩 묶어서 PostList로 표시
-        chunkArray(searchResults[0], 3).map((chunk, chunkIndex) => (
-            <PostList key={chunkIndex}>
-                {chunk.map((result) => (
-                    <Post key={result.id} background={result.img || PostImage}>
-                        <PostLink href={`/feed/details/${result.id}`}></PostLink>
-                    </Post>
-                ))}
-            </PostList>
-        ))
-    ) : (
-        <div>검색 결과가 없습니다.</div>
-    )
-) : ''}
+                        chunkArray(searchResults[0], 3).map((chunk, chunkIndex) => (
+                            <PostList key={chunkIndex}>
+                                {chunk.map((result) => (
+                                    <Post key={result.id} background={result.img || PostImage}>
+                                        <PostLink href={`/feed/details/${result.id}`}></PostLink>
+                                    </Post>
+                                ))}
+                            </PostList>
+                        ))
+                    ) : (
+                        <div>검색 결과가 없습니다.</div>
+                    )
+                ) : ''
+            )}
                     </PostWrap>
                 </ContentWrap>
             </Content>

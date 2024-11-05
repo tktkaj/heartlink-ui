@@ -64,7 +64,7 @@ const Liststyle = styled.div`
     padding-left: 2vw;
 `
 
-export default function SearchMenu({ onSearchResults, onKeywordChange }) {
+export default function SearchMenu({ onSearchResults, onKeywordChange, onTagClick }) {
 const [keyword, setKeyword] = useState('');
 const [searchResults, setSearchResults] = useState([]);
 const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추가
@@ -74,6 +74,12 @@ const handleSearch = (e) => {
     onSearchResults(keyword); // 검색 결과를 부모에게 전달
     onKeywordChange(keyword); // 검색어를 부모에게 전달
 };
+
+const handleTagClick = (tagName) => {
+    console.log(`태그 클릭됨: ${tagName}`);
+    onTagClick(tagName);
+};
+
 
     const searchSubmit = async (e) => {
         e.preventDefault();
@@ -111,8 +117,6 @@ const handleSearch = (e) => {
     };
 
     const renderResult = (result) => {
-        console.log("지피티가하라고함"+result); // 각 결과 객체를 출력해봄
-
         switch (result.type) {
             case 'id':
                 return <Link to={`/user/profile/${result.userId}`}>
@@ -123,7 +127,7 @@ const handleSearch = (e) => {
                 <p style={{ fontFamily: 'SokchoBadaBatang' }}>{result.loginId}</p>
             </Liststyle></Link>;
             case 'tag':
-                return <Liststyle key={result.tagName}>
+                return <Liststyle key={result.tagName} onClick={() => handleTagClick(result.tagName)}>
                 <ProfileThum>
                     &
                 </ProfileThum>
