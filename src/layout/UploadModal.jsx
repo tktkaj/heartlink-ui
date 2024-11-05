@@ -4,7 +4,7 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
+import { getAuthAxios } from '../api/authAxios';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -32,17 +32,16 @@ const ModalContainer = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 20px; /* 위에서의 위치 */
-  right: 20px; /* 오른쪽에서의 위치 */
+  top: 20px;
+  right: 20px;
   background: none;
   border: none;
   cursor: pointer;
-  color: #fff; // 아이콘 색상
-  font-size: 24px; // 크기 조정
+  color: #fff;
+  font-size: 24px;
   z-index: 2;
 `;
 
-// 첫번째 모달
 const StyledIcon = styled(MdAddPhotoAlternate)`
   width: 90px;
   height: 90px; 
@@ -85,10 +84,9 @@ const Label = styled.label`
   margin-top: 10px;
 `;
 
-// 두 번째 모달 스타일
 const PreviewModalContainer = styled(ModalContainer)`
-    width: 1000px;
-    height: 600px;
+  width: 1000px;
+  height: 600px;
 `;
 
 const PreviewContent = styled.div`
@@ -145,16 +143,16 @@ const Checkbox = styled.input`
 `;
 
 const UploadButton = styled.button`
-  background: #706ef4;  // 배경색
-  color: white;         // 글씨색
-  border: none;         // 테두리 없음
-  padding: 10px 20px;  // 여백
-  border-radius: 5px;   // 둥근 모서리
-  cursor: pointer;      // 포인터 커서
-  align-self: flex-end; // 오른쪽 정렬
-  
+  background: #706ef4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-end;
+
   &:hover {
-    background: #5a55c1; // 마우스 오버 시 색상 변경
+    background: #5a55c1;
   }
 `;
 
@@ -164,12 +162,12 @@ export default function UploadModal({ isOpen, onClose }) {
   const [showPreview, setShowPreview] = useState(false);
   const [isCoupleOnly, setIsCoupleOnly] = useState(false);
 
-  if (!isOpen) return null; // 모달이 열리지 않을 때는 null 반환
+  if (!isOpen) return null;
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
       resetForm();
-      onClose(); // 모달 외부 클릭 시 모달 닫기
+      onClose();
     }
   };
 
@@ -180,37 +178,79 @@ export default function UploadModal({ isOpen, onClose }) {
     setIsCoupleOnly(false);
   };
 
-
-  const handleUpload = () => {
-    // 업로드 로직을 여기에 추가하세요
-    console.log("업로드 내용:", text, "커플만 공개:", isCoupleOnly);
+  const handleUpload = async () => {
+    if (files.length === 0) {
+      alert("파일을 선택하세요.");
+      return;
+    }
+  
+    const formData = new FormData();
+  
+    // 파일을 FormData에 추가
+    files.forEach((file) => {
+      formData.append('files', file.file); // 'files' 키로 파일 추가
+    });
+  
+    // postDTO를 JSON 형태로 추가
+    const postDTO = {
+      content: text,
+      visibility: isCoupleOnly ? "PRIVATE" : "PUBLIC"
+    };
+  
+    formData.append('post', JSON.stringify(postDTO)); // JSON 데이터는 문자열로 추가
+  
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+  
+      // 서버에 FormData 보내기
+      const response = await authAxios.post('http://localhost:9090/feed/write', formData);
+  
+      // 응답이 정상적으로 오면
+      if (response.status === 201) {
+        alert('업로드 하였습니다.'); 
+        resetForm();
+        onClose();
+      } else {
+        throw new Error('업로드에 실패했습니다.');
+      }
+    } catch (error) {
+      // 서버에서 반환한 오류 메시지를 출력
+      if (error.response) {
+        console.error('서버 오류:', error.response.data); // 서버 오류 응답 확인
+        alert('서버 오류: ' + error.response.data);
+      } else {
+        console.error('업로드 중 오류 발생:', error.message); // 네트워크 오류 등
+        alert('업로드 중 오류가 발생했습니다.');
+      }
+    }
   };
+  
+  
 
   const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files); // 여러 파일을 배열로 변환
+    const selectedFiles = Array.from(event.target.files);
 
-    // 파일 개수 제한
     if (selectedFiles.length > 10) {
-    alert("최대 10개의 파일만 업로드할 수 있습니다.");
-    return;
-  }
+      alert("최대 10개의 파일만 업로드할 수 있습니다.");
+      return;
+    }
 
-  // 동영상 개수 제한
-  const videoFiles = selectedFiles.filter(file => file.type.startsWith('video/'));
-  if (videoFiles.length > 1) {
-    alert("동영상은 1개만 업로드할 수 있습니다.");
-    return;
-  }
+    const videoFiles = selectedFiles.filter(file => file.type.startsWith('video/'));
+    if (videoFiles.length > 1) {
+      alert("동영상은 1개만 업로드할 수 있습니다.");
+      return;
+    }
 
-  const fileURLs = selectedFiles.map((file) => ({
-    url: URL.createObjectURL(file),
-    type: file.type
-  }));
+    const fileObjects = selectedFiles.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+      type: file.type
+    }));
 
-  setFiles(fileURLs);
-  if (fileURLs.length > 0) setShowPreview(true);
-};
-
+    setFiles(fileObjects);
+    if (fileObjects.length > 0) setShowPreview(true);
+  };
 
   return (
     <>
