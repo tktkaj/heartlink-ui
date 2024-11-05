@@ -1,17 +1,6 @@
 import axios from "axios";
 import { getNewRefreshToken } from "./refresh";
-
-// 로그아웃 처리를 위한 함수
-const handleLogout = () => {
-  // 로컬 스토리지의 모든 인증 관련 데이터 제거
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("userId");
-
-  alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-
-  window.location.href = "/login";
-};
+import Cookies from "js-cookie";
 
 export const getAuthAxios = (token) => {
   const authAxios = axios.create({
@@ -25,18 +14,27 @@ export const getAuthAxios = (token) => {
     async (error) => {
       try {
         if (error.response.status === 401) {
-          try {
-            const { accessToken, refreshToken } = await getNewRefreshToken();
-            error.config.headers.Authorization = accessToken;
-            return axios(error.config);
-          } catch (refreshError) {
-            handleLogout();
-            return Promise.reject("세션이 만료되었습니다.");
+          // 액세스 토큰이 만료되면 토큰 갱신
+          const { accessToken, refreshToken } = await getNewRefreshToken();
+          // 헤더에 갱신된 액세스 토큰 설정
+          error.config.headers.Authorization = accessToken;
+          // 갱신된 리프레시 토큰이 있으면 쿠키나 로컬스토리지에 업데이트
+          if (refreshToken) {
+            Cookies.set("refreshToken", refreshToken, {
+              expires: 7, // 쿠키 만료일, 7일 후 만료
+              path: "", // 쿠키 경로
+              secure: true, // HTTPS 환경에서만 전송
+              sameSite: "Strict", // CSRF 공격 방지
+            });
+            localStorage.setItem("refresh", refreshToken);
           }
+          // 갱신된 토큰으로 요청 재시도
+          return axios(error.config);
         }
       } catch (error) {
         console.error("인터셉터 오류:", error);
       }
+      return Promise.reject("세션이 만료되었습니다.");
     }
   );
   return authAxios;
