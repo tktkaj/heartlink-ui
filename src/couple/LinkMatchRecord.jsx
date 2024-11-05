@@ -114,6 +114,7 @@ function LinkMatchRecord({ closeRecord }) {
 
     fetchMissions();
   }, []);
+  
 
   return (
     <>

@@ -64,11 +64,16 @@ const Liststyle = styled.div`
     padding-left: 2vw;
 `
 
-export default function SearchMenu() {
-    const [keyword, setKeyword] = useState('');
+export default function SearchMenu({ onSearchResults, onKeywordChange }) {
+const [keyword, setKeyword] = useState('');
 const [searchResults, setSearchResults] = useState([]);
 const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추가
 
+const handleSearch = (e) => {
+    e.preventDefault();
+    onSearchResults(keyword); // 검색 결과를 부모에게 전달
+    onKeywordChange(keyword); // 검색어를 부모에게 전달
+};
 
     const searchSubmit = async (e) => {
         e.preventDefault();
@@ -86,7 +91,14 @@ const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추
                 }
             );
             console.log('검색 결과:', response.data);
-            setSearchResults(response.data); // 검색 결과를 상태에 저장
+            setSearchResults([response.data]); // 객체를 배열로 변환하여 상태에 저장
+            onSearchResults([response.data]); // 검색 결과를 부모에게 전달
+            onKeywordChange(keyword); // 결과를 부모에게 전달
+             // 응답이 문자열인 경우
+             if (typeof response.data === 'string') {
+                setSearchResults(response.data); // 서버에서 받은 메시지 설정
+                setSearchResults([]); // 결과를 비움
+            }
         } catch (error) {
             if (error.response) {
                 console.error('서버 응답 에러:', error.response.data);
@@ -103,23 +115,20 @@ const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추
 
         switch (result.type) {
             case 'id':
-                return <Liststyle key={result.loginId}>
+                return <Link to={`/user/profile/${result.userId}`}>
+                <Liststyle key={result.loginId}>
                 <ProfileThum>
-                    <img src={result.img} alt="" />
+                    <img src={result.img} alt="프로필이미지" />
                 </ProfileThum>
-                <p style={{ fontFamily: 'SokchoBadaBatang' }}>@{result.loginId}</p>
-            </Liststyle>;
+                <p style={{ fontFamily: 'SokchoBadaBatang' }}>{result.loginId}</p>
+            </Liststyle></Link>;
             case 'tag':
                 return <Liststyle key={result.tagName}>
                 <ProfileThum>
                     &
                 </ProfileThum>
-                <p>&{result.tagName}</p>
+                <p>{result.tagName}</p>
             </Liststyle>;
-            case 'post':
-                return <div>게시물 내용: {result.content}</div>;
-            default:
-                return <div>알 수 없는 타입</div>;
         }
     };
 
@@ -134,7 +143,6 @@ const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추
                     <input type="text" required placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)}
                         className="block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 " style={{ width: '290px', paddingLeft: '7px', fontSize: '15px', backgroundColor: '#f5f5f5' }}></input>
                                 <button type="submit" style={{width: '15%'}}>검색</button>
-
                 </div>
                 </form>
                 <hr style={{ marginTop: '4vh' }}></hr>
@@ -145,7 +153,7 @@ const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추
         <div>
             {searchResults.map((result, index) => (
                 <div key={index}>
-                    {renderResult(result)}  // 여기서 renderResult가 호출됨
+                    {renderResult(result)}
                 </div>
             ))}
         </div>
@@ -153,28 +161,6 @@ const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추
         <div>검색 결과가 없습니다.</div>
     )
 ) : null}
-
-                    {/* <Ulstyle>
-                        <Liststyle>
-                            <ProfileThum>
-                                <img src={profilethum} alt="" />
-                            </ProfileThum>
-                            <p style={{ fontFamily: 'SokchoBadaBatang' }}>@moong_52</p>
-                        </Liststyle>
-                        <Link to="/search">
-                            <Liststyle>
-                                <ProfileThum>
-                                    &
-                                </ProfileThum>
-                                <p>&풍경사진</p>
-                            </Liststyle>
-                        </Link>
-                        <Liststyle>
-
-                            <p>꾸래핑</p>
-                        </Liststyle>
-                    </Ulstyle> */}
-
                 </SearchList>
             </MenuContainer>
         </>
