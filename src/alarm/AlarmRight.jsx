@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import axios from "axios";
 
 const ToastWrapper = styled.div`
   display: flex;
@@ -48,11 +49,21 @@ export default function AlarmRight() {
 
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    // eventSource에 SSE를 통해 넘어온 데이터가 저장!
+  useEffect(()=>{
+    const token = localStorage.getItem('access');
+
+    axios.get("http://localhost:9090/notifications/check-userid"
+      ,{
+        headers:{
+          Authorization: `${token}`
+        }
+      }
+    ).then((response)=>{
+       // eventSource에 SSE를 통해 넘어온 데이터가 저장!
     // http://localhost:9090/notifications/subscribe 실제로도 사용할 경로!
+    console.log("sse는 ", response.data);
     const eventSource = new EventSource(
-      "http://localhost:9090/notifications/subscribe/4"
+      `http://localhost:9090/notifications/subscribe/${response.data}`
     );
 
     // 'sse'는 내가 넘길 이벤트명이라 수정x, 이벤트명 체크하기 때문에!
@@ -68,12 +79,12 @@ export default function AlarmRight() {
             <CustomToast title="새로운 알림" message={parsedData.message} />,
             {
               position: "top-right",
-              autoClose: 5000,
+              // autoClose: 5000,
               style: {
                 marginTop: "topOffset",
-                width: "290px",
+                width: "400px",
                 top: "20vh",
-                right: "7.5vw",
+                right: "12.9vw",
               },
             },
             { onClick: () => (window.location.href = parsedData.url) }
@@ -86,7 +97,11 @@ export default function AlarmRight() {
     return () => {
       eventSource.close();
     };
-  }, []);
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
+  },[]);
 
   return (
     <div>

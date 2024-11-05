@@ -21,7 +21,6 @@ export default function ChatListModal({handleNewRoom, handleSearchUser, searchLi
             }
         )
         .then((response)=>{
-            console.log('연결굿')
             if(response.status==200)
                 setSearchlist(response.data);
         })
