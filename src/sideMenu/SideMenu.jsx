@@ -7,7 +7,11 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import Setting from "./Setting";
-import { RiUserHeartLine, RiUserHeartFill , RiMessage3Line } from "react-icons/ri";
+import {
+  RiUserHeartLine,
+  RiUserHeartFill,
+  RiMessage3Line,
+} from "react-icons/ri";
 import { BiBell, BiSolidBell } from "react-icons/bi";
 import { getAuthAxios } from "../api/authAxios";
 import { useAuth } from "../api/AuthContext";
@@ -74,11 +78,6 @@ const ProfileThum = styled.div`
 `;
 
 export default function SideMenu() {
-  const { token, setToken, authAxios } = useAuth();
-  const refreshToken = localStorage.getItem("refresh");
-  console.log("토큰", token);
-  console.log("리프레시 토큰", refreshToken);
-
   const [userId, setUserId] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
@@ -129,7 +128,11 @@ export default function SideMenu() {
           <Ulstyle>
             <div>
               <Liststyle to="/home" isActive={getActiveStatus("/home")}>
-                {isActiveHome ? <AiFillHome className="icon" /> : <AiOutlineHome className="icon" />}
+                {isActiveHome ? (
+                  <AiFillHome className="icon" />
+                ) : (
+                  <AiOutlineHome className="icon" />
+                )}
                 <span>홈</span>
               </Liststyle>
               <Liststyle to="/search">
@@ -137,11 +140,22 @@ export default function SideMenu() {
                 검색
               </Liststyle>
               <Liststyle to="/couple" isActive={getActiveStatus("/couple")}>
-                {isActiveCouple ? <RiUserHeartFill className="icon" /> : <RiUserHeartLine className="icon" />}
+                {isActiveCouple ? (
+                  <RiUserHeartFill className="icon" />
+                ) : (
+                  <RiUserHeartLine className="icon" />
+                )}
                 커플
               </Liststyle>
-              <Liststyle to="/notifications" isActive={getActiveStatus("/notifications")}>
-                {isActiveNotification ? <BiSolidBell className="icon" />: <BiBell className="icon" />}
+              <Liststyle
+                to="/notifications"
+                isActive={getActiveStatus("/notifications")}
+              >
+                {isActiveNotification ? (
+                  <BiSolidBell className="icon" />
+                ) : (
+                  <BiBell className="icon" />
+                )}
                 알림
               </Liststyle>
               <Liststyle to="/dm" isActive={getActiveStatus("/dm")}>
