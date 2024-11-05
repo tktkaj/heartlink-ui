@@ -10,6 +10,7 @@ import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
 import { getAuthAxios } from "../api/authAxios";
+import { TiHeartOutline } from "react-icons/ti";
 
 
 const ModalOverlay = styled.div`
@@ -128,7 +129,7 @@ const ContentBox = styled.div`
 `;
 
 const ContentText = styled.span`
-  
+  font-size: 15px;
 `;
 
 const Line = styled.hr`
@@ -160,47 +161,96 @@ const LikeCount = styled.span`
 
 const CommentsBox = styled.div`
   width: 100%;
+  margin-top: 5px;
 `;
 
 const CommentUl = styled.ul`
   overflow-y: scroll;
   scrollbar-width: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 const CommentLi = styled.li`
-  
-`
-
-const CommentBox = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  width: 100%;
 `
 
 const CommentProfile = styled.div`
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 100%;
+  margin-right: 5px;
 `
 
 const CommentTextBox = styled.div`
+
   
 `
 
 const CommentWriter = styled.span`
   font-weight: bold;
+  font-size: 15px;
+  margin-right: 3px;
 `
 
 const CommentText = styled.span`
-  
+  font-size: 15px;
 `
+
+const CommentTextBoxWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
 
 const DayandReplyBox = styled.div`
+  display: inline-block;
+`;
 
-`
+const Day = styled.span`
+  color: #595959;
+  font-size: 11px;
+  margin-right: 5px;
+`;
+
+const ReplyButton = styled.button`
+  color: #595959;
+  font-size: 11px;
+`;
 
 const HeartBox = styled.div`
   margin: 0px 0px 0px auto;
-`
+`;
+
+const HeartIcon = styled(TiHeartOutline)`
+  cursor: pointer;
+  transition: color;
+
+  &:hover {
+    color: #706ef4;
+    opacity: 0.8;
+  }
+`;
+
+const CommentWriteBox = styled.div`
+  width: 100%;
+  height: 35px;
+  margin: auto 0px 0px 0px;
+  border-top: 1px solid #ccc;
+  box-sizing: border-box;
+`;
+
+const CommentInput = styled.textarea`
+  width: 100%;
+  height: 35px;
+  padding: 10px;
+  resize: none;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  color: #333;
+  margin-top: 5px;
+`;
 
 
 
@@ -214,8 +264,8 @@ const HeartBox = styled.div`
 export default function FeedDetail({ isOpen, onClose, post}) {
   const [files, setFiles] = useState(post?.files || []);
   const [postDetails, setPostDetails] = useState(null);
-  const [loading, setLoading] = useState(false); // 로딩 상태 관리
-  const [error, setError] = useState(null); // 오류 상태 관리
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null); 
   
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
@@ -230,7 +280,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
         const access = localStorage.getItem("access");
         const axios = getAuthAxios(access);
     
-          // 인증된 axios 인스턴스를 사용하여 데이터 가져오기
           const response = axios
             .get(`http://localhost:9090/feed/details/${postData}`)
             .then((response) => {
@@ -247,11 +296,20 @@ export default function FeedDetail({ isOpen, onClose, post}) {
 
     useEffect(() => {
       if (postDetails) {
-        console.log("Updated post details:", postDetails); // postDetails가 변경될 때마다 로그 출력
+        console.log("Updated post details:", postDetails);
       }
     }, [postDetails]);
 
     if (!isOpen) return null;
+
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+  
+    // postDetails가 null일 경우 처리
+    if (!postDetails) {
+      return <div>포스트 데이터를 불러오는 중 문제가 발생했습니다.</div>;
+    }
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
@@ -331,7 +389,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 <IconBox>
                   <IoIosHeartEmpty
                     className="feedIcon"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", marginRight: "8px" }}
                     // onClick={(e) => handlePostLike(item.content.postId, e)}
                   />
                   <IoMdShare
@@ -351,9 +409,33 @@ export default function FeedDetail({ isOpen, onClose, post}) {
               </LikeCountBox>
               <CommentsBox>
                 <CommentUl>
-
+                {postDetails.comments && postDetails.comments.length > 0 ? (
+                    postDetails.comments.map((comment, index) => (
+                      <CommentLi key={index}>
+                        <CommentProfile>
+                          <img src={comment.profileImg || defaultImg} alt="Profile" />
+                        </CommentProfile>
+                      <CommentTextBoxWrapper>
+                        <CommentTextBox>
+                          <CommentWriter>{comment.loginId}</CommentWriter> <CommentText>{comment.content}</CommentText>
+                        </CommentTextBox>
+                        <DayandReplyBox>
+                          <Day>1시간 전</Day> <ReplyButton>답글 달기</ReplyButton>
+                        </DayandReplyBox>
+                      </CommentTextBoxWrapper>
+                      <HeartBox>
+                        <HeartIcon />
+                      </HeartBox>
+                      </CommentLi>
+                    ))
+                  ) : (
+                    <div>댓글이 없습니다.</div>
+                  )}
                 </CommentUl>
               </CommentsBox>
+              <CommentWriteBox>
+                <CommentInput placeholder="댓글 달기..."></CommentInput>
+              </CommentWriteBox>
             </RightSection>
           </PreviewContent>
         </PreviewModalContainer>
