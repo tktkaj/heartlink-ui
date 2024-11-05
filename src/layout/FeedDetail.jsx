@@ -49,11 +49,10 @@ const Canvas = styled.div`
 export default function FeedModal({
   closeModal,
   position = { top: 0, left: 0 },
-  post
 }) {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  // const post = { content: "Sample post content", files: [] };
+  const post = { content: "Sample post content", files: [] };
 
   const handleEditClick = () => {
     setIsEditModalOpen(true);

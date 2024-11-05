@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import kakaoLogo from "../image/sns/free-icon-kakao-talk-4494622.png";
 import naverLogo from "../image/sns/pngwing.com.png";
@@ -7,6 +8,8 @@ import MainLogo from "../image/logo/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
 import FindId from "./FindId";
+import Modal1 from "./Modal1";
+import Modal2 from "./Modal2";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -182,6 +185,8 @@ export default function Login() {
     try {
       const result = await login(loginId, password);
       console.log(result);
+
+      // 토큰 저장
       const authorization = result.authorization;
       const refreshToken = result.refreshToken;
 
@@ -208,8 +213,27 @@ export default function Login() {
     setShowFindId(true);
   };
 
+  const location = useLocation();
+  const [errorType, setErrorType] = useState(null);
+  const [providerId, setProviderId] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get("errorType");
+    const provider = params.get("providerId");
+
+    setErrorType(error);
+    setProviderId(provider);
+  }, [location]);
+
   return (
     <LoginBox>
+      {errorType === "phone" && providerId && (
+        <Modal1 providerId={providerId} />
+      )}
+      {errorType === "loginId" && providerId && (
+        <Modal2 providerId={providerId} />
+      )}
       <LoginBoxRight onSubmit={handleSubmit}>
         <LoginTitleAndIntroContainer>
           <LoginTitle>LOGIN</LoginTitle>

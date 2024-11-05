@@ -121,8 +121,10 @@ const UploadButton = styled.button`
 `;
 
 export default function EditPostModal({ isOpen, onClose, post, onSave }) {
+  console.log(`나야 포스트 ${post.postId}`);
   const [files, setFiles] = useState(post.files || []);
   const [text, setText] = useState(post.content || '');
+  console.log("post확인 : ", post);
 
   useEffect(() => {
     if (isOpen) {
@@ -141,8 +143,12 @@ export default function EditPostModal({ isOpen, onClose, post, onSave }) {
 
 
 
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files);
+  const handleFileChange = (postId, e) => {
+    const selectedFiles = Array.from(e.target.files);
+    // const access = localStorage.getItem("access");
+    // const axios = getAuthAxios(access);
+    // const response = axios.put('http://localhost:9090/feed/${postId}/update');
+
     const fileURLs = selectedFiles.map((file) => ({
       url: URL.createObjectURL(file),
       type: file.type,

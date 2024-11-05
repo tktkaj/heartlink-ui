@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -65,23 +66,45 @@ const ErrorText = styled.p`
   text-align: center;
 `;
 
-const Modal2 = ({ onClose, onSubmit }) => {
+const Modal2 = ({ providerId, onSubmit }) => {
   const [loginId, setLoginId] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     if (!loginId) {
-      setError("아이디를 입력해주세요");
+      alert("아이디를 입력해주세요");
       return;
     }
 
-    if (loginId.length < 4) {
-      setError("아이디는 4자 이상이어야 합니다");
+    if (loginId.length < 5 || loginId.length>15) {
+      alert("아이디는 5자 이상 15자 이내어야 합니다");
       return;
     }
-
-    onSubmit(loginId);
+    if (/[^a-zA-Z0-9]/.test(loginId)) {
+      alert("아이디는 영문과 숫자만 포함할 수 있습니다.");
+      return;
+    }
+    try {
+      // 서버에 loginId와 providerId를 전송
+      const response = await axios.post(
+        "http://localhost:9090/user/auth/loginId",
+        { loginId },
+        { params: { providerId } }
+      );
+      setError("");
+      handleLoginRedirect(providerId);
+    } catch (err) {
+      setError("아이디 등록 중 오류가 발생했습니다.");
+      console.error(err);
+    }
   };
+
+  const handleLoginRedirect = (providerId) => {
+    const provider = providerId.split(' ')[0];
+    const redirectUrl = `http://localhost:9090/oauth2/authorization/${provider}`;
+    window.location.href = redirectUrl;
+  };
+
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
