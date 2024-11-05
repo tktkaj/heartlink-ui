@@ -4,7 +4,11 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { FiMessageCircle } from 'react-icons/fi'; // FiMessageCircle 추가
+// import { FiMessageCircle } from 'react-icons/fi'; // FiMessageCircle 추가
+import defaultImg from "../image/logo/fav.png";
+import { IoIosHeartEmpty } from "react-icons/io";
+import { IoMdShare } from "react-icons/io";
+import { FaRegBookmark } from "react-icons/fa";
 
 
 const ModalOverlay = styled.div`
@@ -98,43 +102,125 @@ const PreviewVideo = styled.video`
   object-fit: contain;
 `;
 
-const TextInput = styled.textarea`
+const RightHeader = styled.div`
   width: 100%;
-  height: 80%;
-  padding: 10px;
-  border: 1px solid #ccc;
+  height: 40px;
+  display: flex;
+  align-items: center;
 `;
 
-const UploadButton = styled.button`
-  background: #706ef4;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  align-self: flex-end;
-  margin-top: 34px;
+const Profile = styled.div`
+  width : 40px;
+  border-radius: 100%;
+`;
 
-  &:hover {
-    background: #5a55c1;
+const LoginId = styled.span`
+  width: 100px;
+  font-size: 20px;
+  margin-left: 7px;
+`;
+
+const ContentBox = styled.div`
+  width: 100%;
+  margin: 10px 0px;
+  
+`;
+
+const ContentText = styled.span`
+  
+`;
+
+const Line = styled.hr`
+  width: 100%;
+  margin: 10px 0px;
+`;
+
+const IconBox = styled.div`
+  display: flex;
+  width: 100%;
+  height: 30px;
+  align-items: center;
+
+  .feedIcon {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
   }
 `;
 
-const FiMessageCircleButton = styled(FiMessageCircle)`
-  font-size: 40px;
-  cursor: pointer;
+const LikeCountBox = styled.div`
+  width: 100%;
+  margin: 10px 0px;
 `;
 
-export default function FeedDetail({ isOpen, onClose, post, onSave }) {
-  console.log("EditPostModal 실행!");
-  console.log(`나야 포스트 ${post?.postId}`); // null 체크 추가
+const LikeCount = styled.span`
+  
+`;
+
+const CommentsBox = styled.div`
+  width: 100%;
+`;
+
+const CommentUl = styled.ul`
+  overflow-y: scroll;
+  scrollbar-width: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const CommentLi = styled.li`
+  
+`
+
+const CommentBox = styled.div`
+`
+
+const CommentProfile = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 100%;
+`
+
+const CommentTextBox = styled.div`
+  
+`
+
+const CommentWriter = styled.span`
+  font-weight: bold;
+`
+
+const CommentText = styled.span`
+  
+`
+
+const DayandReplyBox = styled.div`
+
+`
+
+const HeartBox = styled.div`
+  margin: 0px 0px 0px auto;
+`
+
+
+
+
+
+// const FiMessageCircleButton = styled(FiMessageCircle)`
+//   font-size: 40px;
+//   cursor: pointer;
+// `;
+
+export default function FeedDetail({ isOpen, onClose, post}) {
   const [files, setFiles] = useState(post?.files || []);
-  const [text, setText] = useState(post?.content || '');
+  // const [text, setText] = useState(post?.content || '');
+  // const [loginId, setloginId] = useState(post?.loginId || '');
+
+  const [postData, setPostData] = useState(post);
 
   useEffect(() => {
     if (isOpen) {
       setFiles(post?.files || []);
-      setText(post?.content || '');
+      // setText(post?.content || '');
     }
   }, [isOpen, post]);
 
@@ -146,25 +232,24 @@ export default function FeedDetail({ isOpen, onClose, post, onSave }) {
     }
   };
 
-  const handleFileChange = (postId, e) => {
-    const selectedFiles = Array.from(e.target.files);
-    const fileURLs = selectedFiles.map((file) => ({
-      url: URL.createObjectURL(file),
-      type: file.type,
-    }));
-    setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
-  };
+  // const handleFileChange = (postId, e) => {
+  //   const selectedFiles = Array.from(e.target.files);
+  //   const fileURLs = selectedFiles.map((file) => ({
+  //     url: URL.createObjectURL(file),
+  //     type: file.type,
+  //   }));
+  //   setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
+  // };
 
-  const handleSave = () => {
-    const updatedPost = { ...post, content: text, files: files };
-    onSave(updatedPost);
-    onClose();
-  };
+  // const handleSave = () => {
+  //   const updatedPost = { ...post, content: text, files: files };
+  //   onSave(updatedPost);
+  //   onClose();
+  // };
   
 
   return (
     <div>
-      {/* FiMessageCircle 클릭 시 모달 열기 */}
       
       <ModalOverlay onClick={handleOverlayClick}>
         <CloseButton onClick={onClose}>
@@ -194,12 +279,54 @@ export default function FeedDetail({ isOpen, onClose, post, onSave }) {
               </Carousel>
             </LeftSection>
             <RightSection>
-              <TextInput
-                placeholder="내용을 입력하세요..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-              />
-              <UploadButton onClick={handleSave}>수정</UploadButton>
+              <RightHeader>
+                <Profile><img
+                  src={postData.profileImg || defaultImg}
+                /></Profile>
+                <LoginId>{postData.loginId}</LoginId>
+                <button
+                    style={{
+                      backgroundColor: "#706EF4",
+                      width: "70px",
+                      height: "30px",
+                      paddingTop: "3px",
+                      margin: "0px 0px 0px auto",
+                    }}
+                    className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
+                    // onClick={(e) => handleFollow(item.content.userId, e)}
+                  >
+                    팔로우
+                  </button>
+              </RightHeader>
+              <ContentBox>
+                <ContentText>{postData.content}</ContentText>
+                <Line/>
+                <IconBox>
+                  <IoIosHeartEmpty
+                    className="feedIcon"
+                    style={{ cursor: "pointer" }}
+                    // onClick={(e) => handlePostLike(item.content.postId, e)}
+                  />
+                  <IoMdShare
+                    className="feedIcon"
+                    style={{ cursor: "pointer" }}
+                    // onClick={handlePostShare}
+                  />
+                <FaRegBookmark
+                  className="feedIcon"
+                  style={{ cursor: "pointer", margin: "0px 0px 0px auto"}}
+                  // onClick={(e) => handlePostBookmark(item.content.postId, e)}
+                />
+                </IconBox>
+              </ContentBox>
+              <LikeCountBox>
+                <LikeCount>좋아요 {postData.likeCount}개</LikeCount>
+              </LikeCountBox>
+              <CommentsBox>
+                <CommentUl>
+                  
+                </CommentUl>
+              </CommentsBox>
             </RightSection>
           </PreviewContent>
         </PreviewModalContainer>
