@@ -81,6 +81,7 @@ const Modal1 = ({ providerId }) => {
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState("");
+  const [showVerificationInput, setShowVerificationInput] = useState(false);
 
   const formatPhoneNumber = (value) => {
     if (!value) return value;
@@ -110,6 +111,17 @@ const Modal1 = ({ providerId }) => {
     if (phone.length < 13) {
       setError("전화번호를 올바른 형식으로 입력해주세요");
       return;
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:9090/user/sms/send?phoneNumber=${phone}`
+      );
+      console.log("인증번호 전송", response.data);
+      setResult(response.data);
+      setShowVerificationInput(true);
+    } catch (err) {
+      setError("아이디 찾기에 실패했습니다.");
+      console.error(err);
     }
   };
 
