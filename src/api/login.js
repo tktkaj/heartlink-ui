@@ -19,9 +19,10 @@ export const login = async (loginId, password) => {
     if (refreshToken) {
       Cookies.set("refreshToken", refreshToken, {
         expires: 7, // 쿠키 만료일, 7일 후 만료
-        path: "", // 쿠키 경로
-        secure: true, // HTTPS 환경에서만 전송
-        sameSite: "Strict", // CSRF 공격 방지
+        path: "/", // 쿠키 경로
+        secure: false, // HTTPS 환경에서만 전송
+        sameSite: "None", // CSRF 공격 방지
+        HttpOnly: false,
       });
     }
 

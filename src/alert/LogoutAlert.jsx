@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Cookies from "js-cookie";
 import {
   Dialog,
   DialogBackdrop,
@@ -23,6 +24,12 @@ export default function Example() {
     try {
       await axios.get("http://localhost:9090/logout");
       localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("RefreshToken");
+      localStorage.removeItem("accessToken");
+      Cookies.remove("refreshToken");
+      localStorage.removeItem("loginId");
+
       setOpen(false);
       navigate("/");
     } catch (error) {

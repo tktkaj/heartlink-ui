@@ -23,17 +23,11 @@ function App() {
         const response = await getNewRefreshToken(); // 새로 갱신
         if (response && response.accessToken && response.refreshToken) {
           // accessToken과 refreshToken을 localStorage에 저장
-          localStorage.setItem("access", response.accessToken);
-          localStorage.setItem("refresh", response.refreshToken);
+          localStorage.setItem("accessToken", response.accessToken);
+          localStorage.setItem("RefreshToken", response.refreshToken);
           console.log("새로운 accessToken과 refreshToken을 받았습니다.");
         }
-      } catch (error) {
-        console.error("토큰 갱신 실패:", error);
-        // 토큰 갱신 실패 시, 로그아웃 처리
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
-        navigate("/login");
-      }
+      } catch (error) {}
     }
   };
   // 유저 데이터를 fetch하는 함수

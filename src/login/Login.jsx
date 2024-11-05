@@ -196,9 +196,7 @@ export default function Login() {
 
       alert("로그인 성공!");
       window.location.href = "/home";
-    } catch (error) {
-      alert("로그인 실패!");
-    }
+    } catch (error) {}
   };
 
   const handleKeyPress = (e) => {
