@@ -470,7 +470,7 @@ export default function Feed() {
         <div key={index}>
           <FeedBox>
             {isModalOpen && (
-              <FeedModal closeModal={closeModal} position={modalPosition} />
+              <FeedModal closeModal={closeModal} position={modalPosition} post={post}/>
             )}
             <FeedProfile>
               <ProfileTxt>
