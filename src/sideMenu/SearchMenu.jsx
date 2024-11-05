@@ -2,7 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import profilethum from '../image/sidebar/test.png';
 import { Link } from 'react-router-dom';
-
+import { useState } from 'react';
+import axios from "axios";
+import { getAuthAxios } from "../api/authAxios";
 
 const MenuContainer = styled.div`
     width: 350px;
@@ -62,8 +64,77 @@ const Liststyle = styled.div`
     padding-left: 2vw;
 `
 
-export default function SearchMenu() {
+export default function SearchMenu({ onSearchResults, onKeywordChange, onTagClick }) {
+const [keyword, setKeyword] = useState('');
+const [searchResults, setSearchResults] = useState([]);
+const [isSearched, setIsSearched] = useState(false); // 검색 여부 상태 추가
 
+const handleSearch = (e) => {
+    e.preventDefault();
+    onSearchResults(keyword); // 검색 결과를 부모에게 전달
+    onKeywordChange(keyword); // 검색어를 부모에게 전달
+};
+
+const handleTagClick = (tagName) => {
+    console.log(`태그 클릭됨: ${tagName}`);
+    onTagClick(tagName);
+};
+
+
+    const searchSubmit = async (e) => {
+        e.preventDefault();
+        console.log('검색 제출:', keyword);
+        
+        try {
+            const access = localStorage.getItem("access");
+            const response = await axios.get(
+                `http://localhost:9090/search/keyword`,
+                {
+                    params: { keyword },
+                    headers: {
+                        Authorization: access,
+                    },
+                }
+            );
+            console.log('검색 결과:', response.data);
+            setSearchResults([response.data]); // 객체를 배열로 변환하여 상태에 저장
+            onSearchResults([response.data]); // 검색 결과를 부모에게 전달
+            onKeywordChange(keyword); // 결과를 부모에게 전달
+             // 응답이 문자열인 경우
+             if (typeof response.data === 'string') {
+                setSearchResults(response.data); // 서버에서 받은 메시지 설정
+                setSearchResults([]); // 결과를 비움
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error('서버 응답 에러:', error.response.data);
+            } else {
+                console.error('API 요청 실패:', error.message);
+            }
+        }  finally {
+            setIsSearched(true); // 검색 완료 상태로 설정
+        }
+    };
+
+    const renderResult = (result) => {
+        switch (result.type) {
+            case 'id':
+                return <Link to={`/user/profile/${result.userId}`}>
+                <Liststyle key={result.loginId}>
+                <ProfileThum>
+                    <img src={result.img} alt="프로필이미지" />
+                </ProfileThum>
+                <p style={{ fontFamily: 'SokchoBadaBatang' }}>{result.loginId}</p>
+            </Liststyle></Link>;
+            case 'tag':
+                return <Liststyle key={result.tagName} onClick={() => handleTagClick(result.tagName)}>
+                <ProfileThum>
+                    &
+                </ProfileThum>
+                <p>{result.tagName}</p>
+            </Liststyle>;
+        }
+    };
 
     return (
         <>
@@ -71,33 +142,29 @@ export default function SearchMenu() {
                 <div style={{ fontSize: '1.5rem', marginBottom: '10px', paddingLeft: '2vw' }}>
                     <h1>검색</h1>
                 </div>
-                <div style={{ marginLeft: '2vw' }}>
-                    <input type="text" required placeholder="검색어 입력"
-                        class="block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 " style={{ width: '290px', paddingLeft: '7px', fontSize: '15px', backgroundColor: '#f5f5f5' }}></input>
+                <form onSubmit={searchSubmit} style={{ display: 'flex' }}>
+                <div style={{ marginLeft: '2vw', width: '85%', display: 'flex' }}>
+                    <input type="text" required placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)}
+                        className="block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 " style={{ width: '290px', paddingLeft: '7px', fontSize: '15px', backgroundColor: '#f5f5f5' }}></input>
+                                <button type="submit" style={{width: '15%'}}>검색</button>
                 </div>
+                </form>
                 <hr style={{ marginTop: '4vh' }}></hr>
                 <SearchList>
-                    <Ulstyle>
-                        <Liststyle>
-                            <ProfileThum>
-                                <img src={profilethum} alt="" />
-                            </ProfileThum>
-                            <p style={{ fontFamily: 'SokchoBadaBatang' }}>@moong_52</p>
-                        </Liststyle>
-                        <Link to="/search">
-                            <Liststyle>
-                                <ProfileThum>
-                                    &
-                                </ProfileThum>
-                                <p>&풍경사진</p>
-                            </Liststyle>
-                        </Link>
-                        <Liststyle>
 
-                            <p>꾸래핑</p>
-                        </Liststyle>
-                    </Ulstyle>
-
+                {isSearched ? (
+    Array.isArray(searchResults) && searchResults.length > 0 ? (
+        <div>
+            {searchResults.map((result, index) => (
+                <div key={index}>
+                    {renderResult(result)}
+                </div>
+            ))}
+        </div>
+    ) : (
+        <div>검색 결과가 없습니다.</div>
+    )
+) : null}
                 </SearchList>
             </MenuContainer>
         </>
