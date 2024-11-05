@@ -9,6 +9,7 @@ import defaultImg from "../image/logo/fav.png";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
+import { getAuthAxios } from "../api/authAxios";
 
 
 const ModalOverlay = styled.div`
@@ -212,19 +213,45 @@ const HeartBox = styled.div`
 
 export default function FeedDetail({ isOpen, onClose, post}) {
   const [files, setFiles] = useState(post?.files || []);
+  const [postDetails, setPostDetails] = useState(null);
+  const [loading, setLoading] = useState(false); // 로딩 상태 관리
+  const [error, setError] = useState(null); // 오류 상태 관리
+  
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
 
   const [postData, setPostData] = useState(post);
 
+
   useEffect(() => {
     if (isOpen) {
       setFiles(post?.files || []);
-      // setText(post?.content || '');
-    }
-  }, [isOpen, post]);
+      
+        const access = localStorage.getItem("access");
+        const axios = getAuthAxios(access);
+    
+          // 인증된 axios 인스턴스를 사용하여 데이터 가져오기
+          const response = axios
+            .get(`http://localhost:9090/feed/details/${postData}`)
+            .then((response) => {
+              setPostDetails(response.data);
+              setLoading(false);
+            })
+            .catch((err) => {
+              console.error(err);
+              setError("데이터를 불러오는 중 오류가 발생했습니다.");
+              setLoading(false);
+            });
+        }
+    }, [isOpen, postData]);
 
-  if (!isOpen) return null;
+    useEffect(() => {
+      if (postDetails) {
+        console.log("Updated post details:", postDetails); // postDetails가 변경될 때마다 로그 출력
+      }
+    }, [postDetails]);
+
+    if (!isOpen) return null;
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
@@ -281,9 +308,9 @@ export default function FeedDetail({ isOpen, onClose, post}) {
             <RightSection>
               <RightHeader>
                 <Profile><img
-                  src={postData.profileImg || defaultImg}
+                  src={postDetails.profileImg || defaultImg}
                 /></Profile>
-                <LoginId>{postData.loginId}</LoginId>
+                <LoginId>{postDetails.loginId}</LoginId>
                 <button
                     style={{
                       backgroundColor: "#706EF4",
@@ -299,7 +326,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{postData.content}</ContentText>
+                <ContentText>{postDetails.content}</ContentText>
                 <Line/>
                 <IconBox>
                   <IoIosHeartEmpty
@@ -320,11 +347,11 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 </IconBox>
               </ContentBox>
               <LikeCountBox>
-                <LikeCount>좋아요 {postData.likeCount}개</LikeCount>
+                <LikeCount>좋아요 {postDetails.likeCount}개</LikeCount>
               </LikeCountBox>
               <CommentsBox>
                 <CommentUl>
-                  
+
                 </CommentUl>
               </CommentsBox>
             </RightSection>
