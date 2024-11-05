@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
 
+
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -147,6 +148,7 @@ export default function MainPage() {
             </div>
           </LoveStatus>
         </StatusContainer>
+        <AlarmRight />
       </Container>
       <Upload onClick={() => setIsModalOpen(true)} />
       <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

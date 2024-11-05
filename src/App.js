@@ -5,7 +5,6 @@ import SideMenu from "./sideMenu/SideMenu";
 import { getMyPage } from "./api/mypage";
 import { useEffect, useState } from "react";
 import { getNewRefreshToken } from "./api/refresh";
-import AlarmRight from "./alarm/AlarmRight";
 
 function App() {
   const isLoggedIn = () => {
@@ -48,7 +47,6 @@ function App() {
       <div style={{ display: "flex" }}>
         {showSideMenu && <SideMenu userId={userId} />}
         <div style={{ flexGrow: 1 }}>
-        <AlarmRight />
           <Outlet />
         </div>
       </div>
