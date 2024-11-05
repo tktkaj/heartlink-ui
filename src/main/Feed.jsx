@@ -109,7 +109,7 @@ const FeedImages = styled.div`
   justify-content: center;
   align-items: center;
   img {
-    width: 99.6%;
+    width: 99.7%;
     height: 100%;
     object-fit: cover;
   }
