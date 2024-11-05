@@ -238,7 +238,7 @@ export default function Login() {
         <LoginTitleAndIntroContainer>
           <LoginTitle>LOGIN</LoginTitle>
           <LoginIntro>
-            <p style={{ display: "inline-block", color: "#f1767a " }}>
+            <p style={{ display: "inline-block", color: "#f1767a" }}>
               사랑하는 사람
             </p>
             과의 소중한 순간을 함께 기록하세요.

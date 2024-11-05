@@ -137,7 +137,11 @@ export default function Feed() {
   };
 
   const truncateContent = (content) => {
-    return content.length > 15 ? content.slice(0, 15) + "..." : content;
+    if (!content) return ""; // content가 없으면 빈 문자열을 반환
+    const maxLength = 100; // 임의로 설정한 최대 길이
+    return content.length > maxLength
+      ? content.slice(0, maxLength) + "..."
+      : content;
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -188,37 +192,20 @@ export default function Feed() {
     fetchAds();
   }, []);
 
-  // 3개마다 1개 광고 피드를 추가하는 함수
-  // const mergePostsWithAds = () => {
-  //   const mergedPosts = [];
-  //   let postIndex = 0;
-  //   let adIndex = 0;
-  //   const totalPosts = posts.length;
-  //   const adsLength = ads.length;
+  const combinedFeed = [];
+  let postIndex = 0;
+  let adIndex = 0;
 
-  //   while (postIndex < totalPosts || adIndex < adsLength) {
-  //     if (postIndex < totalPosts) {
-  //       mergedPosts.push(posts[postIndex]);
-  //       postIndex++;
-  //     }
-  //     {
-  //       loading && <p>Loading...</p>;
-  //     }
-  //     {
-  //       error && <p>Error: {error}</p>;
-  //     }
-
-  //     // 3개마다 광고를 추가
-  //     if (mergedPosts.length % 4 === 3 && adIndex < adsLength) {
-  //       mergedPosts.push({ type: "ad", ...ads[adIndex] });
-  //       adIndex++;
-  //     }
-  //   }
-
-  //   return mergedPosts;
-  // };
-
-  // const mergedPosts = mergePostsWithAds();
+  while (postIndex < posts.length || adIndex < ads.length) {
+    // 3개의 피드를 추가
+    for (let i = 0; i < 3 && postIndex < posts.length; i++) {
+      combinedFeed.push({ type: "post", content: posts[postIndex++] });
+    }
+    // 광고가 있다면 광고를 추가
+    if (adIndex < ads.length) {
+      combinedFeed.push({ type: "ad", content: ads[adIndex++] });
+    }
+  }
 
   /*************** 유저 팔로우 ***************/
   const handleFollow = (userId, e) => {
@@ -466,114 +453,190 @@ export default function Feed() {
       <ToastContainer />
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
-      {posts.map((post, index) => (
+
+      {combinedFeed.map((item, index) => (
         <div key={index}>
-          <FeedBox>
-            {isModalOpen && (
-              <FeedModal closeModal={closeModal} position={modalPosition} post={post}/>
-            )}
-            <FeedProfile>
-              <ProfileTxt>
-                <a
-                  href={`http://localhost:3000/user/profile/${post.userId}`}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <ProfilePhoto>
-                    <img src={post.profileImg || defaultImg} alt="프사" />
-                  </ProfilePhoto>
-                  <p style={{ fontSize: "21px", cursor: "pointer" }}>
-                    {post.loginId}
+          {item.type === "post" ? (
+            // 피드 렌더링
+            <FeedBox>
+              {isModalOpen && (
+                <FeedModal
+                  closeModal={closeModal}
+                  position={modalPosition}
+                  post={item.content}
+                />
+              )}
+              <FeedProfile>
+                <ProfileTxt>
+                  <a
+                    href={`http://localhost:3000/user/profile/${item.content.userId}`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <ProfilePhoto>
+                      <img
+                        src={item.content.profileImg || defaultImg}
+                        alt="프사"
+                      />
+                    </ProfilePhoto>
+                    <p style={{ fontSize: "21px", cursor: "pointer" }}>
+                      {item.content.loginId}
+                    </p>
+                  </a>
+                  <h3>&</h3>
+                  <p
+                    style={{
+                      fontSize: "15px",
+                      color: "gray",
+                      marginBottom: "-5px",
+                    }}
+                  >
+                    {item.content.partnerId}
                   </p>
-                </a>
-                <h3>&</h3>
-                <p
-                  style={{
-                    fontSize: "15px",
-                    color: "gray",
-                    marginBottom: "-5px",
-                  }}
-                >
-                  {post.partnerId}
+                </ProfileTxt>
+                <div style={{ display: "flex", gap: "15px" }}>
+                  <button
+                    style={{
+                      backgroundColor: "#706EF4",
+                      width: "70px",
+                      height: "30px",
+                      paddingTop: "3px",
+                    }}
+                    className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
+                    onClick={(e) => handleFollow(item.content.userId, e)}
+                  >
+                    팔로우
+                  </button>
+                  <GoKebabHorizontal
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      cursor: "pointer",
+                    }}
+                    onClick={openModal}
+                  />
+                </div>
+              </FeedProfile>
+              <SliderContainer>
+                <Slider {...settings}>
+                  {item.content.files.map((image, index) => (
+                    <FeedImages key={index}>
+                      <img
+                        src={image.fileUrl || defaultImg}
+                        alt={`피드사진 ${index + 1}`}
+                      />
+                    </FeedImages>
+                  ))}
+                </Slider>
+              </SliderContainer>
+              <FeedIcons>
+                <div style={{ display: "flex", gap: "20px" }}>
+                  <IoIosHeartEmpty
+                    className="feedIcon"
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => handlePostLike(item.content.postId, e)}
+                  />
+                  <FiMessageCircle
+                    className="feedIcon"
+                    style={{ cursor: "pointer" }}
+                  />
+                  <IoMdShare
+                    className="feedIcon"
+                    style={{ cursor: "pointer" }}
+                    onClick={handlePostShare}
+                  />
+                </div>
+                <FaRegBookmark
+                  className="feedIcon"
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => handlePostBookmark(item.content.postId, e)}
+                />
+              </FeedIcons>
+              <FeedInfo>
+                <p>
+                  {format(item.content.createdAt, "yyyy.MM.dd. a hh:mm")
+                    .replace("AM", "오전")
+                    .replace("PM", "오후")}
                 </p>
-              </ProfileTxt>
-              <div style={{ display: "flex", gap: "15px" }}>
-                <button
-                  style={{
-                    backgroundColor: "#706EF4",
-                    width: "70px",
-                    height: "30px",
-                    paddingTop: "3px",
-                  }}
-                  className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
-                  onClick={(e) => handleFollow(post.userId, e)}
-                >
-                  팔로우
-                </button>
-                <GoKebabHorizontal
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    cursor: "pointer",
-                  }}
-                  onClick={openModal}
-                />
-              </div>
-            </FeedProfile>
-            <SliderContainer>
-              <Slider {...settings}>
-                {post.files.map((image, index) => (
-                  <FeedImages key={index}>
-                    <img
-                      src={image.fileUrl || defaultImg}
-                      alt={`피드사진 ${index + 1}`}
+                <p>좋아요 {item.content.likeCount}개</p>
+                <p>댓글 {item.content.commentCount}개</p>
+              </FeedInfo>
+              <FeedContent>
+                <p>{truncateContent(item.content.content)}</p>
+                <div>
+                  <p style={{ fontSize: "15px", color: "gray" }}>더보기</p>
+                </div>
+              </FeedContent>
+            </FeedBox>
+          ) : (
+            // 광고 렌더링
+            <div className="ad">
+              <FeedBox>
+                <FeedProfile>
+                  <ProfileTxt>
+                    <ProfilePhoto>
+                      <img src={defaultImg} alt="광고 프로필" />
+                    </ProfilePhoto>
+                    <p style={{ fontSize: "21px", cursor: "pointer" }}>
+                      Ad_Manager
+                    </p>
+                  </ProfileTxt>
+                  <div style={{ display: "flex", gap: "15px" }}>
+                    <GoKebabHorizontal
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        cursor: "pointer",
+                      }}
+                      onClick={openModal}
                     />
-                  </FeedImages>
-                ))}
-              </Slider>
-            </SliderContainer>
-            <FeedIcons>
-              <div style={{ display: "flex", gap: "20px" }}>
-                <IoIosHeartEmpty
-                  className="feedIcon"
-                  style={{ cursor: "pointer" }}
-                  onClick={(e) => handlePostLike(post.postId, e)}
-                />
-                <FiMessageCircle
-                  className="feedIcon"
-                  style={{ cursor: "pointer" }}
-                />
-                <IoMdShare
-                  className="feedIcon"
-                  style={{ cursor: "pointer" }}
-                  onClick={handlePostShare}
-                />
-              </div>
-              <FaRegBookmark
-                className="feedIcon"
-                style={{ cursor: "pointer" }}
-                onClick={(e) => handlePostBookmark(post.postId, e)}
-              />
-            </FeedIcons>
-            <FeedInfo>
-              <p>
-                {format(post.createdAt, "yyyy.MM.dd. a hh:mm")
-                  .replace("AM", "오전")
-                  .replace("PM", "오후")}
-              </p>
-              <p>좋아요 {post.likeCount}개</p>
-              <p>댓글 {post.commentCount}개</p>
-            </FeedInfo>
-            <FeedContent>
-              <p>{truncateContent(post.content)}</p>
-              <div>
-                <p style={{ fontSize: "15px", color: "gray" }}>더보기</p>
-              </div>
-            </FeedContent>
-          </FeedBox>
+                  </div>
+                </FeedProfile>
+                <SliderContainer>
+                  <Slider {...settings}>
+                    <FeedImages key={index}>
+                      <img src={item.imgUrl} alt="광고 이미지" />
+                    </FeedImages>
+                  </Slider>
+                </SliderContainer>
+                <FeedIcons>
+                  <div style={{ display: "flex", gap: "20px" }}>
+                    <IoIosHeartEmpty
+                      className="feedIcon"
+                      style={{ cursor: "pointer" }}
+                    />
+                    <FiMessageCircle
+                      className="feedIcon"
+                      style={{ cursor: "pointer" }}
+                    />
+                    <IoMdShare
+                      className="feedIcon"
+                      style={{ cursor: "pointer" }}
+                    />
+                  </div>
+                  <FaRegBookmark
+                    className="feedIcon"
+                    style={{ cursor: "pointer" }}
+                  />
+                </FeedIcons>
+                <FeedInfo>
+                  <p>{item.searchTime}</p>
+                  <p>좋아요 99개</p>
+                  <p>댓글 99개</p>
+                </FeedInfo>
+                <FeedContent>
+                  <p>{truncateContent(item.content.adDescription)}</p>{" "}
+                  {/* 광고 설명 */}
+                  <div>
+                    <p style={{ fontSize: "15px", color: "gray" }}>더보기</p>
+                  </div>
+                </FeedContent>
+              </FeedBox>
+            </div>
+          )}
         </div>
       ))}
     </div>
