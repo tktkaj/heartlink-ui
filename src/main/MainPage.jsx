@@ -8,6 +8,7 @@ import AlarmRight from "../alarm/AlarmRight";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
+import axios from "axios";
 
 const Container = styled.div`
   width: 100vw;
@@ -84,6 +85,44 @@ export default function MainPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSoonBreak, setIsSoonBreak] = useState(false);
 
+  // /reissue 요청 보내는 함수
+  const reissueToken = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9090/reissue", // 리프레시 토큰을 요청하는 엔드포인트
+        {},
+        {
+          withCredentials: true, // 쿠키를 자동으로 보내도록 설정
+        }
+      );
+      if (response.data.accessToken) {
+        // 새 액세스 토큰을 로컬 스토리지에 저장
+        localStorage.setItem("access", response.data.accessToken);
+        console.log("새 액세스 토큰:", response.data.accessToken);
+      }
+    } catch (error) {
+      console.error("리프레시 토큰 재발급 실패:", error);
+      navigate("/login");
+    }
+  };
+  // 액세스 토큰이 유효한지 확인하는 함수
+  const checkAccessToken = () => {
+    const accessToken = localStorage.getItem("access");
+    if (!accessToken) {
+      return false; // 액세스 토큰이 없으면 유효하지 않음
+    }
+
+    // 만약 액세스 토큰이 있다면, 실제로 그 토큰이 유효한지 서버에서 확인할 수 있음 (선택 사항)
+    return true;
+  };
+
+  useEffect(() => {
+    // 액세스 토큰이 유효하지 않거나 없다면 리프레시 토큰으로 새로운 액세스 토큰을 요청
+    if (!checkAccessToken()) {
+      reissueToken();
+    }
+  }, []); // 한 번만 실행되도록 빈 배열 전달
+
   useEffect(() => {
     const coupleCheck = async () => {
       try {
@@ -100,10 +139,16 @@ export default function MainPage() {
     };
     coupleCheck();
   }, [isSoonBreak]);
+
   useEffect(() => {
     const fetchPartnerInfo = async () => {
       try {
         const access = localStorage.getItem("access");
+
+        if (!access) {
+          await reissueToken(); // 액세스 토큰이 없으면 /reissue로 새 토큰을 발급받음
+        }
+
         const authAxios = getAuthAxios(access);
         const partnerResponse = await authAxios.get(
           "http://localhost:9090/user/couple"

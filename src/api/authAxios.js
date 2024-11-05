@@ -13,7 +13,7 @@ export const getAuthAxios = (token) => {
     (res) => res,
     async (error) => {
       try {
-        if (error.response.status === 401) {
+        if (error.response.status == 401) {
           // 액세스 토큰이 만료되면 토큰 갱신
           const { accessToken, refreshToken } = await getNewRefreshToken();
           // 헤더에 갱신된 액세스 토큰 설정
@@ -22,9 +22,10 @@ export const getAuthAxios = (token) => {
           if (refreshToken) {
             Cookies.set("refreshToken", refreshToken, {
               expires: 7, // 쿠키 만료일, 7일 후 만료
-              path: "", // 쿠키 경로
-              secure: true, // HTTPS 환경에서만 전송
-              sameSite: "Strict", // CSRF 공격 방지
+              path: "/", // 쿠키 경로
+              secure: false, // HTTPS 환경에서만 전송
+              sameSite: "None", // CSRF 공격 방지
+              HttpOnly: false,
             });
             localStorage.setItem("refresh", refreshToken);
           }

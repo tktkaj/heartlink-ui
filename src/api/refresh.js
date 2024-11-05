@@ -5,10 +5,13 @@ export const getNewRefreshToken = async () => {
   console.log("토큰 갱신해야됨");
 
   // 먼저 쿠키에서 리프레시토큰 가져오기
-  const refreshTokenFromCookie = Cookies.get("refreshToken");
+  const refreshTokenFromCookie = Cookies.get("RefreshToken");
+  console.log("쿠키에서 리프레시토큰 가져오기:", refreshTokenFromCookie);
   // 만약 쿠키에 없으면 로컬 스토리지에서 리프레시토큰 가져오기
   const refreshToken =
     refreshTokenFromCookie || localStorage.getItem("refresh");
+
+  console.log("리프레시토큰:", refreshToken);
 
   if (!refreshToken) {
     console.error("Refresh token이 없습니다.");
@@ -29,10 +32,11 @@ export const getNewRefreshToken = async () => {
     localStorage.setItem("access", result.data.accessToken);
     localStorage.setItem("refresh", result.data.refreshToken);
     Cookies.set("refreshToken", result.data.refreshToken, {
-      expires: 7,
-      path: "",
-      secure: true,
-      sameSite: "Strict",
+      expires: 7, // 쿠키 만료일, 7일 후 만료
+      path: "/", // 쿠키 경로
+      secure: false, // HTTPS 환경에서만 전송
+      sameSite: "None", // CSRF 공격 방지
+      HttpOnly: false,
     });
 
     // 새 토큰 반환
@@ -42,16 +46,7 @@ export const getNewRefreshToken = async () => {
       "토큰 갱신 실패:",
       error.response ? error.response.data : error.message
     );
-    if (
-      error.response &&
-      error.response.data.error === "invalid refresh token"
-    ) {
-      // 리프레시 토큰이 유효하지 않으면 세션 만료처리
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      Cookies.remove("refreshToken");
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-    }
-    throw error;
+    if (error.response && error.response.data.error === "invalid refresh token")
+      throw error;
   }
 };
