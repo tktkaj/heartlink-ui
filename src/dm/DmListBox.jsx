@@ -68,7 +68,7 @@ const IconButton = styled.button`
 `;
 
 
-export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleOpenModal, newChatModal }) {
+export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleOpenModal, newChatModal, handleDeleteMessageModal, deleteRoom }) {
 
   const { myLoginId, myUserId, chatUsers } = dmList;
   setUserId(myUserId);
@@ -88,11 +88,11 @@ export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleO
             onClick={() => handleChangeRoom(chatUser)}
           >
             <img src={chatUser.otherUserImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
-            <div style={{width:'210px'}}>
+            <div style={{width:'205px'}}>
               <div style={{ marginBottom: '1px' }}>{chatUser.otherLoginId}</div>
               <div style={{ fontSize: '0.8rem' }}>{chatUser.lastMessage && chatUser.lastMessage.length > 18 ? chatUser.lastMessage.substring(0, 18) + "..." : chatUser.lastMessage}</div>
             </div>
-            <div style={{marginLeft:'0px'}}><MdCancel style={{fontSize: '1.4rem'}} onClick={null}/></div>
+            <div style={{marginLeft:'0px'}}><MdCancel style={{fontSize: '1.5rem'}} onClick={()=>{handleDeleteMessageModal(deleteRoom)}}/></div>
           </DmItem>
         ))
       ) : (

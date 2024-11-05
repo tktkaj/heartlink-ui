@@ -1,11 +1,11 @@
 import React from 'react'
 
-export default function DeleteRoomModal() {
+export default function DeleteRoomModal({handleDeleteMessageModal, deleteRoom }) {
     return (
         <div>
-            <div className="fixed bg-white top-0 left-0 bottom-0 right-0 opacity-10">
+            <div className="fixed bg-white top-0 left-0 bottom-0 right-0 opacity-10" onClick={()=>{handleDeleteMessageModal(deleteRoom)}}>
             </div>
-            <div className="absolute top-1/2 right-1/4 transform -translate-x-1/4 -translate-y-1/2 border-solid border-2 border-slate-300 w-96 rounded-3xl pt-2 bg-white">
+            <div className="absolute top-1/2 right-1/4 transform -translate-x-1/4 -translate-y-1/2 border-solid border-2 border-slate-300 w-96 rounded-3xl pt-2 bg-white" >
                 <div className='flex justify-center items-center text-lg py-5'>
                     <div><p>이 유저와의 채팅을 종료하시겠습니까?</p></div>
                 </div>

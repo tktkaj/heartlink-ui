@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MessageApplyModal from '../layout/MessageApplyModal';
+import DeleteRoomModal from '../layout/DeleteRoomModal'
 
 const NoChatContainer = styled.div`
   display: flex;
@@ -27,11 +28,13 @@ export default function ChatRoom() {
   const [otherProfile, setOtherProfile] = useState(); // 상대방 유저이미지 경로
   const [otherLoginId, setOtherLoginId] = useState(); // 상대방 로그인 아이디
   const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
-  const [newChatModal, setNewChatModal] = useState(false);  //  모달 상태
   const [searchList, setSearchlist] = useState([]);
   const [msgRoomType, setMsgRoomType] = useState('PUBLIC');
   const [openUser, setOpenUser] = useState(false);
-
+  
+  // 모달 모음
+  const [newChatModal, setNewChatModal] = useState(false);
+  const [deleteRoom, setDeleteRomm] = useState(false);
 
   // 웹 소켓 연결
   useEffect(() => {
@@ -377,7 +380,7 @@ export default function ChatRoom() {
       })
   }
 
-  // 모달 on/off 함수
+  // 채팅방 개설 모달
   const handleOpenModal = (newChatModal) => {
     if (newChatModal == false)
       setNewChatModal(true);
@@ -440,13 +443,28 @@ export default function ChatRoom() {
       })
   }
 
+  const handleDeleteMessageModal = (deleteRoom) =>{
+    if (deleteRoom == false)
+      setDeleteRomm(true);
+    else if (deleteRoom == true)
+      setDeleteRomm(false);
+  }
+
+
+
   return (
     <div style={{ display: 'flex' }}>
+
+      {/* 모달 */}
       {newChatModal == true && <ChatListModal newChatModal={newChatModal} handleOpenModal={handleOpenModal} handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
       {msgRoomType == 'PRIVATE' && !openUser && <MessageApplyModal handleMessageAgree={handleMessageAgree} handleMessageReject={handleMessageReject} />}
+      {deleteRoom && <DeleteRoomModal handleDeleteMessageModal={handleDeleteMessageModal} deleteRoom={deleteRoom}/>}
+
+      {/* 알람 toastify*/}
       <ToastContainer />
+
       <MiniSide />
-      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />
+      <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} handleDeleteMessageModal={handleDeleteMessageModal} deleteRoom={deleteRoom} />
       {msgRoomId ? ( // messages가 존재하면 ChatBox를 보여줌
         <ChatBox
           input={input}
