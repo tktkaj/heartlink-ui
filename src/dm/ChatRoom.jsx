@@ -7,6 +7,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import MessageApplyModal from '../layout/MessageApplyModal';
 
 const NoChatContainer = styled.div`
   display: flex;
@@ -28,7 +29,8 @@ export default function ChatRoom() {
   const [otherUserId, setOtherUserId] = useState(); //  상대방 유저 아이디
   const [newChatModal, setNewChatModal] = useState(false);  //  모달 상태
   const [searchList, setSearchlist] = useState([]);
-
+  const [msgRoomType, setMsgRoomType] = useState('PUBLIC');
+  const [openUser, setOpenUser] = useState(false);
 
 
   // 웹 소켓 연결
@@ -102,7 +104,7 @@ export default function ChatRoom() {
   }, [messages]);
 
 
-  // 상대방 클릭시 채팅방이 바뀌도록
+  // 상대방 클릭시 채팅방 내역 불러오는 함수
   const handleChangeRoom = (chat) => {
 
     const token = localStorage.getItem('access');
@@ -110,6 +112,8 @@ export default function ChatRoom() {
     setOtherLoginId(chat.otherLoginId);
     setMsgRoomId(chat.msgRoomId);
     setOtherUserId(chat.otherUserId);
+    setMsgRoomType(chat.msgRoomType);
+    setOpenUser(chat.openUser);
 
     axios.get(`http://localhost:9090/dm/${chat.msgRoomId}`,
       {
@@ -278,7 +282,7 @@ export default function ChatRoom() {
           // 서버로부터 받은 데이터를 상태로 설정
           setDmList(response.data);
           setNewChatModal(false);
-  
+
         })
         .catch((error) => {
           console.error('Error fetching the direct message:', error);
@@ -351,27 +355,26 @@ export default function ChatRoom() {
   }
 
   //  채팅유저 검색 함수
-  const handleSearchUser = (searchName) =>{
+  const handleSearchUser = (searchName) => {
 
     const token = localStorage.getItem('access');
     axios.get("http://localhost:9090/dm/friends"
-      ,{
-        headers:{
+      , {
+        headers: {
           Authorization: `${token}`
         }
-        ,params:{
+        , params: {
           searchName: searchName
         }
       }
     )
-    .then((response)=>{
-        if(response.status==200){
+      .then((response) => {
+        if (response.status == 200) {
           setSearchlist(response.data);
         }
-    })
-    .catch((error)=>{
-      // alert(error);
-    })
+      })
+      .catch((error) => {
+      })
   }
 
   // 모달 on/off 함수
@@ -382,9 +385,65 @@ export default function ChatRoom() {
       setNewChatModal(false);
   }
 
+  // 비공개 사용자 메시지 요청 수락 함수
+
+  const handleMessageAgree = () => {
+
+    const token = localStorage.getItem('access')
+
+    axios.put(`http://localhost:9090/dm/message/accept/${msgRoomId}`
+      , {
+        headers: {
+          Authorization: `${token}`
+        }
+      })
+      .then((response) => {
+        setMsgRoomType('PUBLIC');
+      })
+      .catch((error) => {
+      })
+  }
+
+  // 비공개 사용자 메시지 요청 거부 함수
+
+  const handleMessageReject = () => {
+    const token = localStorage.getItem('access')
+
+    axios.delete(`http://localhost:9090/dm/message/rejection/${msgRoomId}`
+      , {
+        headers: {
+          Authorization: `${token}`
+        }
+      })
+      .then((response) => {
+        setMsgRoomType('PUBLIC');
+        setMsgRoomId(null);
+
+        axios.get("http://localhost:9090/dm"
+          , {
+            headers: {
+              Authorization: `${token}`
+            }
+          }
+        )
+          .then((response) => {
+            // 서버로부터 받은 데이터를 상태로 설정
+            setDmList(response.data);
+
+          })
+          .catch((error) => {
+            console.error('Error fetching the direct message:', error);
+          });
+
+      })
+      .catch((error) => {
+      })
+  }
+
   return (
     <div style={{ display: 'flex' }}>
-      {newChatModal == true && <ChatListModal handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} />}
+      {newChatModal == true && <ChatListModal newChatModal={newChatModal} handleOpenModal={handleOpenModal} handleNewRoom={handleNewRoom} handleSearchUser={handleSearchUser} searchList={searchList} setSearchlist={setSearchlist} />}
+      {msgRoomType == 'PRIVATE' && !openUser && <MessageApplyModal handleMessageAgree={handleMessageAgree} handleMessageReject={handleMessageReject} />}
       <ToastContainer />
       <MiniSide />
       <DmListBox dmList={dmList} handleChangeRoom={handleChangeRoom} setUserId={setUserId} handleOpenModal={handleOpenModal} newChatModal={newChatModal} />

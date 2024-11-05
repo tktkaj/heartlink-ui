@@ -1,14 +1,34 @@
-import React from 'react'
-import TestImg from '../image/mypage/bono.jpg'
-import { useState } from 'react'
+import React from 'react';
+import TestImg from '../image/mypage/bono.jpg';
+import { useState, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 
-export default function ChatListModal({handleNewRoom, handleSearchUser, searchList}) {
+export default function ChatListModal({handleNewRoom, handleSearchUser, searchList, setSearchlist, handleOpenModal, newChatModal}) {
 
     const [x, setX] = useState([]);
     const [otherUserId, setOtherUserId] = useState();
 
+    useEffect(()=>{
+        const token = localStorage.getItem('access');
+
+        axios.get("http://localhost:9090/dm/friends",
+            {
+                headers:{
+                    Authorization : `${token}`
+                }
+            }
+        )
+        .then((response)=>{
+            console.log('연결굿')
+            if(response.status==200)
+                setSearchlist(response.data);
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    },[])
 
     //  radio버튼 누를시 해당되는 유저의 userId 가져오기
     const handleClickRadioButton = (e, userId) => {
@@ -24,7 +44,7 @@ export default function ChatListModal({handleNewRoom, handleSearchUser, searchLi
    
     return (
         <div>
-            <div className="fixed bg-slate-500 top-0 left-0 bottom-0 right-0 opacity-80">
+            <div className="fixed bg-slate-500 top-0 left-0 bottom-0 right-0 opacity-80" onClick={()=>{handleOpenModal(newChatModal)}}>
             </div>
             <div className="absolute top-1/2 right-1/4 transform -translate-x-1/4 -translate-y-1/2 border-solid border-2 border-slate-300 w-96 rounded-3xl pt-2 bg-white">
                 <div className="flex justify-center border-solid  border-b-2 border-slate-300 pb-2"><p className="text-xl">새로운 메시지</p></div>
