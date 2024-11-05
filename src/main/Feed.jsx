@@ -169,22 +169,22 @@ export default function Feed() {
       }
     };
 
-    const fetchAds = async () => {
-      try {
-        const access = localStorage.getItem("access");
-        const authAxios = getAuthAxios(access);
-        const result = await authAxios.get("http://localhost:9090/ads/get");
-        setAds(result.data);
-        console.log("광고 데이터:", result.data);
-      } catch (err) {
-        console.error("Failed to fetch ads:", err);
-        setError("Failed to fetch ads.");
-      }
-    };
+    // const fetchAds = async () => {
+    //   try {
+    //     const access = localStorage.getItem("access");
+    //     const authAxios = getAuthAxios(access);
+    //     const result = await authAxios.get("http://localhost:9090/ads/get");
+    //     setAds(result.data);
+    //     console.log("광고 데이터:", result.data);
+    //   } catch (err) {
+    //     console.error("Failed to fetch ads:", err);
+    //     setError("Failed to fetch ads.");
+    //   }
+    // };
 
     // 호출
     fetchPosts();
-    fetchAds();
+    // fetchAds();
   }, []);
 
   // 3개마다 1개 광고 피드를 추가하는 함수
