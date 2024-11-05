@@ -76,7 +76,7 @@ const ResultText = styled.p`
   color: #666;
 `;
 
-const Modal1 = ({ onClose }) => {
+const Modal1 = ({ providerId }) => {
   const [phone, setPhone] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
