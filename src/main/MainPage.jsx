@@ -107,7 +107,6 @@ export default function MainPage() {
               <p style={{ fontSize: "15px" }}>접속중</p>
             </div>
           </LoveStatus>
-          <AlarmRight />
         </StatusContainer>
       </Container>
       <Upload onClick={() => setIsModalOpen(true)} />
