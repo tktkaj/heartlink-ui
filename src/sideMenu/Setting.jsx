@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import { FaHeartBroken } from "react-icons/fa";
-import { RiLockPasswordFill } from "react-icons/ri";
-import { IoLogOut } from "react-icons/io5";
+import { GoShieldLock } from "react-icons/go";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Password from "./Password";
 import { getAuthAxios } from "../api/authAxios";
-import { BsHeartPulseFill } from "react-icons/bs";
+import { FaLinkSlash } from "react-icons/fa6";
+import { MdLogout } from "react-icons/md";
+import { FaLink } from "react-icons/fa6";
 
 const SettingBox = styled.div`
   background-color: white;
@@ -116,31 +116,31 @@ export default function Setting({ closeSetting }) {
         <ul>
           {isSoonBreak && (
             <SettingList onClick={handleCancelBreak}>
-              <BsHeartPulseFill className="settingIcon" />
+              <FaLink className="settingIcon" />
               <p>커플해지 취소</p>
             </SettingList>
           )}
           {!isSoonBreak && (
             <Link to="/alertCouple">
               <SettingList>
-                <FaHeartBroken className="settingIcon" />
+                <FaLinkSlash className="settingIcon" />
                 <p>커플 해제</p>
               </SettingList>
             </Link>
           )}
           {isSoonBreak && (
             <SettingList onClick={handleFinalBreak}>
-              <FaHeartBroken className="settingIcon" />
+              <FaLinkSlash className="settingIcon" />
               <p>커플 즉시해제</p>
             </SettingList>
           )}
           <SettingList onClick={handlePasswordClick}>
-            <RiLockPasswordFill className="settingIcon" />
+            <GoShieldLock className="settingIcon" />
             <p>비밀번호 변경</p>
           </SettingList>
           <Link to="/alertLogout">
             <SettingList>
-              <IoLogOut className="settingIcon" />
+              <MdLogout className="settingIcon" />
               <p>로그아웃</p>
             </SettingList>
           </Link>
