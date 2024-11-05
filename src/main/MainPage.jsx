@@ -135,6 +135,17 @@ export default function MainPage() {
             </LoveStatus>
           )}
           <AlarmRight />
+          <LoveStatus>
+            <ProfileThum>
+              <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
+            </ProfileThum>
+            <div>
+              <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
+                {partnerInfo?.coupleNickname}
+              </p>
+              <p style={{ fontSize: "15px" }}>접속중</p>
+            </div>
+          </LoveStatus>
         </StatusContainer>
       </Container>
       <Upload onClick={() => setIsModalOpen(true)} />
