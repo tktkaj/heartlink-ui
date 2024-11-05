@@ -6,6 +6,7 @@ import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
 import LinkMatchRecord from "./LinkMatchRecord";
 import { useAuth } from "../api/AuthContext";
+import CoupleGraph from "./CoupleGraph";
 import Dday from "./Dday";
 
 const MainContainer = styled.div`
@@ -104,7 +105,7 @@ const ButtonShadow = styled.div`
 
 const LinkMatchContent = styled.div`
   width: 100%;
-  height: 27vh;
+  height: 22vh;
   background-color: #fab7cd26;
   display: flex;
   justify-content: center;
@@ -114,7 +115,7 @@ const LinkMatchContent = styled.div`
 
 const Match = styled.div`
   width: 13.8vw;
-  height: 19vh;
+  height: 15vh;
   background: #eaeaff;
   border-radius: 25px;
   display: flex;
@@ -130,8 +131,13 @@ const MatchTxt = styled.div`
   }
 `;
 
-const LinkMission = styled.div``;
+const LinkMission = styled.div`
+  width: 67%;
+  margin-right: 60px;
+
+`;
 const MissionHeader = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
@@ -145,26 +151,22 @@ const BingoBoard = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5px;
-  width: 260px;
+  width: 100%;
+  height: 80%;
   margin: 0 auto;
 `;
 
 const BingoCell = styled.div`
   background-color: #dcdcdc;
-  height: 78px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 15px;
-  font-size: 14px;
+  font-size: 18px;
   background-image: url(${(props) => props.image});
   background-size: cover;
   background-position: center;
-`;
-
-const Graph = styled.div`
-  width: 300px;
-  height: 300px;
 `;
 
 export default function Couple() {
@@ -187,6 +189,7 @@ export default function Couple() {
   const [years, setYears] = useState([]);
   const [months, setMonths] = useState([]);
   const [themes, setThemes] = useState([]);
+  const [myMission, setMyMission] = useState([]);
 
   const [selectedMatch, setSelectedMatch] = useState(null);
 
@@ -244,7 +247,9 @@ export default function Couple() {
       }
     };
     fetchData();
+  
   }, [selectedYear, selectedMonth]);
+
 
   const handleMatchSelect = async (couple) => {
     const questionId = mission.linkMatchId;
@@ -296,6 +301,31 @@ export default function Couple() {
     }
   };
 
+  // const fetchMyMissionTags = async (year, month) => {
+  //   try {
+  //     const access = localStorage.getItem("access");
+  //     const response = await axios.get("http://localhost:9090/couple/missionStatus", { params: { year, month } }, {
+  //       headers: {
+  //         Authorization: access,
+  //       },
+  //     });
+  //     console.log("내가 완료한 미션 리스트"+response.data);
+  //     setMyMission(response.data);
+  //   } catch (error) {
+  //     console.error("내가 완료한 미션 리스트 가져오는 중 오류 발생:", error);
+  //   }
+  // }
+
+
+  // 이미지 저장 경로 확인하고 나서 수정해보기
+  const getImageForTheme = (theme) => {
+    // 사용자가 완료한 미션에서 해당 theme의 missionId와 일치하는 미션 찾기
+    const completedMission = myMission.find(mission => mission.missionId === theme.missionId);
+    
+    // 완료된 미션이 있으면 해당 미션의 이미지 경로 반환, 없으면 기본 이미지 경로 반환
+    return completedMission ? `${completedMission.postImgUrl}` : `url/to/image${theme.missionId}.jpg`;
+  };
+
   const handleYearSelect = (year) => {
     setSelectedYear(year);
     setIsOpen1(false);
@@ -309,6 +339,35 @@ export default function Couple() {
   const [isLinkMatchOpen, setIsLinkMatchOpen] = useState(false);
   const openRecord = () => setIsLinkMatchOpen(true);
   const closeRecord = () => setIsLinkMatchOpen(false);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+  
+      try {
+        // 전체 미션 가져오기
+        const missionResponse = await authAxios.get("http://localhost:9090/couple/missionslink", {
+          params: { year: selectedYear, month: selectedMonth },
+          headers: { Authorization: access },
+        });
+        console.log("해야하는 미션 리스트", missionResponse.data);
+        setThemes(missionResponse.data);
+  
+        // 내가 완료한 미션 가져오기
+        const myMissionResponse = await authAxios.get("http://localhost:9090/couple/missionStatus", {
+          params: { year: selectedYear, month: selectedMonth },
+          headers: { Authorization: access },
+        });
+        console.log("내가 완료한 미션 리스트", myMissionResponse.data);
+        setMyMission(myMissionResponse.data);
+      } catch (error) {
+        console.error("미션 또는 완료된 미션 데이터를 가져오는 중 오류 발생:", error);
+      }
+    };
+  
+    fetchData();
+  }, [selectedYear, selectedMonth]);
 
   return (
     <>
@@ -372,7 +431,7 @@ export default function Couple() {
                 </MatchTxt>
               </Match>
             </LinkMatchContent>
-            <div style={{ display: "flex", margin: "auto", width: "35vw" }}>
+            <div style={{ display: "flex", margin: "auto", width: "35vw", position: "relative" }}>
               <LinkMission>
                 <MissionHeader>
                   <LinkMatch>Link Mission</LinkMatch>
@@ -382,7 +441,7 @@ export default function Couple() {
                         <button
                           type="button"
                           onClick={toggleDropdown1}
-                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-lg font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
                           aria-expanded={isOpen1}
                           aria-haspopup="true"
@@ -403,7 +462,7 @@ export default function Couple() {
                                 href="#"
                                 key={index}
                                 onClick={() => handleYearSelect(year)}
-                                className="block px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
+                                className="block px-3 py-0.5 text-lg text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
                               >
                                 {year}
@@ -418,7 +477,7 @@ export default function Couple() {
                         <button
                           type="button"
                           onClick={toggleDropdown2}
-                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-lg font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
                           aria-expanded={isOpen2}
                           aria-haspopup="true"
@@ -439,7 +498,7 @@ export default function Couple() {
                                 href="#"
                                 key={index}
                                 onClick={() => handleMonthSelect(month)}
-                                className="block px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
+                                className="block px-3 py-0.5 text-lg text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
                               >
                                 {month}
@@ -452,17 +511,17 @@ export default function Couple() {
                   </LinkMatchDrop>
                 </MissionHeader>
                 <BingoBoard>
-                  {themes.map((theme) => (
-                    <BingoCell
-                      key={theme.missionId}
-                      image={`url/to/image${theme.missionId}.jpg`}
-                    >
-                      {theme.linkTag}
-                    </BingoCell>
-                  ))}
+                {themes.map((theme) => (
+                  <BingoCell
+                    key={theme.missionId}
+                    image={getImageForTheme(theme)} // 테마에 맞는 이미지 설정
+                  >
+                    {theme.linkTag}
+                  </BingoCell>
+                ))}
                 </BingoBoard>
               </LinkMission>
-              <Graph></Graph>
+              <CoupleGraph></CoupleGraph>
             </div>
           </FeedBox>
           <Advert>
@@ -472,6 +531,6 @@ export default function Couple() {
         <Upload />
         {isLinkMatchOpen && <LinkMatchRecord closeRecord={closeRecord} />}
       </MainContainer>
-    </>
+  </>
   );
 }
