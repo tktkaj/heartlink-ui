@@ -5,7 +5,6 @@ import { IoClose } from "react-icons/io5";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -32,17 +31,16 @@ const ModalContainer = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 20px; /* 위에서의 위치 */
-  right: 20px; /* 오른쪽에서의 위치 */
+  top: 20px;
+  right: 20px;
   background: none;
   border: none;
   cursor: pointer;
-  color: #fff; // 아이콘 색상
-  font-size: 24px; // 크기 조정
+  color: #fff;
+  font-size: 24px;
   z-index: 2;
 `;
 
-// 첫번째 모달
 const StyledIcon = styled(MdAddPhotoAlternate)`
   width: 90px;
   height: 90px; 
@@ -85,10 +83,9 @@ const Label = styled.label`
   margin-top: 10px;
 `;
 
-// 두 번째 모달 스타일
 const PreviewModalContainer = styled(ModalContainer)`
-    width: 1000px;
-    height: 600px;
+  width: 1000px;
+  height: 600px;
 `;
 
 const PreviewContent = styled.div`
@@ -145,16 +142,16 @@ const Checkbox = styled.input`
 `;
 
 const UploadButton = styled.button`
-  background: #706ef4;  // 배경색
-  color: white;         // 글씨색
-  border: none;         // 테두리 없음
-  padding: 10px 20px;  // 여백
-  border-radius: 5px;   // 둥근 모서리
-  cursor: pointer;      // 포인터 커서
-  align-self: flex-end; // 오른쪽 정렬
-  
+  background: #706ef4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-end;
+
   &:hover {
-    background: #5a55c1; // 마우스 오버 시 색상 변경
+    background: #5a55c1;
   }
 `;
 
@@ -164,12 +161,12 @@ export default function UploadModal({ isOpen, onClose }) {
   const [showPreview, setShowPreview] = useState(false);
   const [isCoupleOnly, setIsCoupleOnly] = useState(false);
 
-  if (!isOpen) return null; // 모달이 열리지 않을 때는 null 반환
+  if (!isOpen) return null;
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
       resetForm();
-      onClose(); // 모달 외부 클릭 시 모달 닫기
+      onClose();
     }
   };
 
@@ -180,37 +177,68 @@ export default function UploadModal({ isOpen, onClose }) {
     setIsCoupleOnly(false);
   };
 
-
-  const handleUpload = () => {
-    // 업로드 로직을 여기에 추가하세요
-    console.log("업로드 내용:", text, "커플만 공개:", isCoupleOnly);
+  const handleUpload = async () => {
+    if (files.length === 0) {
+      alert("파일을 선택하세요.");
+      return;
+    }
+  
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files', file.file); // 파일 객체를 첨부
+    });
+  
+    const postDTO = {
+      content: encodeURIComponent(text), // URL 인코딩
+      visibility: isCoupleOnly ? "PRIVATE" : "PUBLIC"
+    };
+    formData.append('post', JSON.stringify(postDTO));
+  
+    // FormData 내용 확인
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ':', pair[1]); // formData의 항목을 출력
+    }
+  
+    try {
+      const response = await fetch('http://localhost:9090/feed/write', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('업로드에 실패했습니다.');
+      }
+  
+      console.log('업로드 성공:', await response.json());
+    } catch (error) {
+      console.error('업로드 중 오류 발생:', error);
+    }
   };
+  
 
   const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files); // 여러 파일을 배열로 변환
+    const selectedFiles = Array.from(event.target.files);
 
-    // 파일 개수 제한
     if (selectedFiles.length > 10) {
-    alert("최대 10개의 파일만 업로드할 수 있습니다.");
-    return;
-  }
+      alert("최대 10개의 파일만 업로드할 수 있습니다.");
+      return;
+    }
 
-  // 동영상 개수 제한
-  const videoFiles = selectedFiles.filter(file => file.type.startsWith('video/'));
-  if (videoFiles.length > 1) {
-    alert("동영상은 1개만 업로드할 수 있습니다.");
-    return;
-  }
+    const videoFiles = selectedFiles.filter(file => file.type.startsWith('video/'));
+    if (videoFiles.length > 1) {
+      alert("동영상은 1개만 업로드할 수 있습니다.");
+      return;
+    }
 
-  const fileURLs = selectedFiles.map((file) => ({
-    url: URL.createObjectURL(file),
-    type: file.type
-  }));
+    const fileObjects = selectedFiles.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+      type: file.type
+    }));
 
-  setFiles(fileURLs);
-  if (fileURLs.length > 0) setShowPreview(true);
-};
-
+    setFiles(fileObjects);
+    if (fileObjects.length > 0) setShowPreview(true);
+  };
 
   return (
     <>
