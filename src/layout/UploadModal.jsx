@@ -4,6 +4,7 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { getAuthAxios } from '../api/authAxios';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -184,26 +185,31 @@ export default function UploadModal({ isOpen, onClose }) {
     }
   
     const formData = new FormData();
+    
+    // 파일을 FormData에 추가
     files.forEach((file) => {
-      formData.append('files', file.file); // 파일 객체를 첨부
+      formData.append('files', file.file); // 'files' 키로 파일 추가
     });
   
+    // postDTO를 JSON 형태로 추가
     const postDTO = {
-      content: encodeURIComponent(text), // URL 인코딩
+      content: text,
       visibility: isCoupleOnly ? "PRIVATE" : "PUBLIC"
     };
-    formData.append('post', JSON.stringify(postDTO));
   
-    // FormData 내용 확인
+    formData.append('post', JSON.stringify(postDTO)); // JSON 데이터는 문자열로 추가
+  
+    // FormData 내용 로그로 출력 (디버깅 용)
     for (let pair of formData.entries()) {
-      console.log(pair[0] + ':', pair[1]); // formData의 항목을 출력
+      console.log(pair[0] + ':', pair[1]);
     }
   
     try {
-      const response = await fetch('http://localhost:9090/feed/write', {
-        method: 'POST',
-        body: formData,
-      });
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+  
+      // 서버에 FormData 보내기
+      const response = await authAxios.post('http://localhost:9090/feed/write', formData);
   
       if (!response.ok) {
         throw new Error('업로드에 실패했습니다.');
@@ -212,6 +218,7 @@ export default function UploadModal({ isOpen, onClose }) {
       console.log('업로드 성공:', await response.json());
     } catch (error) {
       console.error('업로드 중 오류 발생:', error);
+      alert('업로드 중 오류가 발생했습니다.');
     }
   };
   
