@@ -15,6 +15,7 @@ import { getAuthAxios } from "../api/authAxios";
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FeedDetail from "../layout/FeedDetail";
 
 const FeedBox = styled.div`
   width: 37vw;
@@ -115,6 +116,8 @@ const FeedImages = styled.div`
 
 export default function Feed() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [isFeedDetail, setIsFeedDetail] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   const openModal = (event) => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
@@ -447,6 +450,12 @@ export default function Feed() {
       });
   };
 
+  const handleMessageClick = (post) => {
+    console.log("Selected Post: ", post); // 로그 추가
+    setSelectedPost(post); // 선택한 포스트 데이터 저장
+    setIsFeedDetail(true); // FeedDetail 모달 열기
+  };
+
   return (
     <div>
       <ToastContainer />
@@ -541,6 +550,7 @@ export default function Feed() {
                   <FiMessageCircle
                     className="feedIcon"
                     style={{ cursor: "pointer" }}
+                    onClick = {() => handleMessageClick(item.content)}
                   />
                   <IoMdShare
                     className="feedIcon"
@@ -646,6 +656,13 @@ export default function Feed() {
           )}
         </div>
       ))}
+    {isFeedDetail && (
+        <FeedDetail
+          isOpen={isFeedDetail}
+          onClose={() => setIsFeedDetail(false)}
+          post={selectedPost} // 선택된 포스트 전달
+        />
+      )}
     </div>
   );
 }
