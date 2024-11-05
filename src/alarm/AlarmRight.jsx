@@ -79,12 +79,12 @@ export default function AlarmRight() {
             <CustomToast title="새로운 알림" message={parsedData.message} />,
             {
               position: "top-right",
-              autoClose: 5000,
+              // autoClose: 5000,
               style: {
                 marginTop: "topOffset",
-                width: "290px",
+                width: "400px",
                 top: "20vh",
-                right: "7.5vw",
+                right: "12.9vw",
               },
             },
             { onClick: () => (window.location.href = parsedData.url) }
