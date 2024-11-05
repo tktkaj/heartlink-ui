@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FaPlusCircle } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 
 const DmListBoxContainer = styled.div`
     width: 340px;
@@ -18,7 +19,7 @@ const DmListBoxContainer = styled.div`
     }
 }
     animation: slideIn 0.4s forwards;
-    padding-top: 5vh;
+    padding-top: 3vh;
 `;
 
 const DmListHeader = styled.div`
@@ -50,6 +51,7 @@ const DmItem = styled.div`
 const UserNameLabel = styled.div`
   height: 35px;
   font-size: 1.6rem;
+  margin-bottom: 30px;
 `
 const IconButton = styled.button`
   height: 35px;
@@ -64,6 +66,7 @@ const IconButton = styled.button`
   align-items: center;
   justify-content: center;
 `;
+
 
 export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleOpenModal, newChatModal }) {
 
@@ -81,14 +84,15 @@ export default function DmListBox({ dmList, handleChangeRoom, setUserId, handleO
       {chatUsers && chatUsers.length > 0 ? (
         chatUsers.map((chatUser, index) => (
           <DmItem
-            key={index}
+            key={index} 
             onClick={() => handleChangeRoom(chatUser)}
           >
             <img src={chatUser.otherUserImg} alt="프로필" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
-            <div>
+            <div style={{width:'210px'}}>
               <div style={{ marginBottom: '1px' }}>{chatUser.otherLoginId}</div>
               <div style={{ fontSize: '0.8rem' }}>{chatUser.lastMessage && chatUser.lastMessage.length > 18 ? chatUser.lastMessage.substring(0, 18) + "..." : chatUser.lastMessage}</div>
             </div>
+            <div style={{marginLeft:'0px'}}><MdCancel style={{fontSize: '1.4rem'}} onClick={null}/></div>
           </DmItem>
         ))
       ) : (
