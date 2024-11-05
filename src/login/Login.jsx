@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import styled from "styled-components";
 import kakaoLogo from "../image/sns/free-icon-kakao-talk-4494622.png";
 import naverLogo from "../image/sns/pngwing.com.png";
@@ -7,7 +8,8 @@ import MainLogo from "../image/logo/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/login";
 import FindId from "./FindId";
-import axios from "axios";
+import Modal1 from "./Modal1";
+import Modal2 from "./Modal2";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -209,30 +211,31 @@ export default function Login() {
     setShowFindId(true);
   };
 
-  const handleOAuthLogin = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:9090/login/oauth2/code/google"
-      );
-      // 로그인 성공 처리
-    } catch (error) {
-      if (error.response) {
-        const { message, providerId } = JSON.parse(error.response.data);
 
-        if (message.includes("전화번호를 입력받아야 합니다.")) {
-          console.log(message, providerId);
-        } else if (message.includes("아이디를 입력받아야 합니다.")) {
-          console.log(message, providerId);
-        } else {
-          alert("로그인 실패: " + message);
-        }
-      } else {
-        alert("서버에 연결할 수 없습니다.");
-      }
-    }
-  };
+
+  const location = useLocation();
+  const [errorType, setErrorType] = useState(null);
+  const [providerId, setProviderId] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get('errorType');
+    const provider = params.get('providerId');
+
+    setErrorType(error);
+    setProviderId(provider);
+
+  }, [location]);
+
+
   return (
     <LoginBox>
+      {errorType === 'phone' && providerId && (
+        <Modal1 providerId={providerId} />
+      )}
+      {errorType === 'loginId' && providerId && (
+        <Modal2 providerId={providerId} />
+      )}
       <LoginBoxRight onSubmit={handleSubmit}>
         <LoginTitleAndIntroContainer>
           <LoginTitle>LOGIN</LoginTitle>
@@ -273,24 +276,33 @@ export default function Login() {
         <div style={{ display: "flex", gap: "15px" }}>
           <OAuthButton>
             <a
-              href="http://localhost:9090/oauth2/authorization/kakao"
-              target="_blank"
+              href="javascript:void(0);"
+              onClick={() =>
+              (window.location.href =
+                "http://localhost:9090/oauth2/authorization/kakao")
+              }
             >
               <img src={logs.kakaoLogo} alt="카카오 로그인" />
             </a>
           </OAuthButton>
           <OAuthButton>
             <a
-              href="http://localhost:9090/oauth2/authorization/naver"
-              target="_blank"
+              href="javascript:void(0);"
+              onClick={() =>
+              (window.location.href =
+                "http://localhost:9090/oauth2/authorization/naver")
+              }
             >
               <img src={logs.naverLogo} alt="네이버 로그인" />
             </a>
           </OAuthButton>
           <OAuthButton>
             <a
-              href="http://localhost:9090/oauth2/authorization/google"
-              onClick={handleOAuthLogin}
+              href="javascript:void(0);"
+              onClick={() =>
+              (window.location.href =
+                "http://localhost:9090/oauth2/authorization/google")
+              }
             >
               <img src={logs.googleLogo} alt="구글 로그인" />
             </a>
