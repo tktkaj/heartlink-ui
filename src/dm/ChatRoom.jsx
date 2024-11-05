@@ -517,7 +517,7 @@ export default function ChatRoom() {
           handleBlockUser={handleBlockUser}
         />
       ) : ( // messages가 null일 경우 공백을 표시
-        <NoChatContainer>채팅이 없습니다.</NoChatContainer>
+        <NoChatContainer></NoChatContainer>
       )}
     </div>
   );
