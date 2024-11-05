@@ -185,6 +185,8 @@ export default function Login() {
     try {
       const result = await login(loginId, password);
       console.log(result);
+
+      // 토큰 저장
       const authorization = result.authorization;
       const refreshToken = result.refreshToken;
 
