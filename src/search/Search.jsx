@@ -74,19 +74,30 @@ let PostLink = styled.a`
 `;
 
 function Search() {
-    const PostImage = require('../image/search/ping.jpg');
+    // const PostImage = require('../image/search/ping.jpg');
     const [searchResults, setSearchResults] = useState([]);
     const [keyword, setKeyword] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [isTagView, setIsTagView] = useState(false);
-
+    const [isPopular, setIsPopular] = useState(false);
 
     useEffect(() => {
         getPopularPosts();
-
-        
+        // getAllPosts();
     }, []);
+
+    const getAllPosts = async () => {
+        try {
+            const access = localStorage.getItem("access");
+            const authAxios = getAuthAxios(access);
+            const response = await authAxios.get("http://localhost:9090/search/allPosts");
+            console.log('모든 게시글 조회 : '+response.data);
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error("Error fetching all posts:", error);
+        }
+    };
 
     const getPopularPosts = async () => {
         try {
@@ -95,6 +106,8 @@ function Search() {
             const response = await authAxios.get("http://localhost:9090/search/getSearchPost");
             const popularPosts = response.data;
             setSearchResults(popularPosts);
+            setIsPopular(true);
+            console.log('인기글 조회 : ', popularPosts);
         } catch (error) {
             console.error("Error fetching popular posts:", error);
         }
@@ -102,6 +115,7 @@ function Search() {
 
     const handleSearchResults = (results) => {
         setIsTagView(false);
+        setIsPopular(false);
         const extractedResults = results.map((result) => result);
         setSearchResults(extractedResults);
     };
@@ -116,17 +130,17 @@ function Search() {
             result.push(arr.slice(i, i + chunkSize));
         }
         return result;
+
     };
 
     const handleTagClick = (tagName) => {
-        setIsTagView(true); // 태그 뷰로 변경
-        
+        setIsTagView(true);
+        setIsPopular(false);
         const getTagPosts = async () => {
             try {
                 const access = localStorage.getItem("access");
                 const authAxios = getAuthAxios(access);
                 const response = await authAxios.get(`http://localhost:9090/search/tag?keyword=${tagName}`);
-                console.log("tag검색인데 search다 : ", response.data);
                 setSearchResults(response.data);
             } catch (error) {
                 console.error("Error fetching tag posts:", error);
@@ -149,14 +163,28 @@ function Search() {
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
-                    {isTagView ? 
+                        {setIsPopular? (
+                        chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
+                            <PostList key={chunkIndex}>
+                                {chunk.map((result) => (
+                                    <Post key={result.postId} background={result.fileUrl}>
+                                        <PostLink href={`/feed/details/${result.postId}`}></PostLink>
+                                    </Post>
+                                ))}
+                            </PostList>
+                        ))
+                    ):''}
+
+
+
+                    {!setIsPopular ? (isTagView ? 
                 // 태그 검색 결과 뷰
                 (
                     searchResults && searchResults.length > 0 ? (
                         chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
-                                    <Post key={result.postId} background={result.fileUrl || PostImage}>
+                                    <Post key={result.postId} background={result.fileUrl}>
                                         <PostLink href={`/feed/details/${result.postId}`}></PostLink>
                                     </Post>
                                 ))}
@@ -173,7 +201,7 @@ function Search() {
                         chunkArray(searchResults[0], 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
-                                    <Post key={result.id} background={result.img || PostImage}>
+                                    <Post key={result.id} background={result.img}>
                                         <PostLink href={`/feed/details/${result.id}`}></PostLink>
                                     </Post>
                                 ))}
@@ -183,7 +211,7 @@ function Search() {
                         <div>검색 결과가 없습니다.</div>
                     )
                 ) : ''
-            )}
+            )):''}
                     </PostWrap>
                 </ContentWrap>
             </Content>
