@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import profilethum from "../image/sidebar/test.png";
-import feedImage from "../image/feed/yy.jpg";
 import { GoKebabHorizontal } from "react-icons/go";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdShare } from "react-icons/io";
@@ -196,13 +194,14 @@ export default function Feed() {
   let postIndex = 0;
   let adIndex = 0;
 
-  while (postIndex < posts.length || adIndex < ads.length) {
+  // 피드와 광고를 번갈아 가며 결합
+  while (postIndex < posts.length) {
     // 3개의 피드를 추가
     for (let i = 0; i < 3 && postIndex < posts.length; i++) {
       combinedFeed.push({ type: "post", content: posts[postIndex++] });
     }
-    // 광고가 있다면 광고를 추가
-    if (adIndex < ads.length) {
+    // 3개의 피드 후에 광고가 있다면 광고를 추가
+    if (adIndex < ads.length && postIndex % 3 === 0) {
       combinedFeed.push({ type: "ad", content: ads[adIndex++] });
     }
   }
@@ -565,7 +564,11 @@ export default function Feed() {
                 <p>댓글 {item.content.commentCount}개</p>
               </FeedInfo>
               <FeedContent>
-                <p>{truncateContent(item.content.content)}</p>
+                <p>
+                  {item.content.content.length > 20
+                    ? `${item.content.content.slice(0, 20)}...`
+                    : item.content.content}
+                </p>
                 <div>
                   <p style={{ fontSize: "15px", color: "gray" }}>더보기</p>
                 </div>
@@ -584,21 +587,18 @@ export default function Feed() {
                       Ad_Manager
                     </p>
                   </ProfileTxt>
-                  <div style={{ display: "flex", gap: "15px" }}>
-                    <GoKebabHorizontal
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        cursor: "pointer",
-                      }}
-                      onClick={openModal}
-                    />
-                  </div>
                 </FeedProfile>
                 <SliderContainer>
                   <Slider {...settings}>
-                    <FeedImages key={index}>
-                      <img src={item.imgUrl} alt="광고 이미지" />
+                    <FeedImages>
+                      <img
+                        src={item.content.imgUrl}
+                        alt="광고 이미지"
+                        onClick={() =>
+                          window.open(item.content.siteUrl, "_blank")
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
                     </FeedImages>
                   </Slider>
                 </SliderContainer>
@@ -623,13 +623,20 @@ export default function Feed() {
                   />
                 </FeedIcons>
                 <FeedInfo>
-                  <p>{item.searchTime}</p>
-                  <p>좋아요 99개</p>
-                  <p>댓글 99개</p>
+                  <p>
+                    {format(item.content.searchTime, "yyyy.MM.dd. a hh:mm")
+                      .replace("AM", "오전")
+                      .replace("PM", "오후")}
+                  </p>
+                  <p>좋아요 32개</p>
+                  <p>댓글 21개</p>
                 </FeedInfo>
                 <FeedContent>
-                  <p>{truncateContent(item.content.adDescription)}</p>{" "}
-                  {/* 광고 설명 */}
+                  <p>
+                    {item.content.title.length > 20
+                      ? `${item.content.title.slice(0, 20)}...`
+                      : item.content.title}
+                  </p>
                   <div>
                     <p style={{ fontSize: "15px", color: "gray" }}>더보기</p>
                   </div>
