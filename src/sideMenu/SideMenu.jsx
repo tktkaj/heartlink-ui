@@ -95,9 +95,7 @@ export default function SideMenu() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const res = await authAxios.get(
-          "http://localhost:9090/couple/finalNowUnlink"
-        );
+        const res = await authAxios.get("http://localhost:9090/user/profile");
         console.log("로그인한 유저아이디", res.data);
         if (res.data) {
           setUserId(res.data);

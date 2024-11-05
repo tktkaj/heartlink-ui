@@ -1,4 +1,3 @@
-import SideMenu from "../sideMenu/SideMenu";
 import styled from "styled-components";
 import Feed from "./Feed";
 import profilethum from "../image/sidebar/test.png";
@@ -8,6 +7,7 @@ import { useAuth } from "../api/AuthContext";
 import AlarmRight from "../alarm/AlarmRight";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAuthAxios } from "../api/authAxios";
 
 
 const Container = styled.div`
@@ -42,7 +42,7 @@ const StatusContainer = styled.div`
 
 const LoveStatus = styled.div`
   width: 19vw;
-  height: 12vh;
+  height: 16vh;
   background-color: white;
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 15px;
@@ -52,8 +52,8 @@ const LoveStatus = styled.div`
   justify-content: center;
 `;
 const ProfileThum = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   overflow: hidden;
   border-radius: 50%;
   img {
@@ -65,15 +65,32 @@ const ProfileThum = styled.div`
 `;
 
 export default function MainPage() {
-  const { token, setToken, authAxios } = useAuth();
   const navigate = useNavigate();
-  console.log(token);
   const [partnerInfo, setPartnerInfo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSoonBreak, setIsSoonBreak] = useState(false);
 
+  useEffect(() => {
+    const coupleCheck = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const res = await authAxios.get(
+          "http://localhost:9090/couple/checkSoonBreak"
+        );
+        setIsSoonBreak(res.data);
+        console.log("커플유예?", res.data);
+      } catch (error) {
+        console.error("Error breaking couple:", error);
+      }
+    };
+    coupleCheck();
+  }, [isSoonBreak]);
   useEffect(() => {
     const fetchPartnerInfo = async () => {
       try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
         const partnerResponse = await authAxios.get(
           "http://localhost:9090/user/couple"
         );
@@ -90,13 +107,35 @@ export default function MainPage() {
     };
 
     fetchPartnerInfo();
-  }, [authAxios, navigate]);
+  }, [isSoonBreak]);
 
   return (
     <MainContainer>
       <Container>
         <Feed />
         <StatusContainer>
+          {!isSoonBreak ? (
+            <LoveStatus>
+              <ProfileThum>
+                <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
+              </ProfileThum>
+              <div>
+                <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
+                  {partnerInfo?.coupleNickname}
+                </p>
+                <p style={{ fontSize: "15px" }}>접속중</p>
+              </div>
+            </LoveStatus>
+          ) : (
+            <LoveStatus>
+              <div>
+                <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
+                  커플 없음
+                </p>
+              </div>
+            </LoveStatus>
+          )}
+          <AlarmRight />
           <LoveStatus>
             <ProfileThum>
               <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
