@@ -41,7 +41,7 @@ const StatusContainer = styled.div`
 
 const LoveStatus = styled.div`
   width: 19vw;
-  height: 16vh;
+  height: 15vh;
   background-color: white;
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 15px;
@@ -134,21 +134,7 @@ export default function MainPage() {
               </div>
             </LoveStatus>
           )}
-
-          <LoveStatus>
-            <ProfileThum>
-              <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
-            </ProfileThum>
-            <div>
-              <p style={{ fontFamily: "SokchoBadaBatang", fontSize: "17px" }}>
-                {partnerInfo?.coupleNickname}
-              </p>
-              <p style={{ fontSize: "15px" }}>접속중</p>
-            </div>
-          </LoveStatus>
-
           <AlarmRight />
-
         </StatusContainer>
       </Container>
       <Upload onClick={() => setIsModalOpen(true)} />
