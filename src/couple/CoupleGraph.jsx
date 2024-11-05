@@ -3,8 +3,8 @@ import axios from "axios";
 import styled from "styled-components";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getAuthAxios } from "../api/authAxios";
-import 남자아이콘 from '../image/couple/남자아이콘.png';
-import 여자아이콘 from '../image/couple/여자아이콘.png';
+import 남자아이콘 from '../image/couple/남자아이콘.png';
+import 여자아이콘 from '../image/couple/여자아이콘.png';
 
 const GraphStyle = styled.div`
   width: 30%;
