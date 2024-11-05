@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
 
-
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -135,6 +134,7 @@ export default function MainPage() {
               </div>
             </LoveStatus>
           )}
+
           <LoveStatus>
             <ProfileThum>
               <img src={partnerInfo?.coupleImg || profilethum} alt="프사" />
@@ -146,8 +146,10 @@ export default function MainPage() {
               <p style={{ fontSize: "15px" }}>접속중</p>
             </div>
           </LoveStatus>
+
+          <AlarmRight />
+
         </StatusContainer>
-        <AlarmRight />
       </Container>
       <Upload onClick={() => setIsModalOpen(true)} />
       <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
