@@ -80,15 +80,15 @@ export default function Dday() {
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
-      const response = await authAxios.post(
-        `http://localhost:9090/couple/dday?date=${dateString}`
+      const response = await authAxios.put(
+        `http://localhost:9090/couple/dday/update?date=${dateString}`
       );
       console.log("디데이 설정 성공:", response);
-      alert("디데이가 설정되었습니다!");
+      alert("디데이가 수정되었습니다!");
       window.location.href = "/couple";
     } catch (error) {
       console.error("디데이 설정 실패:", error);
-      alert("디데이 설정에 실패했습니다. 다시 시도해주세요.");
+      alert("디데이 수정에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -122,7 +122,7 @@ export default function Dday() {
             ))}
           </Select>
         </DateContainer>
-        <Button onClick={handleSubmit}>설정하기</Button>
+        <Button onClick={handleSubmit}>수정하기</Button>
       </DdayBox>
     </DdayContainer>
   );
