@@ -100,10 +100,18 @@ export default function CoupleConnect() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const checkCoupleStatus = async () => {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
+        const response = await authAxios.get(
+          "http://localhost:9090/user/couple"
+        );
+        if (response.data.coupleUserId) {
+          navigate("/home");
+          return;
+        }
+
         const mycode = await authAxios.get(
           "http://localhost:9090/couple/match/code"
         );
@@ -114,8 +122,8 @@ export default function CoupleConnect() {
       }
     };
 
-    fetchData();
-  }, []);
+    checkCoupleStatus();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

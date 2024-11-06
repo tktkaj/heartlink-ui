@@ -164,10 +164,10 @@ export default function Login() {
   const [showFindId, setShowFindId] = useState(false);
 
   useEffect(() => {
-    // 로그인 상태 확인
-    const isLoggedIn = localStorage.getItem("access");
-    if (isLoggedIn) {
-      navigate("/home"); // 이미 로그인된 경우 홈으로 리다이렉트
+    const access = localStorage.getItem("access");
+    if (access) {
+      navigate("/home");
+      return;
     }
   }, [navigate]);
 
