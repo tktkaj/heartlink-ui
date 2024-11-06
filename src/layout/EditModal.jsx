@@ -5,7 +5,7 @@ import { IoClose } from "react-icons/io5";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { FiMessageCircle } from 'react-icons/fi'; // FiMessageCircle 추가
-
+import { getAuthAxios } from '../api/authAxios';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -155,17 +155,40 @@ export default function FeedDetail({ isOpen, onClose, post, onSave }) {
     setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
   };
 
-  const handleSave = () => {
-    const updatedPost = { ...post, content: text, files: files };
-    onSave(updatedPost);
-    onClose();
-  };
+  const handleSave = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+      const requestBody = {
+        content: text,
+      };
+      const response = await authAxios.put(`http://localhost:9090/feed/${post?.postId}/update`,requestBody);
   
+      if (response.status === 201) {
+        alert('업로드 하였습니다.');
+        setText(''); 
+        onClose();  
+      } else {
+        throw new Error('업로드에 실패했습니다.');
+      }
+    } catch (error) {
+
+      if (error.response) {
+        console.error('서버 오류:', error.response.data);
+        alert('서버 오류: ' + error.response.data);
+      } else {
+        console.error('업로드 중 오류 발생:', error.message); 
+        alert('업로드 중 오류가 발생했습니다.');
+      }
+    }
+    onClose(); 
+  };
+
 
   return (
     <div>
       {/* FiMessageCircle 클릭 시 모달 열기 */}
-      
+
       <ModalOverlay onClick={handleOverlayClick}>
         <CloseButton onClick={onClose}>
           <IoClose />
