@@ -104,6 +104,25 @@ const AutocompleteItem = styled.div`
     `}
 `
 
+const SearchHistoryContainer = styled.div`
+`
+
+const SearchHistoryData = styled.div`
+    max-height: 76vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 3px;
+    }
+`
+
 export default function SearchMenu({ onSearchResults, onKeywordChange, onTagClick }) {
 const [keyword, setKeyword] = useState('');
 const [searchResults, setSearchResults] = useState([]);
@@ -267,7 +286,6 @@ useEffect(() => {
           setTagAutocompleteList([]);
         }
 
-        // console.log('자동완성 리스트:', autocompleteList);
       };
 
       const handleAutocompleteClick = (value) => {
@@ -312,7 +330,6 @@ useEffect(() => {
     }
 };
 
-// 새로운 함수 추가
 const scrollToItem = (index) => {
     if (index === -1) return;
     
@@ -401,11 +418,12 @@ const scrollToItem = (index) => {
 
                 {/* 검색기록 */}
                 {isSearched? null:(
-                    <>
+                    <SearchHistoryContainer>
                     <div style={{ fontSize: '1.2rem', marginBottom: '20px', paddingLeft: '2vw', marginTop:'25px', display: 'flex', alignItems: 'center' }}>
                     <MdManageSearch style={{width: '30px', height: '30px', color: '#706ef4', marginBottom:'5px'}}/>
                     <h1 style={{ fontFamily: 'SokchoBadaBatang', color: '#706ef4'}}>검색기록</h1>
                 </div>
+                <SearchHistoryData>
                 <SearchList>
                 
                 {Array.isArray(searchHistory) && searchHistory.length > 0 ? (
@@ -419,7 +437,8 @@ const scrollToItem = (index) => {
     ) : (
         <div style={{ paddingLeft: '2vw' }}>검색 기록이 없습니다.</div>
     )}</SearchList>
-                    </>
+    </SearchHistoryData>
+                    </SearchHistoryContainer>
                 )}
                 
             </MenuContainer>

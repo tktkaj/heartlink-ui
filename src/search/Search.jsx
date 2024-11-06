@@ -83,7 +83,7 @@ function Search() {
     const [isPopular, setIsPopular] = useState(false);
 
     useEffect(() => {
-        // getPopularPosts();
+        getPopularPosts();
         // getAllPosts();
     }, []);
 
@@ -115,9 +115,11 @@ function Search() {
 
     const handleSearchResults = (results) => {
         setIsTagView(false);
-        setIsPopular(false);
-        console.log('Search의 검색 결과다ㅏㅏㅏㅏ : ', results);
-        console.log('Search의 keyword : ', keyword);
+        if (!keyword.startsWith('&') && !keyword.startsWith('@')) {
+            setIsPopular(false);
+        } else {
+            setIsPopular(true);
+        }
         const extractedResults = results.map((result) => result);
         setSearchResults(extractedResults);
     };
@@ -128,12 +130,17 @@ function Search() {
 
       const chunkArray = (arr, chunkSize) => {
         const result = [];
-        for (let i = 0; i < arr.length; i += chunkSize) {
-            result.push(arr.slice(i, i + chunkSize));
+        const validItems = arr.filter(item => item);
+        
+        for (let i = 0; i < validItems.length; i += chunkSize) {
+            const chunk = validItems.slice(i, Math.min(i + chunkSize, validItems.length));
+            if(chunk.length > 0) {
+                result.push(chunk);
+            }
         }
         return result;
-
     };
+    
 
     const handleTagClick = (tagName) => {
         setIsTagView(true);
@@ -151,6 +158,32 @@ function Search() {
         getTagPosts(tagName);
     };
 
+// 일반 검색 결과 렌더링을 위한 전용 함수
+const renderGeneralSearchResults = () => {
+    if (!searchResults || !Array.isArray(searchResults) || searchResults.length === 0) {
+        return <div>검색 결과가 없습니다.</div>;
+    }
+
+    const validResults = searchResults.filter(result => result !== null && result !== undefined);
+    
+    return chunkArray(validResults, 3).map((chunk, chunkIndex) => {
+        console.log("각 chunk 데이터:", chunk); // chunk 데이터 확인
+        return (
+            <PostList key={chunkIndex}>
+                {chunk.map((result) => {
+                    return (
+                        <Post d
+                            key={result.id} 
+                            background={result.img}>
+                            <PostLink href={`/feed/details/${result.id}`}></PostLink>
+                        </Post>
+                    );
+                })}
+            </PostList>
+        );
+    });
+};
+
     return (
         <div style={{ display: 'flex' }}>
             {/* <SideMenu /> */}
@@ -165,7 +198,7 @@ function Search() {
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
-                        {/* {searchResults && searchResults.length > 0 ? (
+                        {isPopular?(searchResults && searchResults.length > 0 ? (
                         chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
@@ -175,16 +208,15 @@ function Search() {
                                 ))}
                             </PostList>
                         ))
-                    ):''} */}
+                    ):''):null}
 
 
 
-                    {/* {!isPopular ? (isTagView ?  */}
-                                        {isTagView ? 
+                {isTagView ? 
 
                 // 태그 검색 결과 뷰
                 (
-                    searchResults && searchResults.length > 0 ? (
+                    !isPopular && searchResults && searchResults.length > 0 ? (
                         chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
@@ -199,22 +231,10 @@ function Search() {
                     )
                 )
              : (
-                // 기존 검색 결과 뷰
-                !keyword.startsWith('&') && !keyword.startsWith('@') ? (
-                    searchResults && searchResults.length > 0 ? (
-                        chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
-                            <PostList key={chunkIndex}>
-                                {chunk.map((result) => (
-                                    <Post key={result.id} background={result.img}>
-                                        <PostLink href={`/feed/details/${result.id}`}></PostLink>
-                                    </Post>
-                                ))}
-                            </PostList>
-                        ))
-                    ) : (
-                        <div>검색 결과가 없습니다.</div>
-                    )
-                ) : ''
+                // 일반 검색 결과 뷰
+                !isPopular && !keyword.startsWith('&') && !keyword.startsWith('@') ? 
+                    renderGeneralSearchResults() 
+                    : ''
             )}
                     </PostWrap>
                 </ContentWrap>
