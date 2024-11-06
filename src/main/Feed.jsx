@@ -580,7 +580,7 @@ export default function Feed() {
                     : item.content.content}
                 </p>
                 <div>
-                  <p style={{ fontSize: "15px", color: "gray", cursor:"pointer" }} onClick = {() => handleMessageClick(item.content)}>더보기</p>
+                  <p style={{ fontSize: "15px", color: "gray" }}>더보기</p>
                 </div>
               </FeedContent>
             </FeedBox>
