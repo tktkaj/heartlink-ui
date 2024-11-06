@@ -61,6 +61,7 @@ const LinkMatch = styled.div`
   font-family: "SANGJUGyeongcheonIsland";
   position: relative;
   display: inline-block;
+  
 
   &::after {
     content: "";
@@ -137,6 +138,7 @@ const MatchTxt = styled.div`
 const LinkMission = styled.div`
   width: 67%;
   margin-right: 60px;
+  // margin-top: 100px;
 
 `;
 const MissionHeader = styled.div`
@@ -161,7 +163,8 @@ const BingoBoard = styled.div`
 
 const BingoCell = styled.div`
   background-color: #dcdcdc;
-  height: 140px;
+  height: 130px;
+  // width: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -561,7 +564,7 @@ const handleMessageClick = (post) => {
                   </LinkMatchDrop>
                 </MissionHeader>
                 <BingoBoard>
-                {themes.map((theme) => {
+                {Array.isArray(themes) && themes.map((theme) => {
                   const matchedMission = myMission.find(mission => mission.missionId === theme.missionId);
                   return (
                     <BingoCell
