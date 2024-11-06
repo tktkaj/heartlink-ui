@@ -11,6 +11,7 @@ import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
 import { getAuthAxios } from "../api/authAxios";
 import { TiHeartOutline } from "react-icons/ti";
+import { LuSend } from "react-icons/lu";
 
 
 const ModalOverlay = styled.div`
@@ -234,14 +235,17 @@ const HeartIcon = styled(TiHeartOutline)`
 
 const CommentWriteBox = styled.div`
   width: 100%;
-  height: 35px;
   margin: auto 0px 0px 0px;
+  padding-top: 5px;
   border-top: 1px solid #ccc;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const CommentInput = styled.textarea`
-  width: 100%;
+  width: 90%;
   height: 35px;
   padding: 10px;
   resize: none;
@@ -251,6 +255,20 @@ const CommentInput = styled.textarea`
   color: #333;
   margin-top: 5px;
 `;
+
+const CommentSend = styled(LuSend)`
+  cursor: pointer;
+  transition: color;
+  width: 25px;
+  height: 25px;
+  margin-top: 8px;
+
+  &:hover {
+    color: #706ef4;
+    opacity: 0.8;
+  }
+
+`
 
 
 
@@ -435,6 +453,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
               </CommentsBox>
               <CommentWriteBox>
                 <CommentInput placeholder="댓글 달기..."></CommentInput>
+                <CommentSend/>
               </CommentWriteBox>
             </RightSection>
           </PreviewContent>
