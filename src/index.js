@@ -20,6 +20,7 @@ import SignUp from "./join/SignUp";
 import Condition from "./join/Condition";
 import Modal1 from "./login/Modal1";
 import Modal2 from "./login/Modal2";
+import SnsLogin from "./login/SnsLogin";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
       { path: "/coupleConnect2", element: <CoupleConnect2 /> },
       { path: "/modal1", element: <Modal1 /> },
       { path: "/modal2", element: <Modal2 /> },
+      { path: "/refresh", element: <SnsLogin /> },
     ],
   },
 ]);

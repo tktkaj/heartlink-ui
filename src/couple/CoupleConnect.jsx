@@ -104,18 +104,10 @@ export default function CoupleConnect() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/user/couple"
-        );
-        if (response.data.coupleUserId) {
-          navigate("/home");
-          return;
-        }
-
         const mycode = await authAxios.get(
           "http://localhost:9090/couple/match/code"
         );
-        console.log("내 코드:", mycode.data);
+        console.log("내 코드:", mycode);
         setCode(mycode.data);
       } catch (err) {
         console.log(err);
@@ -133,16 +125,21 @@ export default function CoupleConnect() {
       const response = await authAxios.post(
         `http://localhost:9090/couple/match/code/link?code=${inputCode}`
       );
-      console.log("오류오류:", response);
+      console.log("응답: ", response);
+
+      // 201 응답을 처리할 때
       if (response.status == 201) {
         toast.success("커플 연결에 성공했습니다!");
         navigate("/coupleConnect2");
+      } else {
+        // 예상하지 못한 상태 코드 처리
+        toast.error("예상하지 못한 오류가 발생했습니다.");
       }
     } catch (error) {
-      console.log("오류오류:", error.response);
+      // 서버에서 응답이 없는 경우를 대비한 기본적인 처리
+      console.log("오류오류:", error);
       if (error.response) {
         const { status, data } = error.response;
-
         switch (status) {
           case 400:
             toast.error(data || "잘못된 요청입니다. 다시 시도해주세요.");
@@ -154,12 +151,11 @@ export default function CoupleConnect() {
             toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
       } else {
+        // 네트워크 에러나 서버 응답이 아예 없는 경우 처리
         toast.error("서버와의 연결에 실패했습니다.");
       }
-      console.error("연결 실패:", error);
     }
   };
-
   return (
     <>
       <ToastContainer />

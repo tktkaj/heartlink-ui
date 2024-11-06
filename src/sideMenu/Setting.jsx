@@ -102,8 +102,8 @@ export default function Setting({ closeSetting }) {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         await authAxios.delete("http://localhost:9090/couple/finalNowUnlink");
-        setIsSoonBreak(false);
         window.location.reload();
+        setIsSoonBreak(false);
       } catch (error) {
         console.error("Error immediate breaking couple:", error);
       }

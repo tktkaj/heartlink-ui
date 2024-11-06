@@ -13,6 +13,7 @@ import {
 import Setting from "./Setting";
 import { Link, useLocation } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
+import AlarmMenu from "./AlarmMenu";
 
 const MiniContainer = styled.div`
   width: 82px;
@@ -84,9 +85,16 @@ export default function MiniSide() {
   const [isSettingOpen, setIsSettingOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [isAlarmOpen, setIsAlarmOpen] = useState(false);
+  const [showMiniSide, setShowMiniSide] = useState(false);
 
   const openSetting = () => setIsSettingOpen(true);
   const closeSetting = () => setIsSettingOpen(false);
+
+  const toggleAlarm = () => {
+    setIsAlarmOpen(!isAlarmOpen);
+    setShowMiniSide(!showMiniSide);
+  };
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -137,8 +145,9 @@ export default function MiniSide() {
             <Liststyle to="/couple">
               <RiUserHeartLine className="icon" />
             </Liststyle>
-            <Liststyle>
+            <Liststyle as="div" onClick={toggleAlarm}>
               <BiBell className="icon" />
+              {isAlarmOpen && <AlarmMenu />}
             </Liststyle>
             <Liststyle to="/dm">
               {isActiveDm ? (
