@@ -1,6 +1,5 @@
 import axios from "axios";
 import { getNewRefreshToken } from "./refresh";
-import Cookies from "js-cookie";
 
 export const getAuthAxios = (token) => {
   const authAxios = axios.create({
@@ -9,6 +8,7 @@ export const getAuthAxios = (token) => {
       Authorization: token,
     },
   });
+
   authAxios.interceptors.response.use(
     (res) => res,
     async (error) => {
@@ -18,25 +18,25 @@ export const getAuthAxios = (token) => {
           const { accessToken, refreshToken } = await getNewRefreshToken();
           // 헤더에 갱신된 액세스 토큰 설정
           error.config.headers.Authorization = accessToken;
-          // 갱신된 리프레시 토큰이 있으면 쿠키나 로컬스토리지에 업데이트
-          if (refreshToken) {
-            Cookies.set("refreshToken", refreshToken, {
-              expires: 7, // 쿠키 만료일, 7일 후 만료
-              path: "/", // 쿠키 경로
-              secure: false, // HTTPS 환경에서만 전송
-              sameSite: "None", // CSRF 공격 방지
-              HttpOnly: false,
-            });
-            localStorage.setItem("refresh", refreshToken);
-          }
-          // 갱신된 토큰으로 요청 재시도
-          return axios(error.config);
+          // 갱신된 토큰들을 로컬스토리지에 저장
+          localStorage.setItem("access", accessToken);
+          localStorage.setItem("refresh", refreshToken);
         }
+        // 갱신된 토큰으로 요청 재시도
+        const retryResponse = await axios(error.config);
+        if (retryResponse.status === 500) {
+          console.error("서버 오류가 발생했습니다:", retryResponse);
+          throw new Error(
+            "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+          );
+        }
+        return retryResponse;
       } catch (error) {
         console.error("인터셉터 오류:", error);
       }
       return Promise.reject("세션이 만료되었습니다.");
     }
   );
+
   return authAxios;
 };
