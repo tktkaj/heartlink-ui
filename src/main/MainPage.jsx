@@ -117,7 +117,6 @@ export default function MainPage() {
         setPartnerInfo(partnerResponse.data);
       } catch (error) {
         console.error("Error fetching partner info:", error);
-        navigate("/coupleConnect");
       }
     };
 

@@ -120,24 +120,18 @@ export default function CoupleConnect() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const access = localStorage.getItem("access");
-      const authAxios = getAuthAxios(access);
-      const response = await authAxios.post(
-        `http://localhost:9090/couple/match/code/link?code=${inputCode}`
+      const response = await axios.post(
+        "http://localhost:9090/couple/match/code/link",
+        { code: "NVVIFP" }
       );
-      console.log("응답: ", response);
-
-      // 201 응답을 처리할 때
-      if (response.status == 201) {
+      if (response.status === 201) {
         toast.success("커플 연결에 성공했습니다!");
         navigate("/coupleConnect2");
       } else {
-        // 예상하지 못한 상태 코드 처리
         toast.error("예상하지 못한 오류가 발생했습니다.");
       }
     } catch (error) {
-      // 서버에서 응답이 없는 경우를 대비한 기본적인 처리
-      console.log("오류오류:", error);
+      console.error("오류오류:", error);
       if (error.response) {
         const { status, data } = error.response;
         switch (status) {
@@ -151,11 +145,11 @@ export default function CoupleConnect() {
             toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
       } else {
-        // 네트워크 에러나 서버 응답이 아예 없는 경우 처리
         toast.error("서버와의 연결에 실패했습니다.");
       }
     }
   };
+
   return (
     <>
       <ToastContainer />

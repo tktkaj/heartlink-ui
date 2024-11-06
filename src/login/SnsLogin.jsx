@@ -42,14 +42,14 @@ const SnsLogin = () => {
         const partnerResponse = await authAxios.get(
           "http://localhost:9090/user/couple"
         );
-        if (!partnerResponse.data) {
-          navigate("/coupleConnect");
-        } else {
-          // 짝꿍정보가 있으면 /home으로 이동
+        if (partnerResponse.status == 200) {
           navigate("/home");
+        } else {
+          navigate("/coupleConnect");
         }
       } catch (error) {
         console.error("Error fetching partner info:", error);
+        navigate("/coupleConnect");
       }
     };
 
