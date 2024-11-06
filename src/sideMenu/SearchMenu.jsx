@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
 import { BiSearch } from "react-icons/bi";
+import { MdManageSearch } from "react-icons/md";
 
 
 
@@ -66,18 +67,60 @@ const Liststyle = styled.div`
     padding-left: 2vw;
 `
 
+const AutocompleteList = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 290px;
+    background-color: white;
+    z-index: 1;
+    border: 1px solid #e4e4e6;
+    max-height: 225px;
+    overflow-y: auto;
+    
+    scrollbar-width: thin;
+    
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 3px;
+    }
+`
+
+const AutocompleteItem = styled.div`
+    padding: 10px;
+    background-color: ${props => props.selected ? '#e6e6ff' : 'white'};
+    border-bottom: 1px solid #e4e4e6;
+    height: 45px;
+    // 선택되지 않은 경우에만 마우스 오버 시 배경색 변경
+    ${props => !props.selected && `
+        &:hover {
+            background-color: #e6e6ff;
+            cursor: pointer;
+        }
+    `}
+`
+
 export default function SearchMenu({ onSearchResults, onKeywordChange, onTagClick }) {
 const [keyword, setKeyword] = useState('');
 const [searchResults, setSearchResults] = useState([]);
 const [isSearched, setIsSearched] = useState(false);
 const [searchHistory, setSearchHistory] = useState([]);
 const [isSearchedHistory, setIsSearchedHistory] = useState(false);
+const [idAutocompleteList, setIdAutocompleteList] = useState([]);
+const [tagAutocompleteList, setTagAutocompleteList] = useState([]);
+const [selectedIndex, setSelectedIndex] = useState(-1); // 선택된 자동완성 항목 인덱스
+
 const handleSearch = (e) => {
     e.preventDefault();
     onSearchResults(keyword);
     onKeywordChange(keyword);
 };
 
+// 검색된 태그 클릭 시
 const handleTagClick = (tagName) => {
     console.log(`태그 클릭됨: ${tagName}`);
     onKeywordChange('&' + tagName);
@@ -85,6 +128,7 @@ const handleTagClick = (tagName) => {
 };
 
 useEffect(() => {
+    // 검색기록 가져오기
     const getSearchHistory = async () => {
     try {
         const access = localStorage.getItem("access");
@@ -111,7 +155,7 @@ useEffect(() => {
     getSearchHistory();
 }, []);
 
-
+    // 검색 제출
     const searchSubmit = async (e) => {
         e.preventDefault();
         console.log('검색 제출:', keyword);
@@ -147,6 +191,7 @@ useEffect(() => {
         }
     };
 
+    // 검색 결과 렌더링
     const renderResult = (result) => {
         switch (result.type) {
             case 'id':
@@ -167,11 +212,13 @@ useEffect(() => {
         }
     };
 
+    // 검색기록 클릭
     const historyClick = (historyKeyword) => {
         console.log('검색기록 클릭:', historyKeyword);
         setKeyword(historyKeyword); // 검색 기록의 키워드를 input 상태로 설정
     };
 
+    // 검색기록 렌더링
     const renderHistory = (history) => {
         switch (history.type) {
             case 'id':
@@ -195,6 +242,97 @@ useEffect(() => {
         }
     };
     
+    // 자동완성 기능
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setKeyword(value);
+        setSelectedIndex(-1);
+    
+        if (value.startsWith('@')) {
+          // 아이디 자동완성 API 호출
+          console.log('아이디 자동완성 호출');
+          fetch(`http://localhost:9090/es/idAuto?searchId=${value.slice(1)}`)
+            .then(response => response.json())
+            .then(data => setIdAutocompleteList(data))
+            .catch(error => console.error('Error fetching user autocomplete:', error));
+        } else if (value.startsWith('&')) {
+          // 태그 자동완성 API 호출
+          console.log('태그 자동완성 호출');
+          fetch(`http://localhost:9090/es/tagAuto?searchTag=${value.slice(1)}`)
+            .then(response => response.json())
+            .then(data => setTagAutocompleteList(data))
+            .catch(error => console.error('Error fetching tag autocomplete:', error));
+        } else {
+          // 기본 자동완성 초기화
+          setTagAutocompleteList([]);
+        }
+
+        // console.log('자동완성 리스트:', autocompleteList);
+      };
+
+      const handleAutocompleteClick = (value) => {
+        setKeyword(value);
+        setIdAutocompleteList([]);
+        setTagAutocompleteList([]);
+      };
+
+ // 키보드 이벤트 핸들러 추가
+ const handleKeyDown = (e) => {
+    const autocompleteList = keyword.startsWith('@') ? idAutocompleteList : tagAutocompleteList;
+    
+    switch(e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            setSelectedIndex(prev => {
+                const nextIndex = prev < autocompleteList.length - 1 ? prev + 1 : prev;
+                scrollToItem(nextIndex);
+                return nextIndex;
+            });
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            setSelectedIndex(prev => {
+                const nextIndex = prev > -1 ? prev - 1 : prev;
+                scrollToItem(nextIndex);
+                return nextIndex;
+            });
+            break;
+        case 'Enter':
+            e.preventDefault();
+            if (selectedIndex >= 0 && autocompleteList.length > 0) {
+                const selected = autocompleteList[selectedIndex];
+                const value = keyword.startsWith('@') 
+                    ? '@' + selected.loginId 
+                    : '&' + selected.tagName;
+                handleAutocompleteClick(value);
+            } else {
+                searchSubmit(e);
+            }
+            break;
+    }
+};
+
+// 새로운 함수 추가
+const scrollToItem = (index) => {
+    if (index === -1) return;
+    
+    const itemElement = document.querySelector(`[data-index="${index}"]`);
+    const listElement = itemElement?.parentElement;
+    
+    if (itemElement && listElement) {
+        const itemTop = itemElement.offsetTop;
+        const itemHeight = itemElement.offsetHeight;
+        const listHeight = listElement.offsetHeight;
+        const scrollTop = listElement.scrollTop;
+
+        // 항목이 리스트의 위쪽이나 아래쪽 경계를 벗어났는지 확인
+        if (itemTop < scrollTop) {
+            listElement.scrollTop = itemTop;
+        } else if (itemTop + itemHeight > scrollTop + listHeight) {
+            listElement.scrollTop = itemTop + itemHeight - listHeight;
+        }
+    }
+};
 
     return (
         <>
@@ -203,9 +341,40 @@ useEffect(() => {
                     <h1>검색</h1>
                 </div>
                 <form onSubmit={searchSubmit} style={{ display: 'flex' }}>
-                <div style={{ marginLeft: '2vw', width: '85%', display: 'flex' }}>
-                    <input type="text" required placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)}
+                <div style={{ marginLeft: '10%', width: '85%', display: 'flex', position: 'relative' }}>
+                    <input type="text" required placeholder="검색어 입력" value={keyword} onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
                         className="block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 " style={{ width: '290px', paddingLeft: '7px', fontSize: '15px', backgroundColor: '#f5f5f5' }}></input>
+                        {idAutocompleteList.length > 0 && (
+                            <AutocompleteList>
+                                {idAutocompleteList.map((item, index) => (
+                                    <AutocompleteItem 
+                                        data-index={index}
+                                        selected={index === selectedIndex}
+                                        onClick={() => handleAutocompleteClick('@' + item.loginId)} 
+                                        key={index}
+                                    >
+                                        @{item.loginId}
+                                    </AutocompleteItem>
+                                ))}
+                            </AutocompleteList>
+                        )}
+
+                        {tagAutocompleteList.length > 0 && (
+                            <AutocompleteList>
+                                {tagAutocompleteList.map((item, index) => (
+                                    <AutocompleteItem 
+                                        data-index={index}
+                                        selected={index === selectedIndex}
+                                        onClick={() => handleAutocompleteClick('&' + item.tagName)} 
+                                        key={index}
+                                    >
+                                        &{item.tagName}
+                                    </AutocompleteItem>
+                                ))}
+                            </AutocompleteList>
+                        )}
+                                
                                 <button type='submit' style={{width: '10%', marginLeft: '10px'}}>
                                 <BiSearch style={{width: '30px', height: '30px'}}className="icon" />
                                 </button>
@@ -233,8 +402,9 @@ useEffect(() => {
                 {/* 검색기록 */}
                 {isSearched? null:(
                     <>
-                    <div style={{ fontSize: '1.2rem', marginBottom: '20px', paddingLeft: '2vw', marginTop:'20px' }}>
-                    <h1>검색기록</h1>
+                    <div style={{ fontSize: '1.2rem', marginBottom: '20px', paddingLeft: '2vw', marginTop:'25px', display: 'flex', alignItems: 'center' }}>
+                    <MdManageSearch style={{width: '30px', height: '30px', color: '#706ef4', marginBottom:'5px'}}/>
+                    <h1 style={{ fontFamily: 'SokchoBadaBatang', color: '#706ef4'}}>검색기록</h1>
                 </div>
                 <SearchList>
                 

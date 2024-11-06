@@ -516,7 +516,7 @@ export default function Couple() {
                     key={theme.missionId}
                     image={getImageForTheme(theme)} // 테마에 맞는 이미지 설정
                   >
-                    {theme.linkTag}
+                    &{theme.linkTag}
                   </BingoCell>
                 ))}
                 </BingoBoard>
