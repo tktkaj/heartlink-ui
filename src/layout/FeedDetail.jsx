@@ -173,7 +173,8 @@ const CommentUl = styled.ul`
 `
 const CommentLi = styled.li`
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
   margin-bottom: 5px;
   width: 100%;
 `
@@ -186,7 +187,9 @@ const CommentProfile = styled.div`
 `
 
 const CommentTextBox = styled.div`
-
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
   
 `
 
@@ -207,7 +210,9 @@ const CommentTextBoxWrapper = styled.div`
 `;
 
 const DayandReplyBox = styled.div`
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  
 `;
 
 const Day = styled.span`
@@ -270,7 +275,22 @@ const CommentSend = styled(LuSend)`
     opacity: 0.8;
   }
 
+`;
+
+const ReplyLookBox = styled.div`
+  display: flex;
+  margin-top: 5px;
 `
+
+const ReplyLook = styled.button`
+  color: #000000;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    color: #595959;
+  }
+`;
 
 
 
@@ -477,73 +497,69 @@ export default function FeedDetail({ isOpen, onClose, post}) {
               </LikeCountBox>
               <CommentsBox>
                 <CommentUl>
-                {postDetails.comments && postDetails.comments.length > 0 ? (
-                  postDetails.comments.map((comment, index) => {
-                    const hasReplies = postDetails.comments.some(
-                      (reply) => reply.parentId === comment.commentId
-                    ); // 현재 댓글에 답글이 있는지 확인
+                  {postDetails.comments && postDetails.comments.length > 0 ? (
+                    postDetails.comments.map((comment, index) => {
+                      const hasReplies = postDetails.comments.some(
+                        (reply) => reply.parentId === comment.commentId
+                      ); // 댓글에 답글이 있는지 확인
 
-                    // 답글이 아닌 댓글만 표시
-                    if (!comment.parentId) {
-                      return (
-                        <CommentLi key={index}>
-                          <CommentProfile>
-                            <img src={comment.profileImg || defaultImg} alt="Profile" />
-                          </CommentProfile>
-                          <CommentTextBoxWrapper>
-                            <CommentTextBox>
-                              <CommentWriter>{comment.loginId}</CommentWriter>
-                              <CommentText>{comment.content}</CommentText>
-                            </CommentTextBox>
-                            <DayandReplyBox>
-                              <Day>1시간 전</Day>
-                              <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>
-                                답글 달기
-                              </ReplyButton>
-                            </DayandReplyBox>
-                          </CommentTextBoxWrapper>
-                          <HeartBox>
-                            <HeartIcon />
-                          </HeartBox>
+                      // 답글이 아닌 댓글만 표시
+                      if (!comment.parentId) {
+                        return (
+                          <CommentLi key={index}>
+                            <CommentProfile>
+                              <img src={comment.profileImg || defaultImg} alt="Profile" />
+                            </CommentProfile>
+                            <CommentTextBoxWrapper>
+                              <CommentTextBox>
+                                <CommentWriter>{comment.loginId}</CommentWriter>
+                                <CommentText>{comment.content}</CommentText>
+                              </CommentTextBox>
+                              <DayandReplyBox>
+                                <Day>1시간 전</Day>
+                                <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>
+                                  답글 달기
+                                </ReplyButton>
+                              </DayandReplyBox>
 
-                           {/* 답글이 있는 경우만 "답글 보기" 버튼을 렌더링 */}
-                           {hasReplies && (
-                            <button onClick={() => handleToggleReplies(comment.commentId)}>
-                              {visibleReplies[comment.commentId] ? '답글 숨기기' : '답글 보기'}
-                            </button>
-                          )}
+                              {/* 답글 보기 버튼은 DayandReplyBox 아래에 위치 */}
+                              {hasReplies && (
+                                <ReplyLookBox>
+                                  <ReplyLook onClick={() => handleToggleReplies(comment.commentId)}>
+                                    {visibleReplies[comment.commentId] ? '답글 숨기기' : '답글 보기'}
+                                  </ReplyLook>
+                                </ReplyLookBox>
+                              )}
 
-                          {/* 답글을 표시할 부분 */}
-                          {visibleReplies[comment.commentId] && (
-                            <div>
-                              {postDetails.comments
-                                .filter((reply) => reply.parentId === comment.commentId)
-                                .map((reply, idx) => (
-                                  <CommentLi key={idx}>
-                                    <CommentProfile>
-                                      <img src={reply.profileImg || defaultImg} alt="Profile" />
-                                    </CommentProfile>
-                                    <CommentTextBoxWrapper>
-                                      <CommentTextBox>
-                                        <CommentWriter>{reply.loginId}</CommentWriter>
-                                        <CommentText>{reply.content}</CommentText>
-                                      </CommentTextBox>
-                                    </CommentTextBoxWrapper>
-                                    <HeartBox>
-                                      <HeartIcon />
-                                    </HeartBox>
-                                  </CommentLi>
-                                ))}
-                            </div>
-                          )}
-                        </CommentLi>
-                      );
-                    }
-                    return null; // 답글은 숨깁니다
-                  })
-                ) : (
-                  <div>댓글이 없습니다.</div>
-                )}
+                              {/* 답글이 보이는 상태 */}
+                              {visibleReplies[comment.commentId] && (
+                                <div>
+                                  {postDetails.comments
+                                    .filter((reply) => reply.parentId === comment.commentId)
+                                    .map((reply, idx) => (
+                                      <CommentLi key={idx}>
+                                        <CommentProfile>
+                                          <img src={reply.profileImg || defaultImg} alt="Profile" />
+                                        </CommentProfile>
+                                        <CommentTextBoxWrapper>
+                                          <CommentTextBox>
+                                            <CommentWriter>{reply.loginId}</CommentWriter>
+                                            <CommentText>{reply.content}</CommentText>
+                                          </CommentTextBox>
+                                        </CommentTextBoxWrapper>
+                                      </CommentLi>
+                                    ))}
+                                </div>
+                              )}
+                            </CommentTextBoxWrapper>
+                          </CommentLi>
+                        );
+                      }
+                      return null; // 답글은 숨깁니다
+                    })
+                  ) : (
+                    <div>댓글이 없습니다.</div>
+                  )}
               </CommentUl>
             </CommentsBox>
             <CommentWriteBox>
