@@ -163,11 +163,13 @@ const LikeCount = styled.span`
 const CommentsBox = styled.div`
   width: 100%;
   margin-top: 5px;
+  height: 329px;
+  overflow-y: auto;
+  scrollbar-width: none;
 `;
 
 const CommentUl = styled.ul`
-  overflow-y: scroll;
-  scrollbar-width: none;
+  
 `
 const CommentLi = styled.li`
   display: flex;
@@ -283,12 +285,38 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [files, setFiles] = useState(post?.files || []);
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+  const [postData, setPostData] = useState(post);
+  const [commentText, setCommentText] = useState("") 
+
+  const handleCommentChange = (e) => {
+    setCommentText(e.target.value);  // 댓글 내용 업데이트
+  };
+
+  const handleCommentSubmit = async () => {
+    if (commentText.trim()) {  // 공백만 입력되는 것을 방지
+      try{
+        const access = localStorage.getItem("access");
+        const axios = getAuthAxios(access);
+        const response = await axios.post(
+          
+          `http://localhost:9090/comment/${postData}/reply`,
+          {
+            content: commentText  // 댓글 내용
+          },
+        );
+        console.log("댓글 제출 성공 : ", commentText);
+        setCommentText("");
+      } catch(error){
+        console.error("댓글 제출 실패 :", error);
+      }
+    }
+  };
   
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
 
-  const [postData, setPostData] = useState(post);
+  
 
 
   useEffect(() => {
@@ -452,8 +480,12 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 </CommentUl>
               </CommentsBox>
               <CommentWriteBox>
-                <CommentInput placeholder="댓글 달기..."></CommentInput>
-                <CommentSend/>
+              <CommentInput
+                placeholder="댓글 달기..."
+                value={commentText}
+                onChange={handleCommentChange}
+              />
+                <CommentSend onClick={handleCommentSubmit}/>
               </CommentWriteBox>
             </RightSection>
           </PreviewContent>
