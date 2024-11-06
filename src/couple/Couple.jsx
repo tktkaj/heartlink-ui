@@ -8,6 +8,9 @@ import LinkMatchRecord from "./LinkMatchRecord";
 import { useAuth } from "../api/AuthContext";
 import CoupleGraph from "./CoupleGraph";
 import Dday from "./Dday";
+import defaultImage from "../image/mypage/bono.jpg";
+import FeedDetail from "../layout/FeedDetail";
+
 
 const MainContainer = styled.div`
   background-color: #f8f8fa;
@@ -188,9 +191,11 @@ export default function Couple() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [years, setYears] = useState([]);
   const [months, setMonths] = useState([]);
+  // 해야하는 미션 리스트
   const [themes, setThemes] = useState([]);
+  // 내가 완료한 미션 리스트
   const [myMission, setMyMission] = useState([]);
-
+  const [updatedMissions, setUpdatedMissions] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
 
   const [dday, setDday] = useState(null);
@@ -339,13 +344,12 @@ export default function Couple() {
   // }
 
 
-  // 이미지 저장 경로 확인하고 나서 수정해보기
   const getImageForTheme = (theme) => {
-    // 사용자가 완료한 미션에서 해당 theme의 missionId와 일치하는 미션 찾기
+    // 현재 테마의 missionId와 일치하는 완료된 미션 찾기
     const completedMission = myMission.find(mission => mission.missionId === theme.missionId);
-    
-    // 완료된 미션이 있으면 해당 미션의 이미지 경로 반환, 없으면 기본 이미지 경로 반환
-    return completedMission ? `${completedMission.postImgUrl}` : `url/to/image${theme.missionId}.jpg`;
+    console.log("completedMission : ", completedMission);
+    // 완료된 미션이 있으면 해당 이미지 URL 반환, 없으면 빈 문자열 반환
+    return completedMission ? completedMission.postImgUrl : '';
   };
 
   const handleYearSelect = (year) => {
@@ -374,7 +378,7 @@ export default function Couple() {
           headers: { Authorization: access },
         });
         console.log("해야하는 미션 리스트", missionResponse.data);
-        setThemes(missionResponse.data);
+        let allMissions = missionResponse.data;
   
         // 내가 완료한 미션 가져오기
         const myMissionResponse = await authAxios.get("http://localhost:9090/couple/missionStatus", {
@@ -382,7 +386,18 @@ export default function Couple() {
           headers: { Authorization: access },
         });
         console.log("내가 완료한 미션 리스트", myMissionResponse.data);
-        setMyMission(myMissionResponse.data);
+        const completedMissions = myMissionResponse.data;
+        
+        const updatedMissions = allMissions.map(mission=>{
+          const completedMission = completedMissions.find(
+            completed=>completed.postId === mission.missionId);
+            return completedMission ? { ...mission, ...completedMission } : mission;
+        });
+        setThemes(updatedMissions);
+        setMyMission(completedMissions);
+        console.log(myMission[0].postImgUrl);
+        console.log(completedMissions);
+
       } catch (error) {
         console.error("미션 또는 완료된 미션 데이터를 가져오는 중 오류 발생:", error);
       }
@@ -390,6 +405,15 @@ export default function Couple() {
   
     fetchData();
   }, [selectedYear, selectedMonth]);
+
+  const [postDetails, setPostDetails] = useState('null');
+const [isFeedDetail, setIsFeedDetail] = useState(false);
+const handleMessageClick = (post) => {
+  console.log("Selected PostId: ", post);
+  setPostDetails(post);
+  setIsFeedDetail(true);
+  console.log('isFeedDetail : ', isFeedDetail)
+};
 
   return (
     <>
@@ -537,14 +561,21 @@ export default function Couple() {
                   </LinkMatchDrop>
                 </MissionHeader>
                 <BingoBoard>
-                {themes.map((theme) => (
-                  <BingoCell
-                    key={theme.missionId}
-                    image={getImageForTheme(theme)} // 테마에 맞는 이미지 설정
-                  >
-                    &{theme.linkTag}
-                  </BingoCell>
-                ))}
+                {themes.map((theme) => {
+                  const matchedMission = myMission.find(mission => mission.missionId === theme.missionId);
+                  return (
+                    <BingoCell
+                      key={theme.missionId}
+                      {...(matchedMission && { onClick: (e) => handleMessageClick(matchedMission.postId) })}
+                      style={{ 
+                        cursor: matchedMission ? 'pointer' : 'default',
+                        backgroundImage: getImageForTheme(theme)==='' ? '' : `url(${defaultImage})`
+                      }}
+                    >
+                      &{theme.linkTag}
+                    </BingoCell>
+                  );
+                })}
                 </BingoBoard>
               </LinkMission>
               <CoupleGraph></CoupleGraph>
@@ -556,6 +587,13 @@ export default function Couple() {
         </Container>
         <Upload />
         {isLinkMatchOpen && <LinkMatchRecord closeRecord={closeRecord} />}
+        {isFeedDetail && (
+                <FeedDetail
+                    isOpen={isFeedDetail}
+                    onClose={() => setIsFeedDetail(false)}
+                    post={postDetails} // 선택된 포스트 전달
+                />
+            )}
       </MainContainer>
   </>
   );
