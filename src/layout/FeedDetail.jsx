@@ -279,17 +279,21 @@ const CommentSend = styled(LuSend)`
 
 const ReplyLookBox = styled.div`
   display: flex;
-  margin-top: 5px;
+  margin: 15px 0px;
+`;
+
+const ReplyLine = styled.div`
+  border-bottom: 1px solid #595959;
+  margin-right: 16px;
+  width: 24px;
+  margin-bottom: 8px;
 `
 
 const ReplyLook = styled.button`
-  color: #000000;
+  color: #595959;
   font-size: 12px;
   cursor: pointer;
 
-  &:hover {
-    color: #595959;
-  }
 `;
 
 
@@ -522,9 +526,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                 </ReplyButton>
                               </DayandReplyBox>
 
-                              {/* 답글 보기 버튼은 DayandReplyBox 아래에 위치 */}
                               {hasReplies && (
-                                <ReplyLookBox>
+                                <ReplyLookBox> <ReplyLine/>
                                   <ReplyLook onClick={() => handleToggleReplies(comment.commentId)}>
                                     {visibleReplies[comment.commentId] ? '답글 숨기기' : '답글 보기'}
                                   </ReplyLook>
@@ -547,11 +550,17 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                             <CommentText>{reply.content}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
+                                        <HeartBox>
+                                          <HeartIcon />
+                                        </HeartBox>
                                       </CommentLi>
                                     ))}
                                 </div>
                               )}
                             </CommentTextBoxWrapper>
+                            <HeartBox>
+                              <HeartIcon />
+                            </HeartBox>
                           </CommentLi>
                         );
                       }
