@@ -1,17 +1,15 @@
 import styled from "styled-components";
-import { CgMenuGridR } from "react-icons/cg";
-import { IoBookmark } from "react-icons/io5";
+import { IoGridOutline, IoGrid } from "react-icons/io5";
 import { useEffect, useState, useRef } from "react";
 import { getMyPage } from "../api/mypage";
-import { FaRegHeart } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa6";
-import { FaRegBookmark } from "react-icons/fa6";
+import { GoBookmark, GoBookmarkFill } from "react-icons/go";
 import { useParams } from "react-router-dom";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { getAuthAxios } from "../api/authAxios";
 import BlockUser from "./BlockUser";
 import Follow from "./Follow";
+import { IoMdHeartEmpty,IoMdHeart  } from "react-icons/io";
 
 let Content = styled.div`
   background-color: #f8f8fa;
@@ -139,8 +137,11 @@ let ButtonWrapper = styled.div`
 `;
 
 let SettingWrap = styled.div`
+  position: relative;
   display: flex;
-  gap: 15px;
+  gap: 1.2vw;
+  margin-top: 5px;
+  margin-right: 1.6vw;
   .icon {
     width: 25px;
     height: 25px;
@@ -154,8 +155,9 @@ let SettingPopup = styled.div`
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  right: 0;
-  top: 100%;
+  left: 2.4vw;
+  top: 4.7vh;
+  width: 8vw;
   overflow: hidden;
 `;
 
@@ -168,42 +170,51 @@ let SettingOption = styled.div`
   }
 `;
 
-let StatusMessageWrap = styled.div``;
+let StatusMessageWrap = styled.div`
+  width: 15vw;
+`;
 
 let StatusMessage = styled.span`
   font-size: 16px;
 `;
 
 let ButtonWrap = styled.div`
+  margin-top:3px;
   display: flex;
   gap: 10px;
+  height: 4vh;
+  width: 10vw;
 `;
 
 let FollowButton = styled.button`
-  padding: 5px 12px;
-  margin-left: 10px;
+  padding: 5px 10px;
+  /* margin-left: 4vw; */
   border-radius: 5px;
   background-color: #706ef4;
   color: white;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
 `;
 
 let BlockButton = styled.button`
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 5px;
   background-color: #ff4444;
   color: white;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
 `;
 
 let FollowWrap = styled.div`
-  padding-left: 100px;
+  display: flex;
 `;
 
 let FollowUl = styled.ul`
+  padding-top: 5px;
   display: flex;
+  width: 13.7vw;
+  justify-content: end;
+  padding-right: 0.5vw;
 `;
 
 let FollowLi = styled.li`
@@ -589,47 +600,6 @@ function MyPage() {
                   {profile.loginId}
                 </Nickname>
               </div>
-              {Iding && userId && String(Iding) === userId && (
-                <SettingWrap ref={settingRef}>
-                  <FaRegPenToSquare
-                    className="icon"
-                    onClick={() => setShowEditPopup(true)}
-                  />
-                  <RiUserSettingsLine
-                    className="icon"
-                    onClick={() => setShowSettingPopup(!showSettingPopup)}
-                  />
-                  {showSettingPopup && (
-                    <SettingPopup>
-                      <SettingOption
-                        onClick={() => {
-                          setShowBlockUser(true);
-                          setShowSettingPopup(false);
-                        }}
-                      >
-                        차단유저 관리
-                      </SettingOption>
-                      <SettingOption onClick={handlePrivacyToggle}>
-                        {isPrivate ? "계정 공개" : "계정 비공개"}
-                      </SettingOption>
-                    </SettingPopup>
-                  )}
-                </SettingWrap>
-              )}
-              {Iding && userId && String(Iding) !== userId && (
-                <ButtonWrap>
-                  <FollowButton onClick={handleFollow}>
-                    {profile.followStatus
-                      ? "요청중"
-                      : profile.followed
-                      ? "언팔로우"
-                      : "팔로우"}
-                  </FollowButton>
-                  <BlockButton onClick={handleBlock}>
-                    {isBlocked ? "차단 풀기" : "차단하기"}
-                  </BlockButton>
-                </ButtonWrap>
-              )}
             </NicknameWrap>
             <StatusMessageWrap>
               <StatusMessage>
@@ -684,6 +654,47 @@ function MyPage() {
             </EditPopup>
           )}
           <FollowWrap>
+          {Iding && userId && String(Iding) !== userId && (
+                <ButtonWrap>
+                  <FollowButton onClick={handleFollow}>
+                    {profile.followStatus
+                      ? "요청중"
+                      : profile.followed
+                      ? "팔로잉"
+                      : "팔로우"}
+                  </FollowButton>
+                  <BlockButton onClick={handleBlock}>
+                    {isBlocked ? "차단해제" : "차단하기"}
+                  </BlockButton>
+                </ButtonWrap>
+              )}
+          {Iding && userId && String(Iding) === userId && (
+                <SettingWrap ref={settingRef}>
+                  <FaRegPenToSquare
+                    className="icon"
+                    onClick={() => setShowEditPopup(true)}
+                  />
+                  <RiUserSettingsLine
+                    className="icon"
+                    onClick={() => setShowSettingPopup(!showSettingPopup)}
+                  />
+                  {showSettingPopup && (
+                    <SettingPopup>
+                      <SettingOption
+                        onClick={() => {
+                          setShowBlockUser(true);
+                          setShowSettingPopup(false);
+                        }}
+                      >
+                        차단유저 관리
+                      </SettingOption>
+                      <SettingOption onClick={handlePrivacyToggle}>
+                        {isPrivate ? "계정 공개" : "계정 비공개"}
+                      </SettingOption>
+                    </SettingPopup>
+                  )}
+                </SettingWrap>
+              )}
             <FollowUl>
               <FollowLi
                 onClick={() => {
@@ -691,8 +702,8 @@ function MyPage() {
                   setShowFollow(true);
                 }}
               >
-                <Nickname style={{ paddingRight: "10px" }}>팔로워</Nickname>
-                <Nickname>{profile.followerCount}</Nickname>
+                <Nickname style={{ paddingRight: "8px",fontSize:"18px"}}>팔로워</Nickname>
+                <Nickname style={{fontSize:"18px"}}>{profile.followerCount}</Nickname>
               </FollowLi>
               <FollowLi
                 onClick={() => {
@@ -700,32 +711,36 @@ function MyPage() {
                   setShowFollow(true);
                 }}
               >
-                <Nickname style={{ paddingLeft: "30px", paddingRight: "10px" }}>
+                <Nickname style={{ paddingLeft: "20px", paddingRight: "10px", fontSize:"18px"}}>
                   팔로잉
                 </Nickname>
-                <Nickname>{profile.followingCount}</Nickname>
+                <Nickname style={{fontSize:"18px"}}>{profile.followingCount}</Nickname>
               </FollowLi>
             </FollowUl>
           </FollowWrap>
         </Header>
         <MenuWrap>
           <Menu onClick={() => handleTabClick("feed")}>
-            <CgMenuGridR style={{ width: "100%", height: "100%" }} />
+          {activeTab === "feed" ? (
+                  <IoGrid style={{ width: "100%", height: "100%" }} />
+                ) : (
+                  <IoGridOutline style={{ width: "100%", height: "100%" }} />
+                )}
           </Menu>
           {String(Iding) === userId && (
             <>
               <Menu onClick={() => handleTabClick("like")}>
                 {activeTab === "like" ? (
-                  <FaHeart style={{ width: "100%", height: "100%" }} />
+                  <IoMdHeart style={{ width: "100%", height: "100%"}} />
                 ) : (
-                  <FaRegHeart style={{ width: "100%", height: "100%" }} />
+                  <IoMdHeartEmpty style={{ width: "100%", height: "100%" }} />
                 )}
               </Menu>
               <Menu onClick={() => handleTabClick("bookmark")}>
                 {activeTab === "bookmark" ? (
-                  <IoBookmark style={{ width: "100%", height: "100%" }} />
+                  <GoBookmarkFill style={{ width: "100%", height: "100%" }} />
                 ) : (
-                  <FaRegBookmark style={{ width: "100%", height: "100%" }} />
+                  <GoBookmark style={{ width: "100%", height: "100%" }} />
                 )}
               </Menu>
             </>
