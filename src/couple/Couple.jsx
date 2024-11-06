@@ -194,6 +194,7 @@ export default function Couple() {
   const [selectedMatch, setSelectedMatch] = useState(null);
 
   const [dday, setDday] = useState(null);
+  const [isMatchSelected, setIsMatchSelected] = useState(''); // 매치 선택여부 확인
 
   useEffect(() => {
     const fetchYearMonth = async () => {
@@ -247,7 +248,7 @@ export default function Couple() {
       }
     };
     fetchData();
-  
+    checkMyAnswer();
   }, [selectedYear, selectedMonth]);
 
 
@@ -279,6 +280,7 @@ export default function Couple() {
       console.error("API 호출 중 오류 발생:", error);
       setError("매칭을 저장하는 중 오류 발생: " + error.message);
     }
+    setIsMatchSelected(couple);
     setSelectedMatch(couple);
   };
 
@@ -296,6 +298,26 @@ export default function Couple() {
       );
       console.log(response.data);
       setThemes(response.data);
+    } catch (error) {
+      console.error("미션 태그 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  const checkMyAnswer = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const response = await axios.get(
+        "http://localhost:9090/couple/checkMyAnswer",
+        {
+          headers: {
+            Authorization: access
+          }
+        }
+      );
+      console.log(response.data);
+      setIsMatchSelected(response.data);
+      console.log("내 매치 선택지지지ㅣ지지 : ", isMatchSelected);
+
     } catch (error) {
       console.error("미션 태그 가져오는 중 오류 발생:", error);
     }
@@ -412,7 +434,9 @@ export default function Couple() {
               <Match
                 onClick={() => handleMatchSelect(0)}
                 style={{
-                  border: selectedMatch === 0 ? "5px dotted pink" : "none",
+                  border: isMatchSelected !== '' ? 
+                    (isMatchSelected === 0 ? "5px dotted pink" : "none") :
+                    (selectedMatch === 0 ? "5px dotted pink" : "none")
                 }}
               >
                 <MatchTxt>
@@ -423,7 +447,9 @@ export default function Couple() {
               <Match
                 onClick={() => handleMatchSelect(1)}
                 style={{
-                  border: selectedMatch === 1 ? "5px dotted pink" : "none",
+                  border: isMatchSelected !== '' ?
+                    (isMatchSelected === 1 ? "5px dotted pink" : "none") :
+                    (selectedMatch === 1 ? "5px dotted pink" : "none")
                 }}
               >
                 <MatchTxt>
