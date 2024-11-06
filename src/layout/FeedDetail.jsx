@@ -289,7 +289,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [postData, setPostData] = useState(post);
   const [commentText, setCommentText] = useState("") 
   const [parentCommentId, setParentCommentId] = useState(null);
-const [isReplying, setIsReplying] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [visibleReplies, setVisibleReplies] = useState({});
 
 
   const handleCommentChange = (e) => {
@@ -326,6 +327,13 @@ const [isReplying, setIsReplying] = useState(false);
     setCommentText(`@${loginId} `)
     setIsReplying(true);
   }
+
+  const handleToggleReplies = (commentId) => {
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId], // 댓글에 대한 답글 표시 상태를 토글
+    }));
+  };
   
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
@@ -470,42 +478,86 @@ const [isReplying, setIsReplying] = useState(false);
               <CommentsBox>
                 <CommentUl>
                 {postDetails.comments && postDetails.comments.length > 0 ? (
-                    postDetails.comments.map((comment, index) => (
-                      <CommentLi key={index}>
-                        <CommentProfile>
-                          <img src={comment.profileImg || defaultImg} alt="Profile" />
-                        </CommentProfile>
-                      <CommentTextBoxWrapper>
-                        <CommentTextBox>
-                          <CommentWriter>{comment.loginId}</CommentWriter> <CommentText>{comment.content}</CommentText>
-                        </CommentTextBox>
-                        <DayandReplyBox>
-                          <Day>1시간 전</Day> <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>답글 달기</ReplyButton>
-                        </DayandReplyBox>
-                      </CommentTextBoxWrapper>
-                      <HeartBox>
-                        <HeartIcon />
-                      </HeartBox>
-                      </CommentLi>
-                    ))
-                  ) : (
-                    <div>댓글이 없습니다.</div>
-                  )}
-                </CommentUl>
-              </CommentsBox>
-              <CommentWriteBox>
+                  postDetails.comments.map((comment, index) => {
+                    const hasReplies = postDetails.comments.some(
+                      (reply) => reply.parentId === comment.commentId
+                    ); // 현재 댓글에 답글이 있는지 확인
+
+                    // 답글이 아닌 댓글만 표시
+                    if (!comment.parentId) {
+                      return (
+                        <CommentLi key={index}>
+                          <CommentProfile>
+                            <img src={comment.profileImg || defaultImg} alt="Profile" />
+                          </CommentProfile>
+                          <CommentTextBoxWrapper>
+                            <CommentTextBox>
+                              <CommentWriter>{comment.loginId}</CommentWriter>
+                              <CommentText>{comment.content}</CommentText>
+                            </CommentTextBox>
+                            <DayandReplyBox>
+                              <Day>1시간 전</Day>
+                              <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>
+                                답글 달기
+                              </ReplyButton>
+                            </DayandReplyBox>
+                          </CommentTextBoxWrapper>
+                          <HeartBox>
+                            <HeartIcon />
+                          </HeartBox>
+
+                           {/* 답글이 있는 경우만 "답글 보기" 버튼을 렌더링 */}
+                           {hasReplies && (
+                            <button onClick={() => handleToggleReplies(comment.commentId)}>
+                              {visibleReplies[comment.commentId] ? '답글 숨기기' : '답글 보기'}
+                            </button>
+                          )}
+
+                          {/* 답글을 표시할 부분 */}
+                          {visibleReplies[comment.commentId] && (
+                            <div>
+                              {postDetails.comments
+                                .filter((reply) => reply.parentId === comment.commentId)
+                                .map((reply, idx) => (
+                                  <CommentLi key={idx}>
+                                    <CommentProfile>
+                                      <img src={reply.profileImg || defaultImg} alt="Profile" />
+                                    </CommentProfile>
+                                    <CommentTextBoxWrapper>
+                                      <CommentTextBox>
+                                        <CommentWriter>{reply.loginId}</CommentWriter>
+                                        <CommentText>{reply.content}</CommentText>
+                                      </CommentTextBox>
+                                    </CommentTextBoxWrapper>
+                                    <HeartBox>
+                                      <HeartIcon />
+                                    </HeartBox>
+                                  </CommentLi>
+                                ))}
+                            </div>
+                          )}
+                        </CommentLi>
+                      );
+                    }
+                    return null; // 답글은 숨깁니다
+                  })
+                ) : (
+                  <div>댓글이 없습니다.</div>
+                )}
+              </CommentUl>
+            </CommentsBox>
+            <CommentWriteBox>
               <CommentInput
                 placeholder="댓글 달기..."
                 value={commentText}
                 onChange={handleCommentChange}
               />
-                <CommentSend onClick={handleCommentSubmit}/>
-              </CommentWriteBox>
-            </RightSection>
-          </PreviewContent>
-        </PreviewModalContainer>
-      </ModalOverlay>
-    </div>
-  );
+              <CommentSend onClick={handleCommentSubmit} />
+            </CommentWriteBox>
+          </RightSection>
+        </PreviewContent>
+      </PreviewModalContainer>
+    </ModalOverlay>
+  </div>
+);
 }
-
