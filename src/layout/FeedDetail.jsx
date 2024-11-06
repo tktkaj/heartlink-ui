@@ -288,11 +288,15 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [error, setError] = useState(null);
   const [postData, setPostData] = useState(post);
   const [commentText, setCommentText] = useState("") 
+  const [parentCommentId, setParentCommentId] = useState(null);
+const [isReplying, setIsReplying] = useState(false);
+
 
   const handleCommentChange = (e) => {
     setCommentText(e.target.value);  // 댓글 내용 업데이트
   };
 
+  // 댓글 작성
   const handleCommentSubmit = async () => {
     if (commentText.trim()) {  // 공백만 입력되는 것을 방지
       try{
@@ -302,16 +306,26 @@ export default function FeedDetail({ isOpen, onClose, post}) {
           
           `http://localhost:9090/comment/${postData}/reply`,
           {
-            content: commentText  // 댓글 내용
-          },
+            content: commentText,  // 댓글 내용
+            parentId: parentCommentId  // 부모 댓글 ID
+          }
         );
-        console.log("댓글 제출 성공 : ", commentText);
+        console.log("댓글 작성 성공 : ", commentText);
         setCommentText("");
+        setParentCommentId(null);
+        setIsReplying(false);
       } catch(error){
-        console.error("댓글 제출 실패 :", error);
+        console.error("댓글 작성 실패 :", error);
       }
     }
   };
+
+  // 대댓글 작성
+  const handleReplyClick = (commentId, loginId) => {
+    setParentCommentId(commentId);
+    setCommentText(`@${loginId} `)
+    setIsReplying(true);
+  }
   
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
@@ -466,7 +480,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                           <CommentWriter>{comment.loginId}</CommentWriter> <CommentText>{comment.content}</CommentText>
                         </CommentTextBox>
                         <DayandReplyBox>
-                          <Day>1시간 전</Day> <ReplyButton>답글 달기</ReplyButton>
+                          <Day>1시간 전</Day> <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>답글 달기</ReplyButton>
                         </DayandReplyBox>
                       </CommentTextBoxWrapper>
                       <HeartBox>
