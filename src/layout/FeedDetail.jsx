@@ -122,10 +122,11 @@ const Profile = styled.div`
 `;
 
 const LoginId = styled.span`
-  width: 100px;
   font-size: 20px;
   margin-left: 7px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const ContentBox = styled.div`
@@ -324,6 +325,37 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
+
+  function formatTimeDifference(createdAt) {
+    const now = new Date();
+    const postTime = new Date(createdAt);
+    const timeDiff = now - postTime; // 밀리초 단위 차이
+  
+    const seconds = Math.floor(timeDiff / 1000); // 초
+    const minutes = Math.floor(seconds / 60); // 분
+    const hours = Math.floor(minutes / 60); // 시간
+    const days = Math.floor(hours / 24); // 일
+    const months = now.getMonth() - postTime.getMonth() + (now.getFullYear() - postTime.getFullYear()) * 12; // 월 차이
+  
+    if (seconds < 60) {
+      return '방금 전'; // 1분 이내
+    } else if (minutes < 60) {
+      return `${minutes}분 전`; // 1시간 이내
+    } else if (hours < 24) {
+      return `${hours}시간 전`; // 1일 이내
+    } else if (days < 30) {
+      return `${days}일 전`; // 1개월 이내
+    } else if (days >= 30 && days < 365) {
+      return `${months}개월 전`; // 1년 이내
+    } else {
+      // 1년 이상 차이가 날 경우 yyyy-MM-dd 형식
+      const year = postTime.getFullYear();
+      const month = String(postTime.getMonth() + 1).padStart(2, '0');
+      const day = String(postTime.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  }
+  
 
 
   
@@ -669,8 +701,17 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 </Profile>
                 <LoginId>
                   {postDetails.loginId}
+                  <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
+                  <p
+                    style={{
+                      fontSize: "17px",
+                      color: "gray",
+                      
+                    }}
+                  >
+                    {postDetails.partnerId}
+                  </p>
                 </LoginId>
-                
                 <Edit/>
                 <button
                     style={{
@@ -731,7 +772,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                 <CommentText>{comment.content}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
-                                <Day>1시간 전</Day>
+                                <Day>{formatTimeDifference(comment.createdAt)}</Day>
                                 <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>
                                   답글 달기
                                 </ReplyButton>
@@ -770,7 +811,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                               )}
                             </CommentTextBoxWrapper>
                             <HeartBox>
-                              <HeartIcon />
+                              <HeartIcon onClick={() => handlePostLike(null, comment.commentId)}/>
                             </HeartBox>
                           </CommentLi>
                         );
