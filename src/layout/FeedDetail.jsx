@@ -306,7 +306,6 @@ const ReplyLook = styled.button`
 // `;
 
 export default function FeedDetail({ isOpen, onClose, post}) {
-  const [files, setFiles] = useState(post?.files || []);
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null);
@@ -316,6 +315,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
 
+
+  
 
   const handleCommentChange = (e) => {
     setCommentText(e.target.value);  // 댓글 내용 업데이트
@@ -367,7 +368,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
 
   useEffect(() => {
     if (isOpen) {
-      setFiles(post?.files || []);
       
         const access = localStorage.getItem("access");
         const axios = getAuthAxios(access);
@@ -435,25 +435,25 @@ export default function FeedDetail({ isOpen, onClose, post}) {
         <PreviewModalContainer>
           <PreviewContent>
             <LeftSection>
-              <Carousel showThumbs={false}>
-                {files.length === 0 ? (
-                  <div>선택된 파일이 없습니다.</div>
-                ) : (
-                  files.map((file, index) => (
-                    <div key={index}>
-                      {file.type && file.type.startsWith('image/') ? (
-                        <PreviewImage src={file.url} alt={`Preview ${index + 1}`} />
-                      ) : file.type && file.type.startsWith('video/') ? (
-                        <PreviewVideo controls>
-                          <source src={file.url} type={file.type} />
-                        </PreviewVideo>
-                      ) : (
-                        <div>미리보기가 지원되지 않는 파일입니다.</div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </Carousel>
+            <Carousel showThumbs={false}>
+              {postDetails.files && postDetails.files.length > 0 ? (
+                postDetails.files.map((file, index) => (
+                  <div key={index}>
+                    {file.fileType && file.fileType.startsWith('IMAGE') ? (
+                      <PreviewImage src={file.fileUrl} alt={`Preview ${index + 1}`} />
+                    ) : file.fileType && file.fileType.startsWith('VIDEO') ? (
+                      <PreviewVideo controls>
+                        <source src={file.fileUrl} type={file.fileType} />
+                      </PreviewVideo>
+                    ) : (
+                      <div>미리보기가 지원되지 않는 파일입니다.</div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div>선택된 파일이 없습니다.</div>
+              )}
+            </Carousel>
             </LeftSection>
             <RightSection>
               <RightHeader>
