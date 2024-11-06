@@ -5,10 +5,15 @@ import profilethum from "../image/sidebar/test.png";
 import { BiBell, BiSolidBell, BiSearchAlt, BiSearch } from "react-icons/bi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { AiOutlineHome } from "react-icons/ai";
-import { RiUserHeartLine, RiMessage3Line, RiMessage3Fill } from "react-icons/ri";
+import {
+  RiUserHeartLine,
+  RiMessage3Line,
+  RiMessage3Fill,
+} from "react-icons/ri";
 import Setting from "./Setting";
 import { Link, useLocation } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
+import AlarmMenu from "./AlarmMenu";
 
 const MiniContainer = styled.div`
   width: 82px;
@@ -80,9 +85,16 @@ export default function MiniSide() {
   const [isSettingOpen, setIsSettingOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [isAlarmOpen, setIsAlarmOpen] = useState(false);
+  const [showMiniSide, setShowMiniSide] = useState(false);
 
   const openSetting = () => setIsSettingOpen(true);
   const closeSetting = () => setIsSettingOpen(false);
+
+  const toggleAlarm = () => {
+    setIsAlarmOpen(!isAlarmOpen);
+    setShowMiniSide(!showMiniSide);
+  };
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -109,7 +121,6 @@ export default function MiniSide() {
   const location = useLocation();
   const isActiveDm = location.pathname === "/dm";
   const isActiveSearch = location.pathname === "/search";
-  const isActiveNotification = location.pathname === "/notifications";
 
   return (
     <>
@@ -125,16 +136,25 @@ export default function MiniSide() {
               <AiOutlineHome className="icon" />
             </Liststyle>
             <Liststyle to="/search">
-              {isActiveSearch ? <BiSearchAlt className="icon" /> : <BiSearch className="icon" /> }
+              {isActiveSearch ? (
+                <BiSearchAlt className="icon" />
+              ) : (
+                <BiSearch className="icon" />
+              )}
             </Liststyle>
             <Liststyle to="/couple">
               <RiUserHeartLine className="icon" />
             </Liststyle>
-            <Liststyle to="/notifications">
-            {isActiveNotification ? <BiSolidBell className="icon" />: <BiBell className="icon" />}
+            <Liststyle as="div" onClick={toggleAlarm}>
+              <BiBell className="icon" />
+              {isAlarmOpen && <AlarmMenu />}
             </Liststyle>
             <Liststyle to="/dm">
-              {isActiveDm ? <RiMessage3Fill className="icon" /> : <RiMessage3Line className="icon" />}
+              {isActiveDm ? (
+                <RiMessage3Fill className="icon" />
+              ) : (
+                <RiMessage3Line className="icon" />
+              )}
             </Liststyle>
             <Liststyle to={`/user/profile/${userId}`}>
               <ProfileThum>

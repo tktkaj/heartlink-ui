@@ -194,6 +194,8 @@ export default function Login() {
       localStorage.setItem("access", authorization);
       localStorage.setItem("refresh", refreshToken);
 
+      console.log("로그인하면 저장되는 토큰:", authorization, refreshToken);
+
       alert("로그인 성공!");
       window.location.href = "/home";
     } catch (error) {}
