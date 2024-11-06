@@ -11,6 +11,10 @@ import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
 import { getAuthAxios } from "../api/authAxios";
 import { TiHeartOutline } from "react-icons/ti";
+import { LuSend } from "react-icons/lu";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { IoPencil } from "react-icons/io5";
 
 
 const ModalOverlay = styled.div`
@@ -48,22 +52,22 @@ const CloseButton = styled.button`
   color: #fff;
 `;
 
-const StyledIcon = styled(MdAddPhotoAlternate)`
-  width: 90px;
-  height: 90px;
-  color: #706ef4;
-  margin-bottom: 10px;
-`;
+// const StyledIcon = styled(MdAddPhotoAlternate)`
+//   width: 90px;
+//   height: 90px;
+//   color: #706ef4;
+//   margin-bottom: 10px;
+// `;
 
-const ModalContent = styled.div`
-  background: white;
-  width: 330px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-`;
+// const ModalContent = styled.div`
+//   background: white;
+//   width: 330px;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 20px;
+// `;
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -114,12 +118,14 @@ const RightHeader = styled.div`
 const Profile = styled.div`
   width : 40px;
   border-radius: 100%;
+  cursor: pointer;
 `;
 
 const LoginId = styled.span`
   width: 100px;
   font-size: 20px;
   margin-left: 7px;
+  cursor: pointer;
 `;
 
 const ContentBox = styled.div`
@@ -162,15 +168,18 @@ const LikeCount = styled.span`
 const CommentsBox = styled.div`
   width: 100%;
   margin-top: 5px;
+  height: 329px;
+  overflow-y: auto;
+  scrollbar-width: none;
 `;
 
 const CommentUl = styled.ul`
-  overflow-y: scroll;
-  scrollbar-width: none;
+  
 `
 const CommentLi = styled.li`
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
   margin-bottom: 5px;
   width: 100%;
 `
@@ -183,7 +192,9 @@ const CommentProfile = styled.div`
 `
 
 const CommentTextBox = styled.div`
-
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
   
 `
 
@@ -204,7 +215,9 @@ const CommentTextBoxWrapper = styled.div`
 `;
 
 const DayandReplyBox = styled.div`
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  
 `;
 
 const Day = styled.span`
@@ -234,14 +247,17 @@ const HeartIcon = styled(TiHeartOutline)`
 
 const CommentWriteBox = styled.div`
   width: 100%;
-  height: 35px;
   margin: auto 0px 0px 0px;
+  padding-top: 5px;
   border-top: 1px solid #ccc;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const CommentInput = styled.textarea`
-  width: 100%;
+  width: 90%;
   height: 35px;
   padding: 10px;
   resize: none;
@@ -251,6 +267,44 @@ const CommentInput = styled.textarea`
   color: #333;
   margin-top: 5px;
 `;
+
+const CommentSend = styled(LuSend)`
+  cursor: pointer;
+  transition: color;
+  width: 25px;
+  height: 25px;
+  margin-top: 8px;
+
+  &:hover {
+    color: #706ef4;
+    opacity: 0.8;
+  }
+
+`;
+
+const ReplyLookBox = styled.div`
+  display: flex;
+  margin: 15px 0px;
+`;
+
+const ReplyLine = styled.div`
+  border-bottom: 1px solid #595959;
+  margin-right: 16px;
+  width: 24px;
+  margin-bottom: 8px;
+`
+
+const ReplyLook = styled.button`
+  color: #595959;
+  font-size: 12px;
+  cursor: pointer;
+
+`;
+
+const Edit = styled(IoPencil)`
+  font-size: 25px;
+  margin-left: auto;
+`
 
 
 
@@ -262,20 +316,264 @@ const CommentInput = styled.textarea`
 // `;
 
 export default function FeedDetail({ isOpen, onClose, post}) {
-  const [files, setFiles] = useState(post?.files || []);
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+  const [postData, setPostData] = useState(post);
+  const [commentText, setCommentText] = useState("") 
+  const [parentCommentId, setParentCommentId] = useState(null);
+  const [isReplying, setIsReplying] = useState(false);
+  const [visibleReplies, setVisibleReplies] = useState({});
+
+
+  
+
+  const handleCommentChange = (e) => {
+    setCommentText(e.target.value);  // 댓글 내용 업데이트
+  };
+
+  // 댓글 작성
+  const handleCommentSubmit = async () => {
+    if (commentText.trim()) {  // 공백만 입력되는 것을 방지
+      try{
+        const access = localStorage.getItem("access");
+        const axios = getAuthAxios(access);
+        const response = await axios.post(
+          
+          `http://localhost:9090/comment/${postData}/reply`,
+          {
+            content: commentText,  // 댓글 내용
+            parentId: parentCommentId  // 부모 댓글 ID
+          }
+        );
+        console.log("댓글 작성 성공 : ", commentText);
+        setCommentText("");
+        setParentCommentId(null);
+        setIsReplying(false);
+      } catch(error){
+        console.error("댓글 작성 실패 :", error);
+      }
+    }
+  };
+
+  // 대댓글 작성
+  const handleReplyClick = (commentId, loginId) => {
+    setParentCommentId(commentId);
+    setCommentText(`@${loginId} `)
+    setIsReplying(true);
+  }
+
+  const handleToggleReplies = (commentId) => {
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId], // 댓글에 대한 답글 표시 상태를 토글
+    }));
+  };
+
+  // 좋아요
+  const handlePostLike = async (postId, commentId) => {
+    const access = localStorage.getItem("access");
+    const axios = getAuthAxios(access);
+    // like, header에 토큰 값
+
+    const params = {};
+    if (post) params.postId = postId;
+    if (commentId) params.commentId = commentId
+
+    axios
+      .post("http://localhost:9090/like/toggle", null, {
+        params: params,
+        headers: {
+          Authorization: `${access}`,
+        },
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          toast.success(res.data, {
+            position: "top-right", // 위치 설정
+            autoClose: 2000, // 자동 닫힘 시간
+            hideProgressBar: true, // 진행 바 숨김 여부
+            closeOnClick: true, // 클릭 시 닫힘 여부
+            pauseOnHover: true, // 호버 시 일시 정지
+          });
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("권한이 존재하지않아요ㅠㅜ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+        }
+      });
+  };
+
+  // 유저 팔로우
+  const handleFollow = (userId, e) => {
+    const access = localStorage.getItem("access");
+    const axios = getAuthAxios(access);
+    // post, header에 토큰 값
+    axios
+      .post(
+        `http://localhost:9090/follow/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `${access}`,
+          },
+        }
+      )
+      .then((res) => {
+        if ((res.status = 201)) {
+          toast.success(res.data, {
+            position: "top-right", // 위치 설정
+            autoClose: 2000, // 자동 닫힘 시간
+            hideProgressBar: true, // 진행 바 숨김 여부
+            closeOnClick: true, // 클릭 시 닫힘 여부
+            pauseOnHover: true, // 호버 시 일시 정지
+          });
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("서버에서 오류가 발생하였습니다.", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 409:
+            toast.warn(e.response.data, {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다.", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+        }
+      });
+  };
+
+  // 북마크
+  const handlePostBookmark = (postId, e) => {
+    const access = localStorage.getItem("access");
+    const axios = getAuthAxios(access);
+    // delete, header에 토큰 값
+    axios
+      .post(`http://localhost:9090/bookmark/${postId}`, null, {
+        headers: {
+          Authorization: `${access}`,
+        },
+      })
+      .then((res) => {
+        switch (res.status) {
+          case 200:
+            if (res.data == "북마크 추가됨")
+              toast.success("내 북마크 목록에 추가했습니다.", {
+                position: "top-right", // 위치 설정
+                autoClose: 2000, // 자동 닫힘 시간
+                hideProgressBar: true, // 진행 바 숨김 여부
+                closeOnClick: true, // 클릭 시 닫힘 여부
+                pauseOnHover: true, // 호버 시 일시 정지
+              });
+            else if (res.data == "북마크 삭제됨")
+              toast.error("내 북마크 목록에서 제거했습니다.", {
+                position: "top-right", // 위치 설정
+                autoClose: 2000, // 자동 닫힘 시간
+                hideProgressBar: true, // 진행 바 숨김 여부
+                closeOnClick: true, // 클릭 시 닫힘 여부
+                pauseOnHover: true, // 호버 시 일시 정지
+              });
+            break;
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("권한이 존재하지않아요ㅠㅜ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+        }
+      });
+  };
+
+  // 게시글 공유
+  const handlePostShare = () => {
+    const token = localStorage.getItem("access");
+    // 나중에 게시물 상세페이지 주소로 전환할 것.
+    const shareLink = window.location.href;
+    navigator.clipboard
+      .writeText(shareLink)
+      .then(() => {
+        toast.success("대시보드에 링크가 저장되었습니다.", {
+          position: "top-right", // 위치 설정
+          autoClose: 2000, // 자동 닫힘 시간
+          hideProgressBar: true, // 진행 바 숨김 여부
+          closeOnClick: true, // 클릭 시 닫힘 여부
+          pauseOnHover: true, // 호버 시 일시 정지
+        });
+      })
+      .catch(() => {
+        toast.warn("링크 저장을 실패하였습니다.", {
+          position: "top-right", // 위치 설정
+          autoClose: 2000, // 자동 닫힘 시간
+          hideProgressBar: true, // 진행 바 숨김 여부
+          closeOnClick: true, // 클릭 시 닫힘 여부
+          pauseOnHover: true, // 호버 시 일시 정지
+        });
+      });
+  };
+
   
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
 
-  const [postData, setPostData] = useState(post);
+  
 
-
+  // 게시글 상세보기
   useEffect(() => {
     if (isOpen) {
-      setFiles(post?.files || []);
       
         const access = localStorage.getItem("access");
         const axios = getAuthAxios(access);
@@ -335,7 +633,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
 
   return (
     <div>
-      
+      <ToastContainer/>
       <ModalOverlay onClick={handleOverlayClick}>
         <CloseButton onClick={onClose}>
           <IoClose />
@@ -343,42 +641,47 @@ export default function FeedDetail({ isOpen, onClose, post}) {
         <PreviewModalContainer>
           <PreviewContent>
             <LeftSection>
-              <Carousel showThumbs={false}>
-                {files.length === 0 ? (
-                  <div>선택된 파일이 없습니다.</div>
-                ) : (
-                  files.map((file, index) => (
-                    <div key={index}>
-                      {file.type && file.type.startsWith('image/') ? (
-                        <PreviewImage src={file.url} alt={`Preview ${index + 1}`} />
-                      ) : file.type && file.type.startsWith('video/') ? (
-                        <PreviewVideo controls>
-                          <source src={file.url} type={file.type} />
-                        </PreviewVideo>
-                      ) : (
-                        <div>미리보기가 지원되지 않는 파일입니다.</div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </Carousel>
+            <Carousel showThumbs={false}>
+              {postDetails.files && postDetails.files.length > 0 ? (
+                postDetails.files.map((file, index) => (
+                  <div key={index}>
+                    {file.fileType && file.fileType.startsWith('IMAGE') ? (
+                      <PreviewImage src={file.fileUrl} alt={`Preview ${index + 1}`} />
+                    ) : file.fileType && file.fileType.startsWith('VIDEO') ? (
+                      <PreviewVideo controls>
+                        <source src={file.fileUrl} type={file.fileType} />
+                      </PreviewVideo>
+                    ) : (
+                      <div>미리보기가 지원되지 않는 파일입니다.</div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div>선택된 파일이 없습니다.</div>
+              )}
+            </Carousel>
             </LeftSection>
             <RightSection>
               <RightHeader>
                 <Profile><img
                   src={postDetails.profileImg || defaultImg}
-                /></Profile>
-                <LoginId>{postDetails.loginId}</LoginId>
+                />
+                </Profile>
+                <LoginId>
+                  {postDetails.loginId}
+                </LoginId>
+                
+                <Edit/>
                 <button
                     style={{
                       backgroundColor: "#706EF4",
                       width: "70px",
                       height: "30px",
                       paddingTop: "3px",
-                      margin: "0px 0px 0px auto",
+                      margin: "0px 0px 0px 13px",
                     }}
                     className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
-                    // onClick={(e) => handleFollow(item.content.userId, e)}
+                    onClick={(e) => handleFollow(postDetails.userId, e)}
                   >
                     팔로우
                   </button>
@@ -390,17 +693,17 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   <IoIosHeartEmpty
                     className="feedIcon"
                     style={{ cursor: "pointer", marginRight: "8px" }}
-                    // onClick={(e) => handlePostLike(item.content.postId, e)}
+                    onClick={() => handlePostLike(postDetails.postId, null)}
                   />
                   <IoMdShare
                     className="feedIcon"
                     style={{ cursor: "pointer" }}
-                    // onClick={handlePostShare}
+                    onClick={handlePostShare}
                   />
                 <FaRegBookmark
                   className="feedIcon"
                   style={{ cursor: "pointer", margin: "0px 0px 0px auto"}}
-                  // onClick={(e) => handlePostBookmark(item.content.postId, e)}
+                  onClick={(e) => handlePostBookmark(postDetails.postId, e)}
                 />
                 </IconBox>
               </ContentBox>
@@ -409,38 +712,88 @@ export default function FeedDetail({ isOpen, onClose, post}) {
               </LikeCountBox>
               <CommentsBox>
                 <CommentUl>
-                {postDetails.comments && postDetails.comments.length > 0 ? (
-                    postDetails.comments.map((comment, index) => (
-                      <CommentLi key={index}>
-                        <CommentProfile>
-                          <img src={comment.profileImg || defaultImg} alt="Profile" />
-                        </CommentProfile>
-                      <CommentTextBoxWrapper>
-                        <CommentTextBox>
-                          <CommentWriter>{comment.loginId}</CommentWriter> <CommentText>{comment.content}</CommentText>
-                        </CommentTextBox>
-                        <DayandReplyBox>
-                          <Day>1시간 전</Day> <ReplyButton>답글 달기</ReplyButton>
-                        </DayandReplyBox>
-                      </CommentTextBoxWrapper>
-                      <HeartBox>
-                        <HeartIcon />
-                      </HeartBox>
-                      </CommentLi>
-                    ))
+                  {postDetails.comments && postDetails.comments.length > 0 ? (
+                    postDetails.comments.map((comment, index) => {
+                      const hasReplies = postDetails.comments.some(
+                        (reply) => reply.parentId === comment.commentId
+                      ); // 댓글에 답글이 있는지 확인
+
+                      // 답글이 아닌 댓글만 표시
+                      if (!comment.parentId) {
+                        return (
+                          <CommentLi key={index}>
+                            <CommentProfile>
+                              <img src={comment.profileImg || defaultImg} alt="Profile" />
+                            </CommentProfile>
+                            <CommentTextBoxWrapper>
+                              <CommentTextBox>
+                                <CommentWriter>{comment.loginId}</CommentWriter>
+                                <CommentText>{comment.content}</CommentText>
+                              </CommentTextBox>
+                              <DayandReplyBox>
+                                <Day>1시간 전</Day>
+                                <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>
+                                  답글 달기
+                                </ReplyButton>
+                              </DayandReplyBox>
+
+                              {hasReplies && (
+                                <ReplyLookBox> <ReplyLine/>
+                                  <ReplyLook onClick={() => handleToggleReplies(comment.commentId)}>
+                                    {visibleReplies[comment.commentId] ? '답글 숨기기' : '답글 보기'}
+                                  </ReplyLook>
+                                </ReplyLookBox>
+                              )}
+
+                              {/* 답글이 보이는 상태 */}
+                              {visibleReplies[comment.commentId] && (
+                                <div>
+                                  {postDetails.comments
+                                    .filter((reply) => reply.parentId === comment.commentId)
+                                    .map((reply, idx) => (
+                                      <CommentLi key={idx}>
+                                        <CommentProfile>
+                                          <img src={reply.profileImg || defaultImg} alt="Profile" />
+                                        </CommentProfile>
+                                        <CommentTextBoxWrapper>
+                                          <CommentTextBox>
+                                            <CommentWriter>{reply.loginId}</CommentWriter>
+                                            <CommentText>{reply.content}</CommentText>
+                                          </CommentTextBox>
+                                        </CommentTextBoxWrapper>
+                                        <HeartBox>
+                                          <HeartIcon onClick={() => handlePostLike(null, reply.commentId)}/>
+                                        </HeartBox>
+                                      </CommentLi>
+                                    ))}
+                                </div>
+                              )}
+                            </CommentTextBoxWrapper>
+                            <HeartBox>
+                              <HeartIcon />
+                            </HeartBox>
+                          </CommentLi>
+                        );
+                      }
+                      return null; // 답글은 숨깁니다
+                    })
                   ) : (
                     <div>댓글이 없습니다.</div>
                   )}
-                </CommentUl>
-              </CommentsBox>
-              <CommentWriteBox>
-                <CommentInput placeholder="댓글 달기..."></CommentInput>
-              </CommentWriteBox>
-            </RightSection>
-          </PreviewContent>
-        </PreviewModalContainer>
-      </ModalOverlay>
-    </div>
-  );
+              </CommentUl>
+            </CommentsBox>
+            <CommentWriteBox>
+              <CommentInput
+                placeholder="댓글 달기..."
+                value={commentText}
+                onChange={handleCommentChange}
+              />
+              <CommentSend onClick={handleCommentSubmit} />
+            </CommentWriteBox>
+          </RightSection>
+        </PreviewContent>
+      </PreviewModalContainer>
+    </ModalOverlay>
+  </div>
+);
 }
-
