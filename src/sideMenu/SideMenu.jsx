@@ -14,7 +14,8 @@ import {
 } from "react-icons/ri";
 import { BiBell, BiSolidBell } from "react-icons/bi";
 import { getAuthAxios } from "../api/authAxios";
-import { useAuth } from "../api/AuthContext";
+import AlarmMenu from "./AlarmMenu";
+import MiniSide from "./MiniSide";
 
 const Sidebar = styled.div`
   width: 20vw;
@@ -81,12 +82,19 @@ export default function SideMenu() {
   const [userId, setUserId] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
+  const [isAlarmOpen, setIsAlarmOpen] = useState(false);
+  const [showMiniSide, setShowMiniSide] = useState(false);
 
   const openSetting = () => {
     setIsSettingOpen(true);
   };
 
   const closeSetting = () => setIsSettingOpen(false);
+
+  const toggleAlarm = () => {
+    setIsAlarmOpen(!isAlarmOpen);
+    setShowMiniSide(!showMiniSide);
+  };
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -113,9 +121,18 @@ export default function SideMenu() {
   const location = useLocation();
   const isActiveHome = location.pathname === "/home";
   const isActiveCouple = location.pathname === "/couple";
-  const isActiveNotification = location.pathname === "/notifications";
 
   const getActiveStatus = (path) => location.pathname === path;
+
+  if (showMiniSide) {
+    return (
+      <>
+        <MiniSide />
+        {isAlarmOpen && <AlarmMenu />}
+      </>
+    );
+  }
+
   return (
     <>
       <Sidebar>
@@ -147,17 +164,11 @@ export default function SideMenu() {
                 )}
                 커플
               </Liststyle>
-              <Liststyle
-                to="/notifications"
-                isActive={getActiveStatus("/notifications")}
-              >
-                {isActiveNotification ? (
-                  <BiSolidBell className="icon" />
-                ) : (
-                  <BiBell className="icon" />
-                )}
+              <Liststyle as="div" onClick={toggleAlarm}>
+                <BiBell className="icon" />
                 알림
               </Liststyle>
+              {isAlarmOpen && <AlarmMenu />}
               <Liststyle to="/dm" isActive={getActiveStatus("/dm")}>
                 <RiMessage3Line className="icon" />
                 메시지
