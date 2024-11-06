@@ -12,6 +12,9 @@ import { FaRegBookmark } from "react-icons/fa";
 import { getAuthAxios } from "../api/authAxios";
 import { TiHeartOutline } from "react-icons/ti";
 import { LuSend } from "react-icons/lu";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { IoPencil } from "react-icons/io5";
 
 
 const ModalOverlay = styled.div`
@@ -49,22 +52,22 @@ const CloseButton = styled.button`
   color: #fff;
 `;
 
-const StyledIcon = styled(MdAddPhotoAlternate)`
-  width: 90px;
-  height: 90px;
-  color: #706ef4;
-  margin-bottom: 10px;
-`;
+// const StyledIcon = styled(MdAddPhotoAlternate)`
+//   width: 90px;
+//   height: 90px;
+//   color: #706ef4;
+//   margin-bottom: 10px;
+// `;
 
-const ModalContent = styled.div`
-  background: white;
-  width: 330px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-`;
+// const ModalContent = styled.div`
+//   background: white;
+//   width: 330px;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 20px;
+// `;
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -115,12 +118,14 @@ const RightHeader = styled.div`
 const Profile = styled.div`
   width : 40px;
   border-radius: 100%;
+  cursor: pointer;
 `;
 
 const LoginId = styled.span`
   width: 100px;
   font-size: 20px;
   margin-left: 7px;
+  cursor: pointer;
 `;
 
 const ContentBox = styled.div`
@@ -296,6 +301,11 @@ const ReplyLook = styled.button`
 
 `;
 
+const Edit = styled(IoPencil)`
+  font-size: 25px;
+  margin-left: auto;
+`
+
 
 
 
@@ -359,13 +369,209 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       [commentId]: !prev[commentId], // 댓글에 대한 답글 표시 상태를 토글
     }));
   };
+
+  // 좋아요
+  const handlePostLike = async (postId, commentId) => {
+    const access = localStorage.getItem("access");
+    const axios = getAuthAxios(access);
+    // like, header에 토큰 값
+
+    const params = {};
+    if (post) params.postId = postId;
+    if (commentId) params.commentId = commentId
+
+    axios
+      .post("http://localhost:9090/like/toggle", null, {
+        params: params,
+        headers: {
+          Authorization: `${access}`,
+        },
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          toast.success(res.data, {
+            position: "top-right", // 위치 설정
+            autoClose: 2000, // 자동 닫힘 시간
+            hideProgressBar: true, // 진행 바 숨김 여부
+            closeOnClick: true, // 클릭 시 닫힘 여부
+            pauseOnHover: true, // 호버 시 일시 정지
+          });
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("권한이 존재하지않아요ㅠㅜ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+        }
+      });
+  };
+
+  // 유저 팔로우
+  const handleFollow = (userId, e) => {
+    const access = localStorage.getItem("access");
+    const axios = getAuthAxios(access);
+    // post, header에 토큰 값
+    axios
+      .post(
+        `http://localhost:9090/follow/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `${access}`,
+          },
+        }
+      )
+      .then((res) => {
+        if ((res.status = 201)) {
+          toast.success(res.data, {
+            position: "top-right", // 위치 설정
+            autoClose: 2000, // 자동 닫힘 시간
+            hideProgressBar: true, // 진행 바 숨김 여부
+            closeOnClick: true, // 클릭 시 닫힘 여부
+            pauseOnHover: true, // 호버 시 일시 정지
+          });
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("서버에서 오류가 발생하였습니다.", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 409:
+            toast.warn(e.response.data, {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다.", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+        }
+      });
+  };
+
+  // 북마크
+  const handlePostBookmark = (postId, e) => {
+    const access = localStorage.getItem("access");
+    const axios = getAuthAxios(access);
+    // delete, header에 토큰 값
+    axios
+      .post(`http://localhost:9090/bookmark/${postId}`, null, {
+        headers: {
+          Authorization: `${access}`,
+        },
+      })
+      .then((res) => {
+        switch (res.status) {
+          case 200:
+            if (res.data == "북마크 추가됨")
+              toast.success("내 북마크 목록에 추가했습니다.", {
+                position: "top-right", // 위치 설정
+                autoClose: 2000, // 자동 닫힘 시간
+                hideProgressBar: true, // 진행 바 숨김 여부
+                closeOnClick: true, // 클릭 시 닫힘 여부
+                pauseOnHover: true, // 호버 시 일시 정지
+              });
+            else if (res.data == "북마크 삭제됨")
+              toast.error("내 북마크 목록에서 제거했습니다.", {
+                position: "top-right", // 위치 설정
+                autoClose: 2000, // 자동 닫힘 시간
+                hideProgressBar: true, // 진행 바 숨김 여부
+                closeOnClick: true, // 클릭 시 닫힘 여부
+                pauseOnHover: true, // 호버 시 일시 정지
+              });
+            break;
+        }
+      })
+      .catch((e) => {
+        switch (e.status) {
+          case 404:
+            toast.warn("권한이 존재하지않아요ㅠㅜ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+          case 500:
+            toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
+              position: "top-right", // 위치 설정
+              autoClose: 2000, // 자동 닫힘 시간
+              hideProgressBar: true, // 진행 바 숨김 여부
+              closeOnClick: true, // 클릭 시 닫힘 여부
+              pauseOnHover: true, // 호버 시 일시 정지
+            });
+            break;
+        }
+      });
+  };
+
+  // 게시글 공유
+  const handlePostShare = () => {
+    const token = localStorage.getItem("access");
+    // 나중에 게시물 상세페이지 주소로 전환할 것.
+    const shareLink = window.location.href;
+    navigator.clipboard
+      .writeText(shareLink)
+      .then(() => {
+        toast.success("대시보드에 링크가 저장되었습니다.", {
+          position: "top-right", // 위치 설정
+          autoClose: 2000, // 자동 닫힘 시간
+          hideProgressBar: true, // 진행 바 숨김 여부
+          closeOnClick: true, // 클릭 시 닫힘 여부
+          pauseOnHover: true, // 호버 시 일시 정지
+        });
+      })
+      .catch(() => {
+        toast.warn("링크 저장을 실패하였습니다.", {
+          position: "top-right", // 위치 설정
+          autoClose: 2000, // 자동 닫힘 시간
+          hideProgressBar: true, // 진행 바 숨김 여부
+          closeOnClick: true, // 클릭 시 닫힘 여부
+          pauseOnHover: true, // 호버 시 일시 정지
+        });
+      });
+  };
+
   
   // const [text, setText] = useState(post?.content || '');
   // const [loginId, setloginId] = useState(post?.loginId || '');
 
   
 
-
+  // 게시글 상세보기
   useEffect(() => {
     if (isOpen) {
       
@@ -427,7 +633,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
 
   return (
     <div>
-      
+      <ToastContainer/>
       <ModalOverlay onClick={handleOverlayClick}>
         <CloseButton onClick={onClose}>
           <IoClose />
@@ -459,18 +665,23 @@ export default function FeedDetail({ isOpen, onClose, post}) {
               <RightHeader>
                 <Profile><img
                   src={postDetails.profileImg || defaultImg}
-                /></Profile>
-                <LoginId>{postDetails.loginId}</LoginId>
+                />
+                </Profile>
+                <LoginId>
+                  {postDetails.loginId}
+                </LoginId>
+                
+                <Edit/>
                 <button
                     style={{
                       backgroundColor: "#706EF4",
                       width: "70px",
                       height: "30px",
                       paddingTop: "3px",
-                      margin: "0px 0px 0px auto",
+                      margin: "0px 0px 0px 13px",
                     }}
                     className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
-                    // onClick={(e) => handleFollow(item.content.userId, e)}
+                    onClick={(e) => handleFollow(postDetails.userId, e)}
                   >
                     팔로우
                   </button>
@@ -482,17 +693,17 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   <IoIosHeartEmpty
                     className="feedIcon"
                     style={{ cursor: "pointer", marginRight: "8px" }}
-                    // onClick={(e) => handlePostLike(item.content.postId, e)}
+                    onClick={() => handlePostLike(postDetails.postId, null)}
                   />
                   <IoMdShare
                     className="feedIcon"
                     style={{ cursor: "pointer" }}
-                    // onClick={handlePostShare}
+                    onClick={handlePostShare}
                   />
                 <FaRegBookmark
                   className="feedIcon"
                   style={{ cursor: "pointer", margin: "0px 0px 0px auto"}}
-                  // onClick={(e) => handlePostBookmark(item.content.postId, e)}
+                  onClick={(e) => handlePostBookmark(postDetails.postId, e)}
                 />
                 </IconBox>
               </ContentBox>
@@ -551,7 +762,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
-                                          <HeartIcon />
+                                          <HeartIcon onClick={() => handlePostLike(null, reply.commentId)}/>
                                         </HeartBox>
                                       </CommentLi>
                                     ))}
