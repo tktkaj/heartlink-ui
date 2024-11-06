@@ -5,6 +5,7 @@ import SideMenu from '../sideMenu/SideMenu';
 import MiniSide from '../sideMenu/MiniSide';
 import SearchMenu from '../sideMenu/SearchMenu';
 import { getAuthAxios } from "../api/authAxios";
+import FeedDetail from "../layout/FeedDetail";
 
 let Content = styled.div`
     width: 100vw;
@@ -73,19 +74,58 @@ let PostLink = styled.a`
     z-index: 1; 
 `;
 
+let LoadingIndicator = styled.div`
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 24px; /* 더 큰 글씨 크기 */
+    color: #ff4500; /* 강렬한 색상 */
+    font-weight: bold; /* 굵은 텍스트 */
+    animation: pulse 1.5s infinite; /* 애니메이션 추가 */
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.7;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+`;
+
 function Search() {
-    // const PostImage = require('../image/search/ping.jpg');
     const [searchResults, setSearchResults] = useState([]);
     const [keyword, setKeyword] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [isTagView, setIsTagView] = useState(false);
     const [isPopular, setIsPopular] = useState(false);
+    // 무한 스크롤
+    const [isLoading, setIsLoading] = useState(false);
+    const [nextCursor, setNextCursor] = useState(null);
+    const limit = 15;
 
     useEffect(() => {
-        // getPopularPosts();
-        // getAllPosts();
-    }, []);
+        getPopularPosts();
+    
+        const handleScroll = () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 && !isLoading) {
+                loadMorePosts();
+            }
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+    
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isLoading]);
 
     const getAllPosts = async () => {
         try {
@@ -99,25 +139,47 @@ function Search() {
         }
     };
 
+    // 무한 스크롤 이벤트 리스너
+    window.addEventListener('scroll', () => {
+        if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !isLoading) {
+            loadMorePosts();
+        }
+    });
+
+    // 무한 스크롤 데이터 로드
+    const loadMorePosts = () => {
+        setIsLoading(true);
+        getPopularPosts();
+    };
+
     const getPopularPosts = async () => {
         try {
             const access = localStorage.getItem("access");
             const authAxios = getAuthAxios(access);
-            const response = await authAxios.get("http://localhost:9090/search/getSearchPost");
+            const response = await authAxios.get(`http://localhost:9090/search/getSearchPost?cursor=${nextCursor || ''}&limit=${limit}`);
             const popularPosts = response.data;
-            setSearchResults(popularPosts);
+    
+            setNextCursor(popularPosts.nextCursor);
+            setSearchResults(prevResults => [...prevResults, ...popularPosts.data]); // 기존 데이터에 추가
             setIsPopular(true);
-            console.log('인기글 조회 : ', popularPosts);
+    
+            if (!popularPosts.hasNext) {
+                window.removeEventListener('scroll', loadMorePosts);
+            }
         } catch (error) {
             console.error("Error fetching popular posts:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleSearchResults = (results) => {
         setIsTagView(false);
-        setIsPopular(false);
-        console.log('Search의 검색 결과다ㅏㅏㅏㅏ : ', results);
-        console.log('Search의 keyword : ', keyword);
+        if (!keyword.startsWith('&') && !keyword.startsWith('@')) {
+            setIsPopular(false);
+        } else {
+            setIsPopular(true);
+        }
         const extractedResults = results.map((result) => result);
         setSearchResults(extractedResults);
     };
@@ -128,12 +190,17 @@ function Search() {
 
       const chunkArray = (arr, chunkSize) => {
         const result = [];
-        for (let i = 0; i < arr.length; i += chunkSize) {
-            result.push(arr.slice(i, i + chunkSize));
+        const validItems = arr.filter(item => item);
+        
+        for (let i = 0; i < validItems.length; i += chunkSize) {
+            const chunk = validItems.slice(i, Math.min(i + chunkSize, validItems.length));
+            if(chunk.length > 0) {
+                result.push(chunk);
+            }
         }
         return result;
-
     };
+    
 
     const handleTagClick = (tagName) => {
         setIsTagView(true);
@@ -151,7 +218,45 @@ function Search() {
         getTagPosts(tagName);
     };
 
+// 일반 검색 결과 렌더링을 위한 전용 함수
+const renderGeneralSearchResults = () => {
+    if (!searchResults || !Array.isArray(searchResults) || searchResults.length === 0) {
+        return <div>검색 결과가 없습니다.</div>;
+    }
+
+    const validResults = searchResults.filter(result => result !== null && result !== undefined);
+    
+    return chunkArray(validResults, 3).map((chunk, chunkIndex) => {
+        console.log("각 chunk 데이터:", chunk); // chunk 데이터 확인
+        return (
+            <PostList key={chunkIndex}>
+                {chunk.map((result) => {
+                    return (
+                        <Post d
+                            key={result.id} 
+                            background={result.img}>
+                            <PostLink style={{cursor: 'pointer'}} onClick={(e)=>handleMessageClick(result.id)}></PostLink>
+                        </Post>
+                    );
+                })}
+            </PostList>
+        );
+    });
+};
+const [postDetails, setPostDetails] = useState('null');
+const [isFeedDetail, setIsFeedDetail] = useState(false);
+const handleMessageClick = (post) => {
+    console.log("Selected PostId: ", post);
+    setPostDetails(post);
+    setIsFeedDetail(true);
+    console.log('isFeedDetail : ', isFeedDetail)
+
+};
+
     return (
+
+
+        
         <div style={{ display: 'flex' }}>
             {/* <SideMenu /> */}
             <MiniSide />
@@ -165,31 +270,30 @@ function Search() {
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
-                        {/* {searchResults && searchResults.length > 0 ? (
+                        {isPopular?(searchResults && searchResults.length > 0 ? (
                         chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
                                     <Post key={result.postId} background={result.fileUrl}>
-                                        <PostLink href={`/feed/details/${result.postId}`}></PostLink>
+                                        <PostLink style={{cursor: 'pointer'}} onClick={(e)=>handleMessageClick(result.postId)}></PostLink>
                                     </Post>
                                 ))}
                             </PostList>
                         ))
-                    ):''} */}
+                    ):''):null}
 
 
 
-                    {/* {!isPopular ? (isTagView ?  */}
-                                        {isTagView ? 
+                {isTagView ? 
 
                 // 태그 검색 결과 뷰
                 (
-                    searchResults && searchResults.length > 0 ? (
+                    !isPopular && searchResults && searchResults.length > 0 ? (
                         chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
                                     <Post key={result.postId} background={result.fileUrl}>
-                                        <PostLink href={`/feed/details/${result.postId}`}></PostLink>
+                                        <PostLink style={{cursor: 'pointer'}} onClick={(e)=>handleMessageClick(result.id)}></PostLink>
                                     </Post>
                                 ))}
                             </PostList>
@@ -199,26 +303,29 @@ function Search() {
                     )
                 )
              : (
-                // 기존 검색 결과 뷰
-                !keyword.startsWith('&') && !keyword.startsWith('@') ? (
-                    searchResults && searchResults.length > 0 ? (
-                        chunkArray(searchResults, 3).map((chunk, chunkIndex) => (
-                            <PostList key={chunkIndex}>
-                                {chunk.map((result) => (
-                                    <Post key={result.id} background={result.img}>
-                                        <PostLink href={`/feed/details/${result.id}`}></PostLink>
-                                    </Post>
-                                ))}
-                            </PostList>
-                        ))
-                    ) : (
-                        <div>검색 결과가 없습니다.</div>
-                    )
-                ) : ''
+                // 일반 검색 결과 뷰
+                !isPopular && !keyword.startsWith('&') && !keyword.startsWith('@') ? 
+                    renderGeneralSearchResults() 
+                    : ''
             )}
+
+
+                        {/* 로딩 중일 때 로딩 인디케이터 표시 */}
+                        {isLoading && (
+                            <LoadingIndicator>데이터를 불러오는 중입니다...</LoadingIndicator>
+                        )}
+                        <div>로딩중주우주웆ㅇ</div>
                     </PostWrap>
                 </ContentWrap>
             </Content>
+            {isFeedDetail && (
+                <FeedDetail
+                    isOpen={isFeedDetail}
+                    onClose={() => setIsFeedDetail(false)}
+                    post={postDetails} // 선택된 포스트 전달
+                />
+            )}
+
         </div>
     );
 }
