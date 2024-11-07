@@ -87,8 +87,8 @@ export default function AlarmRight() {
                 top: "20vh",
                 right: "12.9vw",
               },
-            },
-            { onClick: () => (window.location.href = parsedData.url) }
+              onClick: () => (window.location.href = parsedData.url),
+            }
           );
         }
       } catch (error) {
