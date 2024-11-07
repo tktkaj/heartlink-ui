@@ -102,6 +102,8 @@ const RightHeader = styled.div`
 
 const Profile = styled.div`
   width : 40px;
+  height: 40px;
+  overflow: hidden;
   border-radius: 100%;
   cursor: pointer;
 `;
@@ -173,6 +175,7 @@ const CommentLi = styled.li`
 const CommentProfile = styled.div`
   width: 40px;
   height: 40px;
+  overflow: hidden;
   border-radius: 100%;
   margin-right: 5px;
 `
@@ -337,85 +340,72 @@ export default function FeedDetail({ isOpen, onClose, post}) {
 
   // 링크태그 이동 함수
   const handleTagClick = (text) => {    navigate(`/search`, { state: { searchText: text } });  };
-  // const handleTagClick = (tagName) => {
-  //   navigate(`/search?keyword=${tagName}`);
-  // };
-  
+
   // 유저태그 이동 함수
-  const handleUserClick = (userId) => {
+const handleUserClick = (userId) => {
+  // 예시: 로그인한 유저의 ID를 서버에서 받아오고, 그에 해당하는 `userId`를 처리
+  // const currentUserId = loggedInUserId;  // 로그인된 사용자 ID를 가져옴
+
+  // if (currentUserId === taggedUserId) {
+  //   console.log("자기 자신에게 태그됨");
+  // } else {
+  //   console.log("다른 사용자에게 태그됨");
+  //   // 이 부분에서 서버로 해당 사용자의 프로필 페이지로 이동
+  // }
+  if (userId) {
     navigate(`/user/profile/${userId}`);
-  };
-  
-  const TagLink = (content, user) => {
-    // 링크태그와 유저 아이디를 찾기 위한 정규식
-    const regex = /(&[\\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
-  
-    const parts = content.split(regex);
-  
-    return parts.map((part, index) => {
-      if (part && part.startsWith('&')) {
-        // 링크태그인 경우
-        return (
-          <span
-            key={index}
-            style={{
-              color: '#706ef4',  // 파란색으로 스타일 적용
-              cursor: 'pointer', // 클릭 가능하게
-              fontSize: "12px"
-            }}
-            onClick={() => handleTagClick(part.substring(1))} // 해시태그 클릭 시 이동
-          >
-            {part}
-          </span>
-        );
-      }
-  
-      if (part && part.startsWith('@')) {
-      // 유저 아이디인 경우
-      const userId = part.substring(1); // '@'를 제거한 유저 아이디
-      console.log("userId는? ", userId);
-      console.log("user 는?", user);
-      // 유저 아이디를 찾아서 그에 맞는 값을 할당
-      let userIdToUse;
+  } else {
+    console.log("User ID is not found");
+  }
+};
 
-      // // postData.userId 존재 여부 확인
-      // if (user && postDetails.loginId && postData.userId === userId) {
-      //   console.log("postDetails에서 userId 는?", userId);
-      //   userIdToUse = postDetails.userId;
-      // }
-      // // reply.userId 존재 여부 확인
-      // else if (reply && reply.loginId && reply.userId === userId) {
-      //   console.log("reply userId 는?", userId);
-      //   userIdToUse = reply.userId;
-      // }
-      // // comment.userId 존재 여부 확인
-      // else if (comment && comment.loginId && comment.userId === userId) {
-      //   console.log("comment userId 는?", userId);
-      //   userIdToUse = comment.userId;
-      // }
+// TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
+const TagLink = (content) => {
+  const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
 
-      // 값이 제대로 할당되었는지 확인하는 로그 추가
-      console.log('userIdToUse:', userIdToUse);
 
-        return (
-          <span
-            key={index}
-            style={{
-              color: '#706ef4',
-              cursor: 'pointer',
-              fontSize: "12px"
-            }}
-            onClick={() => handleUserClick(userIdToUse)}
-          >
-            {part}
-          </span>
-        );
-      }
-  
-      // 해시태그나 유저 아이디가 아닌 일반 텍스트는 그대로 출력
-      return part;
-    });
-  };
+
+  const parts = content.split(regex);
+
+  return parts.map((part, index) => {
+    if (part && part.startsWith('&')) {
+      return (
+        <span
+          key={index}
+          style={{
+            color: '#706ef4',
+            cursor: 'pointer',
+            fontSize: "12px"
+          }}
+          onClick={() => handleTagClick(part.substring(1))}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    if (part && part.startsWith('@')) {
+      const taggedUserId = part.substring(1);  // '@' 이후의 사용자 ID 추출
+      console.log("taggedUserId는? ", taggedUserId);
+
+      return (
+        <span
+          key={index}
+          style={{
+            color: '#706ef4',
+            cursor: 'pointer',
+            fontSize: "12px"
+          }}
+          onClick={() => handleUserClick(taggedUserId)}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    return part;
+  });
+};
   
 
   const handleCommentChange = (e) => {
@@ -733,12 +723,16 @@ export default function FeedDetail({ isOpen, onClose, post}) {
             </LeftSection>
             <RightSection>
               <RightHeader>
-                <Profile><img
+                <Profile><img style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                        }}
                   src={postDetails.profileImg || defaultImg}
                 />
                 </Profile>
                 <LoginId>
-                  {TagLink(postDetails.loginId, postDetails.userId)}
+                  {postDetails.loginId}
                   <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
                   <p
                     style={{
@@ -802,11 +796,17 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                         return (
                           <CommentLi key={index}>
                             <CommentProfile>
-                              <img src={comment.profileImg || defaultImg} alt="Profile" />
+                              <img 
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                              }}
+                              src={comment.profileImg || defaultImg} alt="Profile" />
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter>{TagLink(comment.loginId, comment.userId)}</CommentWriter>
+                                <CommentWriter>{comment.loginId}</CommentWriter>
                                 <CommentText>{TagLink(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
@@ -832,11 +832,17 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                     .map((reply, idx) => (
                                       <CommentLi key={idx}>
                                         <CommentProfile>
-                                          <img src={reply.profileImg || defaultImg} alt="Profile" />
+                                          <img 
+                                           style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                                          }}
+                                          src={reply.profileImg || defaultImg} alt="Profile" />
                                         </CommentProfile>
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter>{TagLink(reply.loginId, reply.userId)}</CommentWriter>
+                                            <CommentWriter>{reply.loginId}</CommentWriter>
                                             <CommentText>{TagLink(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
