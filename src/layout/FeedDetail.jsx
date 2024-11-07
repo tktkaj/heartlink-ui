@@ -121,7 +121,7 @@ const ContentBox = styled.div`
 `;
 
 const ContentText = styled.span`
-  font-size: 15px;
+  font-size: 14px;
 `;
 
 const Line = styled.hr`
@@ -191,7 +191,7 @@ const CommentWriter = styled.span`
 `
 
 const CommentText = styled.span`
-  font-size: 15px;
+  font-size: 13px;
 `
 
 const CommentTextBoxWrapper = styled.div`
@@ -335,34 +335,84 @@ export default function FeedDetail({ isOpen, onClose, post}) {
     }
   }
 
-  const handleTagClick = (tagName) => {
-    navigate(`/search?keyword=${tagName}`);
+  // 링크태그 이동 함수
+  const handleTagClick = (text) => {    navigate(`/search`, { state: { searchText: text } });  };
+  // const handleTagClick = (tagName) => {
+  //   navigate(`/search?keyword=${tagName}`);
+  // };
+  
+  // 유저태그 이동 함수
+  const handleUserClick = (userId) => {
+    navigate(`/user/profile/${userId}`);
   };
   
-  const ContentLinkTag = (content) => {
-    const regex = /(&[\\w가-힣_]+)/g;
+  const TagLink = (content, user) => {
+    // 링크태그와 유저 아이디를 찾기 위한 정규식
+    const regex = /(&[\\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
   
-    // 텍스트에서 해시태그를 감싸기
     const parts = content.split(regex);
   
     return parts.map((part, index) => {
-      // 해시태그 부분만 스타일을 적용
       if (part && part.startsWith('&')) {
+        // 링크태그인 경우
         return (
           <span
             key={index}
             style={{
-              color: '#706ef4',
-              cursor: 'pointer'
+              color: '#706ef4',  // 파란색으로 스타일 적용
+              cursor: 'pointer', // 클릭 가능하게
+              fontSize: "12px"
             }}
-            onClick={() => handleTagClick(part.substring(1))} // 해시태그 클릭 시 처리
+            onClick={() => handleTagClick(part.substring(1))} // 해시태그 클릭 시 이동
           >
             {part}
           </span>
         );
       }
   
-      // 해시태그가 아닌 일반 텍스트는 그대로 표시
+      if (part && part.startsWith('@')) {
+      // 유저 아이디인 경우
+      const userId = part.substring(1); // '@'를 제거한 유저 아이디
+      console.log("userId는? ", userId);
+      console.log("user 는?", user);
+      // 유저 아이디를 찾아서 그에 맞는 값을 할당
+      let userIdToUse;
+
+      // // postData.userId 존재 여부 확인
+      // if (user && postDetails.loginId && postData.userId === userId) {
+      //   console.log("postDetails에서 userId 는?", userId);
+      //   userIdToUse = postDetails.userId;
+      // }
+      // // reply.userId 존재 여부 확인
+      // else if (reply && reply.loginId && reply.userId === userId) {
+      //   console.log("reply userId 는?", userId);
+      //   userIdToUse = reply.userId;
+      // }
+      // // comment.userId 존재 여부 확인
+      // else if (comment && comment.loginId && comment.userId === userId) {
+      //   console.log("comment userId 는?", userId);
+      //   userIdToUse = comment.userId;
+      // }
+
+      // 값이 제대로 할당되었는지 확인하는 로그 추가
+      console.log('userIdToUse:', userIdToUse);
+
+        return (
+          <span
+            key={index}
+            style={{
+              color: '#706ef4',
+              cursor: 'pointer',
+              fontSize: "12px"
+            }}
+            onClick={() => handleUserClick(userIdToUse)}
+          >
+            {part}
+          </span>
+        );
+      }
+  
+      // 해시태그나 유저 아이디가 아닌 일반 텍스트는 그대로 출력
       return part;
     });
   };
@@ -688,7 +738,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 />
                 </Profile>
                 <LoginId>
-                  {postDetails.loginId}
+                  {TagLink(postDetails.loginId, postDetails.userId)}
                   <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
                   <p
                     style={{
@@ -716,7 +766,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{ContentLinkTag(postDetails.content)}</ContentText>
+                <ContentText>{TagLink(postDetails.content)}</ContentText>
                 <Line/>
                 <IconBox>
                   <IoIosHeartEmpty
@@ -756,8 +806,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter>{comment.loginId}</CommentWriter>
-                                <CommentText>{ContentLinkTag(comment.content)}</CommentText>
+                                <CommentWriter>{TagLink(comment.loginId, comment.userId)}</CommentWriter>
+                                <CommentText>{TagLink(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
                                 <Day>{formatTimeDifference(comment.createdAt)}</Day>
@@ -786,8 +836,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                         </CommentProfile>
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter>{reply.loginId}</CommentWriter>
-                                            <CommentText>{ContentLinkTag(reply.content)}</CommentText>
+                                            <CommentWriter>{TagLink(reply.loginId, reply.userId)}</CommentWriter>
+                                            <CommentText>{TagLink(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
