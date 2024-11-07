@@ -102,6 +102,8 @@ const RightHeader = styled.div`
 
 const Profile = styled.div`
   width : 40px;
+  height: 40px;
+  overflow: hidden;
   border-radius: 100%;
   cursor: pointer;
 `;
@@ -173,6 +175,7 @@ const CommentLi = styled.li`
 const CommentProfile = styled.div`
   width: 40px;
   height: 40px;
+  overflow: hidden;
   border-radius: 100%;
   margin-right: 5px;
 `
@@ -727,7 +730,11 @@ const TagLink = (content, reply, comment, postDetails) => {
             </LeftSection>
             <RightSection>
               <RightHeader>
-                <Profile><img
+                <Profile><img style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                        }}
                   src={postDetails.profileImg || defaultImg}
                 />
                 </Profile>
@@ -796,7 +803,13 @@ const TagLink = (content, reply, comment, postDetails) => {
                         return (
                           <CommentLi key={index}>
                             <CommentProfile>
-                              <img src={comment.profileImg || defaultImg} alt="Profile" />
+                              <img 
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                              }}
+                              src={comment.profileImg || defaultImg} alt="Profile" />
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
@@ -826,7 +839,13 @@ const TagLink = (content, reply, comment, postDetails) => {
                                     .map((reply, idx) => (
                                       <CommentLi key={idx}>
                                         <CommentProfile>
-                                          <img src={reply.profileImg || defaultImg} alt="Profile" />
+                                          <img 
+                                           style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                                          }}
+                                          src={reply.profileImg || defaultImg} alt="Profile" />
                                         </CommentProfile>
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
