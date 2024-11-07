@@ -15,6 +15,7 @@ import { LuSend } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoPencil } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
 
 
 const ModalOverlay = styled.div`
@@ -52,22 +53,6 @@ const CloseButton = styled.button`
   color: #fff;
 `;
 
-// const StyledIcon = styled(MdAddPhotoAlternate)`
-//   width: 90px;
-//   height: 90px;
-//   color: #706ef4;
-//   margin-bottom: 10px;
-// `;
-
-// const ModalContent = styled.div`
-//   background: white;
-//   width: 330px;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 20px;
-// `;
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -136,7 +121,7 @@ const ContentBox = styled.div`
 `;
 
 const ContentText = styled.span`
-  font-size: 15px;
+  font-size: 14px;
 `;
 
 const Line = styled.hr`
@@ -206,7 +191,7 @@ const CommentWriter = styled.span`
 `
 
 const CommentText = styled.span`
-  font-size: 15px;
+  font-size: 13px;
 `
 
 const CommentTextBoxWrapper = styled.div`
@@ -309,13 +294,6 @@ const Edit = styled(IoPencil)`
 
 
 
-
-
-// const FiMessageCircleButton = styled(FiMessageCircle)`
-//   font-size: 40px;
-//   cursor: pointer;
-// `;
-
 export default function FeedDetail({ isOpen, onClose, post}) {
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false); 
@@ -325,6 +303,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
+  const navigate = useNavigate();
 
   function formatTimeDifference(createdAt) {
     const now = new Date();
@@ -355,9 +334,88 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       return `${year}-${month}-${day}`;
     }
   }
+
+  // 링크태그 이동 함수
+  const handleTagClick = (text) => {    navigate(`/search`, { state: { searchText: text } });  };
+  // const handleTagClick = (tagName) => {
+  //   navigate(`/search?keyword=${tagName}`);
+  // };
   
+  // 유저태그 이동 함수
+  const handleUserClick = (userId) => {
+    navigate(`/user/profile/${userId}`);
+  };
+  
+  const TagLink = (content, user) => {
+    // 링크태그와 유저 아이디를 찾기 위한 정규식
+    const regex = /(&[\\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
+  
+    const parts = content.split(regex);
+  
+    return parts.map((part, index) => {
+      if (part && part.startsWith('&')) {
+        // 링크태그인 경우
+        return (
+          <span
+            key={index}
+            style={{
+              color: '#706ef4',  // 파란색으로 스타일 적용
+              cursor: 'pointer', // 클릭 가능하게
+              fontSize: "12px"
+            }}
+            onClick={() => handleTagClick(part.substring(1))} // 해시태그 클릭 시 이동
+          >
+            {part}
+          </span>
+        );
+      }
+  
+      if (part && part.startsWith('@')) {
+      // 유저 아이디인 경우
+      const userId = part.substring(1); // '@'를 제거한 유저 아이디
+      console.log("userId는? ", userId);
+      console.log("user 는?", user);
+      // 유저 아이디를 찾아서 그에 맞는 값을 할당
+      let userIdToUse;
 
+      // // postData.userId 존재 여부 확인
+      // if (user && postDetails.loginId && postData.userId === userId) {
+      //   console.log("postDetails에서 userId 는?", userId);
+      //   userIdToUse = postDetails.userId;
+      // }
+      // // reply.userId 존재 여부 확인
+      // else if (reply && reply.loginId && reply.userId === userId) {
+      //   console.log("reply userId 는?", userId);
+      //   userIdToUse = reply.userId;
+      // }
+      // // comment.userId 존재 여부 확인
+      // else if (comment && comment.loginId && comment.userId === userId) {
+      //   console.log("comment userId 는?", userId);
+      //   userIdToUse = comment.userId;
+      // }
 
+      // 값이 제대로 할당되었는지 확인하는 로그 추가
+      console.log('userIdToUse:', userIdToUse);
+
+        return (
+          <span
+            key={index}
+            style={{
+              color: '#706ef4',
+              cursor: 'pointer',
+              fontSize: "12px"
+            }}
+            onClick={() => handleUserClick(userIdToUse)}
+          >
+            {part}
+          </span>
+        );
+      }
+  
+      // 해시태그나 유저 아이디가 아닌 일반 텍스트는 그대로 출력
+      return part;
+    });
+  };
   
 
   const handleCommentChange = (e) => {
@@ -597,11 +655,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       });
   };
 
-  
-  // const [text, setText] = useState(post?.content || '');
-  // const [loginId, setloginId] = useState(post?.loginId || '');
-
-  
 
   // 게시글 상세보기
   useEffect(() => {
@@ -647,21 +700,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
     }
   };
 
-  // const handleFileChange = (postId, e) => {
-  //   const selectedFiles = Array.from(e.target.files);
-  //   const fileURLs = selectedFiles.map((file) => ({
-  //     url: URL.createObjectURL(file),
-  //     type: file.type,
-  //   }));
-  //   setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
-  // };
-
-  // const handleSave = () => {
-  //   const updatedPost = { ...post, content: text, files: files };
-  //   onSave(updatedPost);
-  //   onClose();
-  // };
-  
 
   return (
     <div>
@@ -700,7 +738,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 />
                 </Profile>
                 <LoginId>
-                  {postDetails.loginId}
+                  {TagLink(postDetails.loginId, postDetails.userId)}
                   <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
                   <p
                     style={{
@@ -728,7 +766,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{postDetails.content}</ContentText>
+                <ContentText>{TagLink(postDetails.content)}</ContentText>
                 <Line/>
                 <IconBox>
                   <IoIosHeartEmpty
@@ -768,8 +806,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter>{comment.loginId}</CommentWriter>
-                                <CommentText>{comment.content}</CommentText>
+                                <CommentWriter>{TagLink(comment.loginId, comment.userId)}</CommentWriter>
+                                <CommentText>{TagLink(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
                                 <Day>{formatTimeDifference(comment.createdAt)}</Day>
@@ -798,8 +836,8 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                         </CommentProfile>
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter>{reply.loginId}</CommentWriter>
-                                            <CommentText>{reply.content}</CommentText>
+                                            <CommentWriter>{TagLink(reply.loginId, reply.userId)}</CommentWriter>
+                                            <CommentText>{TagLink(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
