@@ -342,80 +342,74 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   // };
   
   // 유저태그 이동 함수
-  const handleUserClick = (userId) => {
+const handleUserClick = (userId) => {
+  if (userId) {
     navigate(`/user/profile/${userId}`);
-  };
-  
-  const TagLink = (content, user) => {
-    // 링크태그와 유저 아이디를 찾기 위한 정규식
-    const regex = /(&[\\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
-  
-    const parts = content.split(regex);
-  
-    return parts.map((part, index) => {
-      if (part && part.startsWith('&')) {
-        // 링크태그인 경우
-        return (
-          <span
-            key={index}
-            style={{
-              color: '#706ef4',  // 파란색으로 스타일 적용
-              cursor: 'pointer', // 클릭 가능하게
-              fontSize: "12px"
-            }}
-            onClick={() => handleTagClick(part.substring(1))} // 해시태그 클릭 시 이동
-          >
-            {part}
-          </span>
-        );
-      }
-  
-      if (part && part.startsWith('@')) {
-      // 유저 아이디인 경우
-      const userId = part.substring(1); // '@'를 제거한 유저 아이디
+  } else {
+    console.log("User ID is not found");
+  }
+};
+
+// TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
+const TagLink = (content, reply, comment, postDetails) => {
+  console.log("TagLink 실행! content : ", content, " reply : ", reply, " comment : ", comment, " postDetails : ", postDetails);
+
+  const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
+
+  const parts = content.split(regex);
+
+  return parts.map((part, index) => {
+    if (part && part.startsWith('&')) {
+      return (
+        <span
+          key={index}
+          style={{
+            color: '#706ef4',
+            cursor: 'pointer',
+            fontSize: "12px"
+          }}
+          onClick={() => handleTagClick(part.substring(1))}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    if (part && part.startsWith('@')) {
+      const userId = part.substring(1);
       console.log("userId는? ", userId);
-      console.log("user 는?", user);
-      // 유저 아이디를 찾아서 그에 맞는 값을 할당
-      let userIdToUse;
 
-      // // postData.userId 존재 여부 확인
-      // if (user && postDetails.loginId && postData.userId === userId) {
-      //   console.log("postDetails에서 userId 는?", userId);
-      //   userIdToUse = postDetails.userId;
-      // }
-      // // reply.userId 존재 여부 확인
-      // else if (reply && reply.loginId && reply.userId === userId) {
-      //   console.log("reply userId 는?", userId);
-      //   userIdToUse = reply.userId;
-      // }
-      // // comment.userId 존재 여부 확인
-      // else if (comment && comment.loginId && comment.userId === userId) {
-      //   console.log("comment userId 는?", userId);
-      //   userIdToUse = comment.userId;
-      // }
+      let userIdToUse = null;
 
-      // 값이 제대로 할당되었는지 확인하는 로그 추가
+      // postDetails에서 유저 아이디 찾기
+      if (postDetails && postDetails.userId === userId) {
+        userIdToUse = postDetails.userId;
+      } else if (reply && reply.userId === userId) {
+        userIdToUse = reply.userId;
+      } else if (comment && comment.userId === userId) {
+        userIdToUse = comment.userId;
+      }
+
       console.log('userIdToUse:', userIdToUse);
 
-        return (
-          <span
-            key={index}
-            style={{
-              color: '#706ef4',
-              cursor: 'pointer',
-              fontSize: "12px"
-            }}
-            onClick={() => handleUserClick(userIdToUse)}
-          >
-            {part}
-          </span>
-        );
-      }
-  
-      // 해시태그나 유저 아이디가 아닌 일반 텍스트는 그대로 출력
-      return part;
-    });
-  };
+      return (
+        <span
+          key={index}
+          style={{
+            color: '#706ef4',
+            cursor: 'pointer',
+            fontSize: "12px"
+          }}
+          onClick={() => handleUserClick(userIdToUse)}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    return part;
+  });
+};
   
 
   const handleCommentChange = (e) => {
@@ -738,7 +732,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                 />
                 </Profile>
                 <LoginId>
-                  {TagLink(postDetails.loginId, postDetails.userId)}
+                  {TagLink(postDetails.loginId, postDetails)}
                   <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
                   <p
                     style={{
