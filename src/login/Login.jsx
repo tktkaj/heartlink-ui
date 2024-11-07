@@ -6,10 +6,10 @@ import naverLogo from "../image/sns/pngwing.com.png";
 import googleLogo from "../image/sns/google_logo_icon_147282.png";
 import MainLogo from "../image/logo/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../api/login";
 import FindId from "./FindId";
 import Modal1 from "./Modal1";
 import Modal2 from "./Modal2";
+import axios from "axios";
 
 const LoginBox = styled.div`
   background-color: white;
@@ -182,23 +182,33 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("loginId:", loginId, "password:", password);
+
     try {
-      const result = await login(loginId, password);
-      console.log(result);
+      // 로그인 요청 보내기
+      const response = await axios.post("http://localhost:9090/login", {
+        loginId,
+        password,
+      });
+      console.log(response);
 
-      // 토큰 저장
-      const authorization = result.authorization;
-      const refreshToken = result.refreshToken;
+      // 헤더에서 토큰 추출
+      const authorization = response.headers.authorization;
+      const refreshToken = response.headers.refreshtoken;
 
+      // 로컬 스토리지에 토큰 저장
       localStorage.setItem("loginId", loginId);
       localStorage.setItem("access", authorization);
       localStorage.setItem("refresh", refreshToken);
 
       console.log("로그인하면 저장되는 토큰:", authorization, refreshToken);
 
+      // 로그인 성공 시 메시지 표시하고 페이지 리다이렉트
       alert("로그인 성공!");
       window.location.href = "/home";
-    } catch (error) {}
+    } catch (error) {
+      console.error("Login request failed:", error);
+      alert("로그인 실패. 다시 시도해주세요.");
+    }
   };
 
   const handleKeyPress = (e) => {
