@@ -340,12 +340,18 @@ export default function FeedDetail({ isOpen, onClose, post}) {
 
   // 링크태그 이동 함수
   const handleTagClick = (text) => {    navigate(`/search`, { state: { searchText: text } });  };
-  // const handleTagClick = (tagName) => {
-  //   navigate(`/search?keyword=${tagName}`);
-  // };
-  
+
   // 유저태그 이동 함수
 const handleUserClick = (userId) => {
+  // 예시: 로그인한 유저의 ID를 서버에서 받아오고, 그에 해당하는 `userId`를 처리
+  // const currentUserId = loggedInUserId;  // 로그인된 사용자 ID를 가져옴
+
+  // if (currentUserId === taggedUserId) {
+  //   console.log("자기 자신에게 태그됨");
+  // } else {
+  //   console.log("다른 사용자에게 태그됨");
+  //   // 이 부분에서 서버로 해당 사용자의 프로필 페이지로 이동
+  // }
   if (userId) {
     navigate(`/user/profile/${userId}`);
   } else {
@@ -354,10 +360,10 @@ const handleUserClick = (userId) => {
 };
 
 // TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
-const TagLink = (content, reply, comment, postDetails) => {
-  console.log("TagLink 실행! content : ", content, " reply : ", reply, " comment : ", comment, " postDetails : ", postDetails);
-
+const TagLink = (content) => {
   const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
+
+
 
   const parts = content.split(regex);
 
@@ -379,21 +385,8 @@ const TagLink = (content, reply, comment, postDetails) => {
     }
 
     if (part && part.startsWith('@')) {
-      const userId = part.substring(1);
-      console.log("userId는? ", userId);
-
-      let userIdToUse = null;
-
-      // postDetails에서 유저 아이디 찾기
-      if (postDetails && postDetails.userId === userId) {
-        userIdToUse = postDetails.userId;
-      } else if (reply && reply.userId === userId) {
-        userIdToUse = reply.userId;
-      } else if (comment && comment.userId === userId) {
-        userIdToUse = comment.userId;
-      }
-
-      console.log('userIdToUse:', userIdToUse);
+      const taggedUserId = part.substring(1);  // '@' 이후의 사용자 ID 추출
+      console.log("taggedUserId는? ", taggedUserId);
 
       return (
         <span
@@ -403,7 +396,7 @@ const TagLink = (content, reply, comment, postDetails) => {
             cursor: 'pointer',
             fontSize: "12px"
           }}
-          onClick={() => handleUserClick(userIdToUse)}
+          onClick={() => handleUserClick(taggedUserId)}
         >
           {part}
         </span>
@@ -739,7 +732,7 @@ const TagLink = (content, reply, comment, postDetails) => {
                 />
                 </Profile>
                 <LoginId>
-                  {TagLink(postDetails.loginId, postDetails)}
+                  {postDetails.loginId}
                   <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
                   <p
                     style={{
@@ -813,7 +806,7 @@ const TagLink = (content, reply, comment, postDetails) => {
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter>{TagLink(comment.loginId, comment.userId)}</CommentWriter>
+                                <CommentWriter>{comment.loginId}</CommentWriter>
                                 <CommentText>{TagLink(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
@@ -849,7 +842,7 @@ const TagLink = (content, reply, comment, postDetails) => {
                                         </CommentProfile>
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter>{TagLink(reply.loginId, reply.userId)}</CommentWriter>
+                                            <CommentWriter>{reply.loginId}</CommentWriter>
                                             <CommentText>{TagLink(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>

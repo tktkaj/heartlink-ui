@@ -178,6 +178,11 @@ export default function UploadModal({ isOpen, onClose }) {
     setIsCoupleOnly(false);
   };
 
+  // 텍스트에서 줄 바꿈을 <br>로 변환
+  const convertTextToHtml = (text) => {
+    return text.split('\n').join('<br/>'); // 줄바꿈을 <br/>로 변환
+  };
+
   const handleUpload = async () => {
     if (files.length === 0) {
       alert("파일을 선택하세요.");
@@ -190,10 +195,13 @@ export default function UploadModal({ isOpen, onClose }) {
     files.forEach((file) => {
       formData.append('files', file.file); // 'files' 키로 파일 추가
     });
+
+    // 줄바꿈을 <br/>로 변환
+    const convertedText = convertTextToHtml(text);
   
     // postDTO를 JSON 형태로 추가
     const postDTO = {
-      content: text,
+      content: convertedText,
       visibility: isCoupleOnly ? "PRIVATE" : "PUBLIC"
     };
   
@@ -227,7 +235,7 @@ export default function UploadModal({ isOpen, onClose }) {
   };
   
   
-
+  // 파일 개수 예외
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
 
@@ -236,6 +244,7 @@ export default function UploadModal({ isOpen, onClose }) {
       return;
     }
 
+    // 동영상 개수 예외
     const videoFiles = selectedFiles.filter(file => file.type.startsWith('video/'));
     if (videoFiles.length > 1) {
       alert("동영상은 1개만 업로드할 수 있습니다.");
@@ -251,6 +260,7 @@ export default function UploadModal({ isOpen, onClose }) {
     setFiles(fileObjects);
     if (fileObjects.length > 0) setShowPreview(true);
   };
+
 
   return (
     <>
