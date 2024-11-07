@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState }  from 'react'
 import styled from 'styled-components'
 import ProfileImg from '../image/sidebar/test.png'
+import axios from 'axios'
+import { format } from 'date-fns'
 
 const MenuContainer = styled.div`
     width: 350px;
@@ -23,9 +25,11 @@ const MenuContainer = styled.div`
     padding-top: 5vh;
 `
 const Alarms = styled.div`
+    height: 100%;
     margin-top:2vw;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
     gap: 15px;
 `
 
@@ -89,6 +93,26 @@ const DeclineButton = styled.button`
 `;
 
 export default function AlarmMenu() {
+
+    // 받아온 notifications를 저장할 state
+    const [notifications, setNotificactions] = useState();
+    //  axios 연결
+
+    useEffect(() => {
+        const token = localStorage.getItem("access");
+
+        axios.get("http://localhost:9090/notifications"
+            , {
+                headers: {
+                    Authorization: `${token}`
+                }
+            }
+        ).then((response) => {
+            setNotificactions(response.data);
+        })
+            .catch()
+    }, [])
+
     return (
         <>
             <MenuContainer>
@@ -96,32 +120,35 @@ export default function AlarmMenu() {
                     <h1>알림</h1>
                 </div>
                 <Alarms>
-                    <AlarmItem>
-                        <ProfileImage src={ProfileImg} />
-                        <AlarmTextContainer>
-                            <AlarmText>dduddo님이 회원님의 게시물을 좋아합니다.</AlarmText>
-                            <AlarmTime>방금 전</AlarmTime>
-                        </AlarmTextContainer>
-                    </AlarmItem>
+                    {notifications && notifications.map((notification, index) => {
 
-                    <AlarmItem>
-                        <ProfileImage src={ProfileImg} />
-                        <AlarmTextContainer>
-                            <AlarmText>Yebook님이 회원님의 게시물에 댓글을 남겼습니다.</AlarmText>
-                            <AlarmTime>방금 전</AlarmTime>
-                        </AlarmTextContainer>
-                    </AlarmItem>
+                        //  오늘로부터 얼마나 지난 메세지인지 일자를 보여주기 위한 날짜 계산
 
-                    <AlarmItem>
-                        <ProfileImage src={ProfileImg} />
-                        <AlarmTextContainer>
-                            <AlarmText>tktkaj님이 팔로우 요청하셨습니다.</AlarmText>
-                            <ButtonContainer>
-                                <AcceptButton>수락</AcceptButton>
-                                <DeclineButton>거절</DeclineButton>
-                            </ButtonContainer>
-                        </AlarmTextContainer>
-                    </AlarmItem>
+                        //  날짜 포맷팅
+                        let today = format(new Date(), 'yyyy-MM-dd');
+                        let createDate = format(notification.createdAt, 'yyyy-MM-dd');
+
+                        const oldDate = new Date(today);
+                        const newDate = new Date(createDate);
+
+                        // 실질적인 날짜 계산
+                        let diff = Math.abs(newDate.getTime() - oldDate.getTime());
+                        diff = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                        console.log(notification.otherUserImg);
+                        return (
+                            <AlarmItem key={index}>
+                                <ProfileImage src={notification.otherUserImg} />
+                                <AlarmTextContainer>
+                                    <AlarmText>{notification.message}</AlarmText>
+                                    {notification.type == 'PRIVATE_FOLLOW_REQUEST' && <ButtonContainer>
+                                        <AcceptButton>수락</AcceptButton>
+                                        <DeclineButton>거절</DeclineButton>
+                                    </ButtonContainer>}
+                                    {notification.type !== 'PRIVATE_FOLLOW_REQUEST' && <AlarmTime>{diff == 0 ? '오늘' : `${diff}일전`}</AlarmTime>}
+                                </AlarmTextContainer>
+                            </AlarmItem>
+                        )
+                    })}
                 </Alarms>
 
             </MenuContainer>
