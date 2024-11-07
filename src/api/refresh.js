@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 export const getNewRefreshToken = async () => {
   console.log("토큰 갱신해야됨");
@@ -14,12 +13,16 @@ export const getNewRefreshToken = async () => {
 
   try {
     // 리프레시 토큰을 헤더에 담아 서버에 전달해서 새로운 액세스 토큰을 발급받음
-    const result = await axios.post("http://localhost:9090/reissue", {
-      headers: {
-        RefreshToken: refreshToken,
-        "Content-Type": "application/json",
-      },
-    });
+    const result = await axios.post(
+      "http://localhost:9090/reissue",
+      {},
+      {
+        headers: {
+          RefreshToken: refreshToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     console.log("갱신된 토큰:", result.data.accessToken);
 
     // 새 토큰을 로컬 스토리지에 저장
