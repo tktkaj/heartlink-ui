@@ -53,7 +53,6 @@ export default function FeedModal({
 }) {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  // const post = { content: "Sample post content", files: [] };
 
   const handleEditClick = () => {
     setIsEditModalOpen(true);
