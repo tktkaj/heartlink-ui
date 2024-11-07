@@ -15,6 +15,7 @@ import { LuSend } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoPencil } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
 
 
 const ModalOverlay = styled.div`
@@ -302,6 +303,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
+  const navigate = useNavigate();
 
   function formatTimeDifference(createdAt) {
     const now = new Date();
@@ -332,9 +334,38 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       return `${year}-${month}-${day}`;
     }
   }
+
+  const handleTagClick = (tagName) => {
+    navigate(`/search?keyword=${tagName}`);
+  };
   
-
-
+  const ContentLinkTag = (content) => {
+    const regex = /(&[\\w가-힣_]+)/g;
+  
+    // 텍스트에서 해시태그를 감싸기
+    const parts = content.split(regex);
+  
+    return parts.map((part, index) => {
+      // 해시태그 부분만 스타일을 적용
+      if (part && part.startsWith('&')) {
+        return (
+          <span
+            key={index}
+            style={{
+              color: '#706ef4',
+              cursor: 'pointer'
+            }}
+            onClick={() => handleTagClick(part.substring(1))} // 해시태그 클릭 시 처리
+          >
+            {part}
+          </span>
+        );
+      }
+  
+      // 해시태그가 아닌 일반 텍스트는 그대로 표시
+      return part;
+    });
+  };
   
 
   const handleCommentChange = (e) => {
@@ -685,7 +716,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{postDetails.content}</ContentText>
+                <ContentText>{ContentLinkTag(postDetails.content)}</ContentText>
                 <Line/>
                 <IconBox>
                   <IoIosHeartEmpty
@@ -726,7 +757,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
                                 <CommentWriter>{comment.loginId}</CommentWriter>
-                                <CommentText>{comment.content}</CommentText>
+                                <CommentText>{ContentLinkTag(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
                                 <Day>{formatTimeDifference(comment.createdAt)}</Day>
@@ -756,7 +787,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
                                             <CommentWriter>{reply.loginId}</CommentWriter>
-                                            <CommentText>{reply.content}</CommentText>
+                                            <CommentText>{ContentLinkTag(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
