@@ -178,6 +178,7 @@ const CommentProfile = styled.div`
   overflow: hidden;
   border-radius: 100%;
   margin-right: 5px;
+  cursor: pointer;
 `
 
 const CommentTextBox = styled.div`
@@ -191,6 +192,7 @@ const CommentWriter = styled.span`
   font-weight: bold;
   font-size: 15px;
   margin-right: 3px;
+  cursor: pointer;
 `
 
 const CommentText = styled.span`
@@ -723,7 +725,7 @@ const TagLink = (content) => {
             </LeftSection>
             <RightSection>
               <RightHeader>
-                <Profile><img style={{
+                <Profile onClick={() => handleUserClick(postDetails.userId)}><img style={{
                           width: "100%",
                           height: "100%",
                           objectFit: "cover",  // 이미지를 영역에 맞게 크롭
@@ -731,9 +733,10 @@ const TagLink = (content) => {
                   src={postDetails.profileImg || defaultImg}
                 />
                 </Profile>
-                <LoginId>
+                <LoginId onClick={() => handleUserClick(postDetails.userId)}>
                   {postDetails.loginId}
-                  <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
+                </LoginId>
+                  <h3 style={{color: "#706ef4", margin: "0px 5px", fontSize: "20px"}}>&</h3>
                   <p
                     style={{
                       fontSize: "17px",
@@ -743,7 +746,7 @@ const TagLink = (content) => {
                   >
                     {postDetails.partnerId}
                   </p>
-                </LoginId>
+                
                 <Edit/>
                 <button
                     style={{
@@ -795,7 +798,7 @@ const TagLink = (content) => {
                       if (!comment.parentId) {
                         return (
                           <CommentLi key={index}>
-                            <CommentProfile>
+                            <CommentProfile  onClick={() => handleUserClick(comment.userId)}>
                               <img 
                               style={{
                                 width: "100%",
@@ -806,7 +809,7 @@ const TagLink = (content) => {
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter>{comment.loginId}</CommentWriter>
+                                <CommentWriter  onClick={() => handleUserClick(comment.userId)}>{comment.loginId}</CommentWriter>
                                 <CommentText>{TagLink(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
@@ -831,7 +834,7 @@ const TagLink = (content) => {
                                     .filter((reply) => reply.parentId === comment.commentId)
                                     .map((reply, idx) => (
                                       <CommentLi key={idx}>
-                                        <CommentProfile>
+                                        <CommentProfile  onClick={() => handleUserClick(reply.userId)}>
                                           <img 
                                            style={{
                                             width: "100%",
@@ -839,10 +842,10 @@ const TagLink = (content) => {
                                             objectFit: "cover",  // 이미지를 영역에 맞게 크롭
                                           }}
                                           src={reply.profileImg || defaultImg} alt="Profile" />
-                                        </CommentProfile>
+                                        </CommentProfile >
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter>{reply.loginId}</CommentWriter>
+                                            <CommentWriter onClick={() => handleUserClick(reply.userId)}>{reply.loginId}</CommentWriter>
                                             <CommentText>{TagLink(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
