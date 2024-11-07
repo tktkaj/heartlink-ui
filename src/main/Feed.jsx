@@ -71,6 +71,10 @@ const FeedIcons = styled.div`
   .feedIcon {
     width: 25px;
     height: 25px;
+    &:hover {
+    color: #706ef4;
+    opacity: 0.8;
+  }
   }
 `;
 
@@ -127,6 +131,37 @@ export default function Feed() {
     });
     setIsModalOpen(true);
   };
+
+  // 시간 처리 함수
+  function formatTimeDifference(createdAt) {
+    const now = new Date();
+    const postTime = new Date(createdAt);
+    const timeDiff = now - postTime; // 밀리초 단위 차이
+  
+    const seconds = Math.floor(timeDiff / 1000); // 초
+    const minutes = Math.floor(seconds / 60); // 분
+    const hours = Math.floor(minutes / 60); // 시간
+    const days = Math.floor(hours / 24); // 일
+    const months = now.getMonth() - postTime.getMonth() + (now.getFullYear() - postTime.getFullYear()) * 12; // 월 차이
+  
+    if (seconds < 60) {
+      return '방금 전'; // 1분 이내
+    } else if (minutes < 60) {
+      return `${minutes}분 전`; // 1시간 이내
+    } else if (hours < 24) {
+      return `${hours}시간 전`; // 1일 이내
+    } else if (days < 30) {
+      return `${days}일 전`; // 1개월 이내
+    } else if (days >= 30 && days < 365) {
+      return `${months}개월 전`; // 1년 이내
+    } else {
+      // 1년 이상 차이가 날 경우 yyyy-MM-dd 형식
+      const year = postTime.getFullYear();
+      const month = String(postTime.getMonth() + 1).padStart(2, '0');
+      const day = String(postTime.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  }
 
   const settings = {
     dots: true,
@@ -566,9 +601,7 @@ export default function Feed() {
               </FeedIcons>
               <FeedInfo>
                 <p>
-                  {format(item.content.createdAt, "yyyy.MM.dd. a hh:mm")
-                    .replace("AM", "오전")
-                    .replace("PM", "오후")}
+                  {formatTimeDifference(item.content.createdAt)}
                 </p>
                 <p>좋아요 {item.content.likeCount}개</p>
                 <p>댓글 {item.content.commentCount}개</p>
@@ -634,9 +667,7 @@ export default function Feed() {
                 </FeedIcons>
                 <FeedInfo>
                   <p>
-                    {format(item.content.searchTime, "yyyy.MM.dd. a hh:mm")
-                      .replace("AM", "오전")
-                      .replace("PM", "오후")}
+                    {formatTimeDifference(item.content.searchTime)}
                   </p>
                   <p>좋아요 32개</p>
                   <p>댓글 21개</p>
