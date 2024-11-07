@@ -141,6 +141,11 @@ const IconBox = styled.div`
     width: 25px;
     height: 25px;
     margin-right: 5px;
+
+    &:hover {
+    color: #706ef4;
+    opacity: 0.8;
+  }
   }
 `;
 
@@ -768,7 +773,7 @@ const TagLink = (content) => {
                 <IconBox>
                   <IoIosHeartEmpty
                     className="feedIcon"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
+                    style={{ cursor: "pointer", marginRight: "8px"}}
                     onClick={() => handlePostLike(postDetails.postId, null)}
                   />
                   <IoMdShare
