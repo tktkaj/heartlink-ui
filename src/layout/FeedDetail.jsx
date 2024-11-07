@@ -52,22 +52,6 @@ const CloseButton = styled.button`
   color: #fff;
 `;
 
-// const StyledIcon = styled(MdAddPhotoAlternate)`
-//   width: 90px;
-//   height: 90px;
-//   color: #706ef4;
-//   margin-bottom: 10px;
-// `;
-
-// const ModalContent = styled.div`
-//   background: white;
-//   width: 330px;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 20px;
-// `;
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -308,13 +292,6 @@ const Edit = styled(IoPencil)`
 `
 
 
-
-
-
-// const FiMessageCircleButton = styled(FiMessageCircle)`
-//   font-size: 40px;
-//   cursor: pointer;
-// `;
 
 export default function FeedDetail({ isOpen, onClose, post}) {
   const [postDetails, setPostDetails] = useState(null);
@@ -597,11 +574,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       });
   };
 
-  
-  // const [text, setText] = useState(post?.content || '');
-  // const [loginId, setloginId] = useState(post?.loginId || '');
-
-  
 
   // 게시글 상세보기
   useEffect(() => {
@@ -647,21 +619,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
     }
   };
 
-  // const handleFileChange = (postId, e) => {
-  //   const selectedFiles = Array.from(e.target.files);
-  //   const fileURLs = selectedFiles.map((file) => ({
-  //     url: URL.createObjectURL(file),
-  //     type: file.type,
-  //   }));
-  //   setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
-  // };
-
-  // const handleSave = () => {
-  //   const updatedPost = { ...post, content: text, files: files };
-  //   onSave(updatedPost);
-  //   onClose();
-  // };
-  
 
   return (
     <div>
