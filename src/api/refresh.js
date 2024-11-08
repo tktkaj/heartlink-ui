@@ -1,4 +1,5 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 export const getNewRefreshToken = async () => {
   console.log("토큰 갱신해야됨");
@@ -24,8 +25,16 @@ export const getNewRefreshToken = async () => {
       }
     );
     console.log("갱신된 토큰:", result.data.accessToken);
+    const accessToken = localStorage.getItem("access"); // accessToken을 가져옵니다.
+    const decoded = jwtDecode(accessToken); // JWT를 디코딩
+
+    console.log(decoded); // 디코딩된 내용 확인
+    const decodedPayload = jwtDecode(accessToken);
+    console.log(decodedPayload.role); // "admin" 또는 "user"와 같은 역할 정보
 
     // 새 토큰을 로컬 스토리지에 저장
+    console.log("새 액세스 토큰", result.data.accessToken);
+    console.log("새 리프레시 토큰", result.data.refreshToken);
     localStorage.setItem("access", result.data.accessToken);
     localStorage.setItem("refresh", result.data.refreshToken);
 
@@ -36,7 +45,15 @@ export const getNewRefreshToken = async () => {
       "토큰 갱신 실패:",
       error.response ? error.response.data : error.message
     );
-    if (error.response && error.response.data.error === "invalid refresh token")
-      throw error;
+    if (
+      error.response &&
+      error.response.data.error === "invalid refresh token"
+    ) {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("loginId");
+      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+      window.location.href = "/login";
+    }
   }
 };

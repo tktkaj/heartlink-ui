@@ -125,10 +125,13 @@ export default function CoupleConnect() {
       const response = await authAxios.post(
         `http://localhost:9090/couple/match/code/link?code=${inputCode}`
       );
-      console.log("응답: ", response);
+      console.log("응답:", response);
+      console.log("응답데이터:", response.data);
+      console.log("응답상태:", response.status);
+      console.log("응답상태메시지:", response.statusText);
 
       // 201 응답을 처리할 때
-      if (response.status == 201) {
+      if (response.status === 201) {
         toast.success("커플 연결에 성공했습니다!");
         navigate("/coupleConnect2");
       } else {
@@ -136,8 +139,6 @@ export default function CoupleConnect() {
         toast.error("예상하지 못한 오류가 발생했습니다.");
       }
     } catch (error) {
-      console.log("오류:", error.message);
-      console.log("상세 오류:", error.stack);
       toast.error("서버와의 연결에 실패했습니다.");
     }
   };
