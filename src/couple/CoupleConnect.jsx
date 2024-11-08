@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Logo from "../image/logo/Logo.png";
 import { MdContentCopy } from "react-icons/md";
-import kakao from "../image/sns/free-icon-kakao-talk-4494622.png";
 import CopyToClipboard from "react-copy-to-clipboard";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
 import { toast, ToastContainer } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 const SignUpBox = styled.form`
   background-color: white;
@@ -102,6 +101,29 @@ export default function CoupleConnect() {
   useEffect(() => {
     const checkCoupleStatus = async () => {
       try {
+        const accessToken = localStorage.getItem("access");
+
+        // JWT 토큰 디코딩해서 역할 추출
+        const decodedToken = jwtDecode(accessToken);
+        const userRole = decodedToken.role; // "ROLE_USER", "ROLE_COUPLE", "ROLE_SINGLE" 등
+
+        // ROLE_USER일 때만 페이지에 그대로 있어야 함
+        if (userRole === "ROLE_COUPLE" || userRole === "ROLE_SINGLE") {
+          navigate("/home");
+          return;
+        }
+
+        // // ROLE_USER일 경우에만 여기에 도달
+        // const authAxios = getAuthAxios(accessToken);
+        // const response = await authAxios.get(
+        //   "http://localhost:9090/user/couple"
+        // );
+        // if (response.data) {
+        //   navigate("/home");
+        //   return;
+        // }
+
+        // 여전히 ROLE_USER라면, 여기에 맞는 로직 실행
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         const mycode = await authAxios.get(
@@ -110,7 +132,7 @@ export default function CoupleConnect() {
         console.log("내 코드:", mycode);
         setCode(mycode.data);
       } catch (err) {
-        console.log(err);
+        console.error("Error checking couple status:", err);
       }
     };
 
