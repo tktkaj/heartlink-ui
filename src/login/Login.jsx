@@ -204,10 +204,9 @@ export default function Login() {
 
       // 로그인 성공 시 메시지 표시하고 페이지 리다이렉트
       alert("로그인 성공!");
-      window.location.href = "/home";
+      window.location.href = "/coupleConnect";
     } catch (error) {
       console.error("Login request failed:", error);
-      alert("로그인 실패. 다시 시도해주세요.");
     }
   };
 
