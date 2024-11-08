@@ -3,14 +3,14 @@ import styled from 'styled-components'
 import ProfileImg from '../image/sidebar/test.png'
 
 const MenuContainer = styled.div`
-    width: 350px;
+    width: 400px;
     height: 100vh;
     background-color: white;
     border-radius: 0 10px 10px 0;
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
     position: fixed;
     top: 0;
-    left: 4.7vw;
+    left: 82px;
     @keyframes slideIn {
     from {
         transform: translateX(-80%);

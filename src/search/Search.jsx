@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SideMenu from '../sideMenu/SideMenu';
 import MiniSide from '../sideMenu/MiniSide';
 import SearchMenu from '../sideMenu/SearchMenu';
@@ -110,6 +110,17 @@ function Search() {
     const [isLoading, setIsLoading] = useState(false);
     const [nextCursor, setNextCursor] = useState(null);
     const limit = 15;
+    // 피드의 태그 검색
+    const location = useLocation();
+    const searchText = location.state?.searchText || '';  // state로 전달된 값 가져오기
+
+    useEffect(() => {
+        if (searchText) {
+            handleKeywordChange('&' + searchText);
+            setKeyword('&' + searchText);  // input에 searchText 설정
+            handleTagClick(searchText);  // searchText로 검색
+        }
+    }, [searchText]);
 
     useEffect(() => {
         getPopularPosts();
@@ -160,8 +171,23 @@ function Search() {
             const popularPosts = response.data;
     
             setNextCursor(popularPosts.nextCursor);
-            setSearchResults(prevResults => [...prevResults, ...popularPosts.data]); // 기존 데이터에 추가
-            setIsPopular(true);
+            setSearchResults(prevResults => {
+                // prevResults의 구조 확인
+                const currentResults = Array.isArray(prevResults) 
+                    ? Array.isArray(prevResults[0]) 
+                        ? prevResults.flat() // 2차원 배열인 경우 평탄화
+                        : prevResults       // 1차원 배열인 경우 그대로 사용
+                    : [];                   // 배열이 아닌 경우 빈 배열로 초기화
+    
+                // popularPosts.data도 같은 방식으로 처리
+                const newData = Array.isArray(popularPosts.data)
+                    ? Array.isArray(popularPosts.data[0])
+                        ? popularPosts.data.flat()
+                        : popularPosts.data
+                    : [];
+    
+                return [...currentResults, ...newData];
+            });           setIsPopular(true);
     
             if (!popularPosts.hasNext) {
                 window.removeEventListener('scroll', loadMorePosts);
@@ -202,14 +228,17 @@ function Search() {
     };
     
 
+    // 태그 검색
     const handleTagClick = (tagName) => {
         setIsTagView(true);
         setIsPopular(false);
+        console.log('태그 검색하는 키워드:', tagName);
         const getTagPosts = async () => {
             try {
                 const access = localStorage.getItem("access");
                 const authAxios = getAuthAxios(access);
                 const response = await authAxios.get(`http://localhost:9090/search/tag?keyword=${tagName}`);
+                console.log('태그 검색 결과:', response.data);
                 setSearchResults(response.data);
             } catch (error) {
                 console.error("Error fetching tag posts:", error);
@@ -223,9 +252,10 @@ const renderGeneralSearchResults = () => {
     if (!searchResults || !Array.isArray(searchResults) || searchResults.length === 0) {
         return <div>검색 결과가 없습니다.</div>;
     }
-
+    console.log('일반 검색어 :', searchResults);
     const validResults = searchResults.filter(result => result !== null && result !== undefined);
-    
+    console.log('일반 검색어 결과 :', validResults);
+
     return chunkArray(validResults, 3).map((chunk, chunkIndex) => {
         console.log("각 chunk 데이터:", chunk); // chunk 데이터 확인
         return (
@@ -266,7 +296,7 @@ const handleMessageClick = (post) => {
                 <ContentWrap>
                     <SearchResultWrap>
                         <SearchResult>
-                            {isTagView? keyword :( keyword ? (keyword.charAt(0) === '@' || keyword.charAt(0) === '&' ? '인기글 리스트' : keyword) : '인기글 리스트')}
+                            {isTagView? keyword :( keyword ? (keyword.charAt(0) === '@' || keyword.charAt(0) === '&' ? '맞춤 피드' : keyword) : '맞춤 피드')}
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
@@ -293,7 +323,7 @@ const handleMessageClick = (post) => {
                             <PostList key={chunkIndex}>
                                 {chunk.map((result) => (
                                     <Post key={result.postId} background={result.fileUrl}>
-                                        <PostLink style={{cursor: 'pointer'}} onClick={(e)=>handleMessageClick(result.id)}></PostLink>
+                                        <PostLink style={{cursor: 'pointer'}} onClick={(e)=>handleMessageClick(result.postId)}></PostLink>
                                     </Post>
                                 ))}
                             </PostList>
@@ -311,10 +341,10 @@ const handleMessageClick = (post) => {
 
 
                         {/* 로딩 중일 때 로딩 인디케이터 표시 */}
-                        {isLoading && (
+                        {/* {isLoading && (
                             <LoadingIndicator>데이터를 불러오는 중입니다...</LoadingIndicator>
                         )}
-                        <div>로딩중주우주웆ㅇ</div>
+                        <div>로딩중주우주웆ㅇ</div> */}
                     </PostWrap>
                 </ContentWrap>
             </Content>
