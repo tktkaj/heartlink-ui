@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import profilethum from '../image/sidebar/test.png';
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLocation } from 'react';
 import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
 import { BiSearch } from "react-icons/bi";
@@ -133,6 +133,7 @@ const [idAutocompleteList, setIdAutocompleteList] = useState([]);
 const [tagAutocompleteList, setTagAutocompleteList] = useState([]);
 const [selectedIndex, setSelectedIndex] = useState(-1); // 선택된 자동완성 항목 인덱스
 
+
 const handleSearch = (e) => {
     e.preventDefault();
     onSearchResults(keyword);
@@ -191,14 +192,23 @@ useEffect(() => {
                 }
             );
             console.log('검색 결과:', response.data);
-            setSearchResults([response.data]);
-            console.log('setSearchResults 결과:', searchResults);
-            onSearchResults(response.data);
-            onKeywordChange(keyword);
-             if (typeof response.data === 'string') {
-                setSearchResults(response.data);
-                setSearchResults([]);
-            }
+            // 응답 데이터 정규화
+        let normalizedData = response.data;
+        console.log('normalizedData', normalizedData);
+            // console.log('normalizedData', normalizedData);
+        if (Array.isArray(response.data) && Array.isArray(response.data[0])) {
+            // 배열의 배열인 경우 첫 번째 배열 사용
+            normalizedData = response.data[0];
+        } else if (!Array.isArray(response.data)) {
+            // 단일 객체인 경우 배열로 변환
+            normalizedData = [response.data];
+        }
+        setSearchResults(normalizedData);
+
+        onSearchResults(normalizedData);
+        onKeywordChange(keyword);
+        setIsSearched(true);
+        
         } catch (error) {
             if (error.response) {
                 console.error('서버 응답 에러:', error.response.data);
@@ -240,6 +250,7 @@ useEffect(() => {
     // 검색기록 렌더링
     const renderHistory = (history) => {
         switch (history.type) {
+            
             case 'id':
                 return (
                     <Liststyle key={history.keyword} onClick={() => historyClick('@' + history.keyword)}>
@@ -262,29 +273,42 @@ useEffect(() => {
     };
     
     // 자동완성 기능
-    const handleInputChange = (e) => {
+    const handleInputChange = async (e) => {
         const value = e.target.value;
         setKeyword(value);
         setSelectedIndex(-1);
     
         if (value.startsWith('@')) {
-          // 아이디 자동완성 API 호출
-          console.log('아이디 자동완성 호출');
-          fetch(`http://localhost:9090/es/idAuto?searchId=${value.slice(1)}`)
-            .then(response => response.json())
-            .then(data => setIdAutocompleteList(data))
-            .catch(error => console.error('Error fetching user autocomplete:', error));
-        } else if (value.startsWith('&')) {
-          // 태그 자동완성 API 호출
-          console.log('태그 자동완성 호출');
-          fetch(`http://localhost:9090/es/tagAuto?searchTag=${value.slice(1)}`)
-            .then(response => response.json())
-            .then(data => setTagAutocompleteList(data))
-            .catch(error => console.error('Error fetching tag autocomplete:', error));
-        } else {
-          // 기본 자동완성 초기화
-          setTagAutocompleteList([]);
-        }
+            // 아이디 자동완성 API 호출
+            const access = localStorage.getItem("access");
+            const authAxios = getAuthAxios(access);
+            const response = await authAxios.get(`http://localhost:9090/es/idAuto?searchId=${value.slice(1)}`
+            , {
+              headers: {
+                Authorization: `Bearer ${access}`,
+              }
+            })
+              .then(response => setIdAutocompleteList(response.data))
+              .catch(error => console.error('Error fetching user autocomplete:', error));
+          
+          } else if (value.startsWith('&')) {
+            // 태그 자동완성 API 호출
+            const access = localStorage.getItem("access");
+            const authAxios = getAuthAxios(access);
+            const response = await authAxios.get(`http://localhost:9090/es/tagAuto?searchTag=${value.slice(1)}`, {
+              headers: {
+                Authorization: `Bearer ${access}`,
+              }
+            })
+              .then(response => setTagAutocompleteList(response.data))
+              .catch(error => console.error('Error fetching tag autocomplete:', error));
+          
+          } else {
+            // 기본 자동완성 초기화
+            setTagAutocompleteList([]);
+            setIdAutocompleteList([]);
+          }
+          
 
       };
 
