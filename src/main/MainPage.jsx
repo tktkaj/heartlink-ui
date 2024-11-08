@@ -108,6 +108,7 @@ export default function MainPage() {
         const partnerResponse = await authAxios.get(
           "http://localhost:9090/user/couple"
         );
+        console.log("짝꿍정보 응답", partnerResponse);
         if (!partnerResponse.data) {
           navigate("/coupleConnect");
           return;
