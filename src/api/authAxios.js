@@ -5,7 +5,7 @@ export const getAuthAxios = (token) => {
   const authAxios = axios.create({
     baseURL: "http://localhost:9090",
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -13,28 +13,46 @@ export const getAuthAxios = (token) => {
     (res) => res,
     async (error) => {
       try {
-        if (error.response.status == 401) {
-          // 액세스 토큰이 만료되면 토큰 갱신
+        // 401 오류 (액세스 토큰 만료)
+        if (error.response.status === 401) {
+          console.log("액세스 토큰 만료");
+
+          // 액세스 토큰이 만료되면 리프레시 토큰으로 갱신
           const { accessToken, refreshToken } = await getNewRefreshToken();
-          // 헤더에 갱신된 액세스 토큰 설정
+
+          // 갱신된 토큰을 헤더에 설정
           error.config.headers.Authorization = accessToken;
-          // 갱신된 토큰들을 로컬스토리지에 저장
+          error.config.headers.RefreshToken = refreshToken;
+
+          // 갱신된 토큰을 로컬스토리지에 저장
           localStorage.setItem("access", accessToken);
           localStorage.setItem("refresh", refreshToken);
+
+          // 갱신된 토큰으로 요청 재시도
+          const retryResponse = await axios(error.config);
+          return retryResponse;
         }
-        // 갱신된 토큰으로 요청 재시도
-        const retryResponse = await axios(error.config);
-        if (retryResponse.status === 500) {
-          console.error("서버 오류가 발생했습니다:", retryResponse);
-          throw new Error(
-            "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-          );
+
+        // 403 오류 (리프레시 토큰 만료)
+        if (error.response.status === 403) {
+          console.log("리프레시 토큰 만료 또는 유효하지 않음");
+
+          // 리프레시 토큰이 만료되었을 경우
+          alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+          // localStorage.removeItem("access");
+          // localStorage.removeItem("refresh");
+          // localStorage.removeItem("loginId");
+
+          // // 사용자를 로그인 페이지로 리디렉션
+          // window.location.href = "/login"; // 로그아웃 후 로그인 페이지로 이동
         }
-        return retryResponse;
-      } catch (error) {
-        console.error("인터셉터 오류:", error);
+
+        // 다른 오류는 그대로 처리
+        return Promise.reject(error);
+      } catch (err) {
+        console.error("인터셉터 오류:", err);
+        return Promise.reject(err);
       }
-      return Promise.reject("세션이 만료되었습니다.");
     }
   );
 
