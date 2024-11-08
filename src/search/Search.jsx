@@ -296,7 +296,7 @@ const handleMessageClick = (post) => {
                 <ContentWrap>
                     <SearchResultWrap>
                         <SearchResult>
-                            {isTagView? keyword :( keyword ? (keyword.charAt(0) === '@' || keyword.charAt(0) === '&' ? '인기글 리스트' : keyword) : '인기글 리스트')}
+                            {isTagView? keyword :( keyword ? (keyword.charAt(0) === '@' || keyword.charAt(0) === '&' ? '맞춤 피드' : keyword) : '맞춤 피드')}
                         </SearchResult>
                     </SearchResultWrap>
                     <PostWrap>
