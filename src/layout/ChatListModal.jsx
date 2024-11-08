@@ -49,7 +49,7 @@ export default function ChatListModal({handleNewRoom, handleSearchUser, searchLi
                 <div className="flex justify-center border-solid  border-b-2 border-slate-300 pb-2"><p className="text-xl">새로운 메시지</p></div>
                 <div className="flex justify-start border-solid pl-5 border-b-2 border-slate-300 gap-1 pt-2 pb-2">
                     <div className="flex items-center text-sm w-16"><p>친구 검색: </p></div>
-                    <div className="flex items-center"><input type='text' className="text-sm w-48 outline-none cursor-pointer" placeholder='채팅할 사람을 입력해주세요' onChange={(e)=>{handleInput(e)}}></input></div>
+                    <div className="flex items-center"><input type='text' className="text-sm w-56 outline-none cursor-pointer" placeholder='채팅할 유저아이디를 입력해주세요.' onChange={(e)=>{handleInput(e)}}></input></div>
                 </div>
                 <div className="overflow-y-scroll h-60 border-solid border-b-2 border-slate-300">
                     {searchList && searchList.map((search, index) => {

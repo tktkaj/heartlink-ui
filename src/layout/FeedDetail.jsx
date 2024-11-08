@@ -15,6 +15,7 @@ import { LuSend } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoPencil } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
 
 
 const ModalOverlay = styled.div`
@@ -52,22 +53,6 @@ const CloseButton = styled.button`
   color: #fff;
 `;
 
-// const StyledIcon = styled(MdAddPhotoAlternate)`
-//   width: 90px;
-//   height: 90px;
-//   color: #706ef4;
-//   margin-bottom: 10px;
-// `;
-
-// const ModalContent = styled.div`
-//   background: white;
-//   width: 330px;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 20px;
-// `;
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -117,6 +102,8 @@ const RightHeader = styled.div`
 
 const Profile = styled.div`
   width : 40px;
+  height: 40px;
+  overflow: hidden;
   border-radius: 100%;
   cursor: pointer;
 `;
@@ -136,7 +123,7 @@ const ContentBox = styled.div`
 `;
 
 const ContentText = styled.span`
-  font-size: 15px;
+  font-size: 14px;
 `;
 
 const Line = styled.hr`
@@ -154,6 +141,11 @@ const IconBox = styled.div`
     width: 25px;
     height: 25px;
     margin-right: 5px;
+
+    &:hover {
+    color: #706ef4;
+    opacity: 0.8;
+  }
   }
 `;
 
@@ -188,8 +180,10 @@ const CommentLi = styled.li`
 const CommentProfile = styled.div`
   width: 40px;
   height: 40px;
+  overflow: hidden;
   border-radius: 100%;
   margin-right: 5px;
+  cursor: pointer;
 `
 
 const CommentTextBox = styled.div`
@@ -203,10 +197,11 @@ const CommentWriter = styled.span`
   font-weight: bold;
   font-size: 15px;
   margin-right: 3px;
+  cursor: pointer;
 `
 
 const CommentText = styled.span`
-  font-size: 15px;
+  font-size: 13px;
 `
 
 const CommentTextBoxWrapper = styled.div`
@@ -309,13 +304,6 @@ const Edit = styled(IoPencil)`
 
 
 
-
-
-// const FiMessageCircleButton = styled(FiMessageCircle)`
-//   font-size: 40px;
-//   cursor: pointer;
-// `;
-
 export default function FeedDetail({ isOpen, onClose, post}) {
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false); 
@@ -325,6 +313,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
+  const navigate = useNavigate();
 
   function formatTimeDifference(createdAt) {
     const now = new Date();
@@ -355,9 +344,75 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       return `${year}-${month}-${day}`;
     }
   }
-  
+
+  // 링크태그 이동 함수
+  const handleTagClick = (text) => {    navigate(`/search`, { state: { searchText: text } });  };
+
+  // 유저태그 이동 함수
+const handleUserClick = (userId) => {
+  // 예시: 로그인한 유저의 ID를 서버에서 받아오고, 그에 해당하는 `userId`를 처리
+  // const currentUserId = loggedInUserId;  // 로그인된 사용자 ID를 가져옴
+
+  // if (currentUserId === taggedUserId) {
+  //   console.log("자기 자신에게 태그됨");
+  // } else {
+  //   console.log("다른 사용자에게 태그됨");
+  //   // 이 부분에서 서버로 해당 사용자의 프로필 페이지로 이동
+  // }
+  if (userId) {
+    navigate(`/user/profile/${userId}`);
+  } else {
+    console.log("User ID is not found");
+  }
+};
+
+// TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
+const TagLink = (content) => {
+  const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
 
 
+
+  const parts = content.split(regex);
+
+  return parts.map((part, index) => {
+    if (part && part.startsWith('&')) {
+      return (
+        <span
+          key={index}
+          style={{
+            color: '#706ef4',
+            cursor: 'pointer',
+            fontSize: "12px"
+          }}
+          onClick={() => handleTagClick(part.substring(1))}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    if (part && part.startsWith('@')) {
+      const taggedUserId = part.substring(1);  // '@' 이후의 사용자 ID 추출
+      console.log("taggedUserId는? ", taggedUserId);
+
+      return (
+        <span
+          key={index}
+          style={{
+            color: '#706ef4',
+            cursor: 'pointer',
+            fontSize: "12px"
+          }}
+          onClick={() => handleUserClick(taggedUserId)}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    return part;
+  });
+};
   
 
   const handleCommentChange = (e) => {
@@ -597,11 +652,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
       });
   };
 
-  
-  // const [text, setText] = useState(post?.content || '');
-  // const [loginId, setloginId] = useState(post?.loginId || '');
-
-  
 
   // 게시글 상세보기
   useEffect(() => {
@@ -647,21 +697,6 @@ export default function FeedDetail({ isOpen, onClose, post}) {
     }
   };
 
-  // const handleFileChange = (postId, e) => {
-  //   const selectedFiles = Array.from(e.target.files);
-  //   const fileURLs = selectedFiles.map((file) => ({
-  //     url: URL.createObjectURL(file),
-  //     type: file.type,
-  //   }));
-  //   setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
-  // };
-
-  // const handleSave = () => {
-  //   const updatedPost = { ...post, content: text, files: files };
-  //   onSave(updatedPost);
-  //   onClose();
-  // };
-  
 
   return (
     <div>
@@ -695,13 +730,18 @@ export default function FeedDetail({ isOpen, onClose, post}) {
             </LeftSection>
             <RightSection>
               <RightHeader>
-                <Profile><img
+                <Profile onClick={() => handleUserClick(postDetails.userId)}><img style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                        }}
                   src={postDetails.profileImg || defaultImg}
                 />
                 </Profile>
-                <LoginId>
+                <LoginId onClick={() => handleUserClick(postDetails.userId)}>
                   {postDetails.loginId}
-                  <h3 style={{color: "#706ef4", margin: "0px 5px"}}>&</h3>
+                </LoginId>
+                  <h3 style={{color: "#706ef4", margin: "0px 5px", fontSize: "20px"}}>&</h3>
                   <p
                     style={{
                       fontSize: "17px",
@@ -711,7 +751,7 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   >
                     {postDetails.partnerId}
                   </p>
-                </LoginId>
+                
                 <Edit/>
                 <button
                     style={{
@@ -728,12 +768,12 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                   </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{postDetails.content}</ContentText>
+                <ContentText>{TagLink(postDetails.content)}</ContentText>
                 <Line/>
                 <IconBox>
                   <IoIosHeartEmpty
                     className="feedIcon"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
+                    style={{ cursor: "pointer", marginRight: "8px"}}
                     onClick={() => handlePostLike(postDetails.postId, null)}
                   />
                   <IoMdShare
@@ -763,13 +803,19 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                       if (!comment.parentId) {
                         return (
                           <CommentLi key={index}>
-                            <CommentProfile>
-                              <img src={comment.profileImg || defaultImg} alt="Profile" />
+                            <CommentProfile  onClick={() => handleUserClick(comment.userId)}>
+                              <img 
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                              }}
+                              src={comment.profileImg || defaultImg} alt="Profile" />
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter>{comment.loginId}</CommentWriter>
-                                <CommentText>{comment.content}</CommentText>
+                                <CommentWriter  onClick={() => handleUserClick(comment.userId)}>{comment.loginId}</CommentWriter>
+                                <CommentText>{TagLink(comment.content)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
                                 <Day>{formatTimeDifference(comment.createdAt)}</Day>
@@ -793,13 +839,19 @@ export default function FeedDetail({ isOpen, onClose, post}) {
                                     .filter((reply) => reply.parentId === comment.commentId)
                                     .map((reply, idx) => (
                                       <CommentLi key={idx}>
-                                        <CommentProfile>
-                                          <img src={reply.profileImg || defaultImg} alt="Profile" />
-                                        </CommentProfile>
+                                        <CommentProfile  onClick={() => handleUserClick(reply.userId)}>
+                                          <img 
+                                           style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",  // 이미지를 영역에 맞게 크롭
+                                          }}
+                                          src={reply.profileImg || defaultImg} alt="Profile" />
+                                        </CommentProfile >
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter>{reply.loginId}</CommentWriter>
-                                            <CommentText>{reply.content}</CommentText>
+                                            <CommentWriter onClick={() => handleUserClick(reply.userId)}>{reply.loginId}</CommentWriter>
+                                            <CommentText>{TagLink(reply.content)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
