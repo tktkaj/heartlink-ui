@@ -7,6 +7,7 @@ import { getAuthAxios } from "../api/authAxios";
 import { FaLinkSlash } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
 import { FaLink } from "react-icons/fa6";
+import { getNewRefreshToken } from "../api/refresh";
 
 const SettingBox = styled.div`
   background-color: white;
@@ -84,6 +85,15 @@ export default function Setting({ closeSetting }) {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         await authAxios.put("http://localhost:9090/couple/unlink/cancel");
+
+        // 커플 해지 취소 후 새로운 토큰 받아오기
+        const { accessToken, refreshToken } = await getNewRefreshToken();
+        localStorage.setItem("access", accessToken);
+        localStorage.setItem("refresh", refreshToken);
+
+        console.log("커플 해지 취소 후 토큰", localStorage.getItem("access"));
+        console.log("커플 해지 취소 후 토큰", localStorage.getItem("refresh"));
+
         setIsSoonBreak(false);
         window.location.reload();
         console.log("해지취소?", isSoonBreak);
@@ -102,6 +112,15 @@ export default function Setting({ closeSetting }) {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         await authAxios.delete("http://localhost:9090/couple/finalNowUnlink");
+
+        // 커플 즉시 해지 후 새로운 토큰 받아오기
+        const { accessToken, refreshToken } = await getNewRefreshToken();
+        localStorage.setItem("access", accessToken);
+        localStorage.setItem("refresh", refreshToken);
+
+        console.log("커플 즉시 해지 후 토큰", localStorage.getItem("access"));
+        console.log("커플 즉시 해지 후 토큰", localStorage.getItem("refresh"));
+
         window.location.reload();
         setIsSoonBreak(false);
       } catch (error) {
