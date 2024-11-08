@@ -119,11 +119,14 @@ function Search() {
             handleKeywordChange('&' + searchText);
             setKeyword('&' + searchText);  // input에 searchText 설정
             handleTagClick(searchText);  // searchText로 검색
+            setIsPopular(false);
         }
     }, [searchText]);
 
     useEffect(() => {
-        getPopularPosts();
+        if (!searchText && !isTagView) {  // searchText가 없고 태그 뷰가 아닐 때만 실행
+            getPopularPosts();
+        }
     
         const handleScroll = () => {
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 && !isLoading) {
@@ -200,7 +203,11 @@ function Search() {
     };
 
     const handleSearchResults = (results) => {
-        setIsTagView(false);
+        if (keyword.startsWith('&')){
+            setIsTagView(true);
+        } else {
+            setIsTagView(false);
+        }
         if (!keyword.startsWith('&') && !keyword.startsWith('@')) {
             setIsPopular(false);
         } else {
@@ -232,7 +239,7 @@ function Search() {
     const handleTagClick = (tagName) => {
         setIsTagView(true);
         setIsPopular(false);
-        console.log('태그 검색하는 키워드:', tagName);
+        console.log('태그 검색하는 키워드!!!!!!!!!!!!!!:', tagName);
         const getTagPosts = async () => {
             try {
                 const access = localStorage.getItem("access");
