@@ -367,10 +367,8 @@ const handleUserClick = (userId) => {
 };
 
 // TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
-const TagLink = (content) => {
+const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
   const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
-
-
 
   const parts = content.split(regex);
 
@@ -392,8 +390,18 @@ const TagLink = (content) => {
     }
 
     if (part && part.startsWith('@')) {
-      const taggedUserId = part.substring(1);  // '@' 이후의 사용자 ID 추출
-      console.log("taggedUserId는? ", taggedUserId);
+      const taggedUserLoginId  = part.substring(1);  // '@' 이후의 사용자 ID 추출
+
+
+
+      // '@' 태그된 사용자가 mentionedLoginIds에 포함되는지 확인
+      const userIndex = mentionedLoginIds.indexOf(taggedUserLoginId);
+
+      // 만약 찾았다면 userId 추출, 못 찾으면 null
+      const userId = userIndex !== -1 ? mentionedUserIds[userIndex] : null;
+
+      console.log("taggedUserLoginId:", taggedUserLoginId);
+      console.log("matchedUserId:", userId);
 
       return (
         <span
@@ -403,7 +411,7 @@ const TagLink = (content) => {
             cursor: 'pointer',
             fontSize: "12px"
           }}
-          onClick={() => handleUserClick(taggedUserId)}
+          onClick={() => handleUserClick(userId)}
         >
           {part}
         </span>
@@ -717,6 +725,7 @@ const TagLink = (content) => {
                     ) : file.fileType && file.fileType.startsWith('VIDEO') ? (
                       <PreviewVideo controls>
                         <source src={file.fileUrl} type={file.fileType} />
+                        
                       </PreviewVideo>
                     ) : (
                       <div>미리보기가 지원되지 않는 파일입니다.</div>
@@ -768,7 +777,7 @@ const TagLink = (content) => {
                   </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{TagLink(postDetails.content)}</ContentText>
+                <ContentText>{TagLink(postDetails.content, postDetails.mentionedLoginIds, postDetails.mentionedUserIds)}</ContentText>
                 <Line/>
                 <IconBox>
                   <IoIosHeartEmpty
@@ -815,7 +824,7 @@ const TagLink = (content) => {
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
                                 <CommentWriter  onClick={() => handleUserClick(comment.userId)}>{comment.loginId}</CommentWriter>
-                                <CommentText>{TagLink(comment.content)}</CommentText>
+                                <CommentText>{TagLink(comment.content, comment.mentionedLoginIds, comment.mentionedUserIds)}</CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
                                 <Day>{formatTimeDifference(comment.createdAt)}</Day>
@@ -851,7 +860,7 @@ const TagLink = (content) => {
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
                                             <CommentWriter onClick={() => handleUserClick(reply.userId)}>{reply.loginId}</CommentWriter>
-                                            <CommentText>{TagLink(reply.content)}</CommentText>
+                                            <CommentText>{TagLink(reply.content, reply.mentionedLoginIds, reply.mentionedUserIds)}</CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
