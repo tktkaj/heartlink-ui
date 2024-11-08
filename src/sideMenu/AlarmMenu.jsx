@@ -112,6 +112,11 @@ export default function AlarmMenu() {
         })
             .catch()
     }, [])
+      
+
+    const handleAcceptFollow = async() =>{
+        
+    }
 
     return (
         <>
@@ -136,7 +141,7 @@ export default function AlarmMenu() {
                         diff = Math.ceil(diff / (1000 * 60 * 60 * 24));
                         console.log(notification.otherUserImg);
                         return (
-                            <AlarmItem key={index}>
+                            <AlarmItem key={index} onClick={() => (window.location.href = notification.link)}>
                                 <ProfileImage src={notification.otherUserImg} />
                                 <AlarmTextContainer>
                                     <AlarmText>{notification.message}</AlarmText>
