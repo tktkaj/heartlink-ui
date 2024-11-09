@@ -120,27 +120,28 @@ const HeartPost = styled(IoIosHeartEmpty)`
   height: 25px;
   cursor: pointer;
   color: ${(props) => (props.liked ? "red" : "black")};
-`
+`;
 
 const BookmarkPost = styled(FaRegBookmark)`
   width: 25px;
   height: 25px;
   cursor: pointer;
   color: ${(props) => (props.bookmarked ? "#706EF4" : "black")};
-`
+`;
 
 export default function Feed() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [isFeedDetail, setIsFeedDetail] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
-  const openModal = (event) => {
+  const openModal = (event, postId, userId) => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
     setModalPosition({
       top: buttonRect.bottom + 10, // 버튼의 아래쪽 위치
       left: buttonRect.left - 50, // 버튼의 왼쪽 위치
     });
     setIsModalOpen(true);
+    setSelectedPost({ postId, userId });
   };
 
   // 시간 처리 함수
@@ -539,7 +540,9 @@ export default function Feed() {
                       cursor: "pointer",
                       marginTop: "5px",
                     }}
-                    onClick={openModal}
+                    onClick={(e) =>
+                      openModal(e, item.content.postId, item.content.userId)
+                    }
                   />
                 </div>
               </FeedProfile>
