@@ -626,7 +626,7 @@ export default function Couple() {
           <FeedDetail
             isOpen={isFeedDetail}
             onClose={() => setIsFeedDetail(false)}
-            post={postDetails} // 선택된 포스트 전달
+            post={{postId: postDetails}} // 선택된 포스트 전달
           />
         )}
       </MainContainer>

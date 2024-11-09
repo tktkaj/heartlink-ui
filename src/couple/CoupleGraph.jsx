@@ -91,8 +91,8 @@ export default function CoupleGraph() {
         const { match1, match2 } = res2.data;
         setMatch1(match1);
         setMatch2(match2);
-console.log("match1 : "+match1);
-console.log("match2 : "+match2);
+        console.log("match1 : "+match1);
+        console.log("match2 : "+match2);
 
         setFemaleData([
           { name: match1, value: f0rate }, // 기본값 설정
@@ -103,6 +103,9 @@ console.log("match2 : "+match2);
           { name: match1, value: m0rate }, // 기본값 설정
           { name: match2, value: m1rate },
         ]);
+
+        console.log("maleData : "+maleData);
+        console.log("femaleData : "+femaleData);
       } catch (err) {
         console.log(err);
       }
@@ -110,7 +113,7 @@ console.log("match2 : "+match2);
 
     fetchData();
     fetchData2();
-  }, [match1, match2, f0rate, f1rate, m0rate, m1rate]);
+  }, []);
 
   return (
     <GraphStyle>
