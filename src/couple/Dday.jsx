@@ -81,7 +81,7 @@ export default function Dday() {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const response = await authAxios.put(
-        `http://localhost:9090/couple/dday/update?date=${dateString}`
+        `/couple/dday/update?date=${dateString}`
       );
       console.log("디데이 설정 성공:", response);
       alert("디데이가 수정되었습니다!");

@@ -22,7 +22,7 @@ export default function CoupleAlert() {
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
-      const res = await authAxios.put("http://localhost:9090/couple/unlink");
+      const res = await authAxios.put("/couple/unlink");
 
       // 커플 해지 후 새로운 토큰 받아오기
       const { accessToken, refreshToken } = await getNewRefreshToken();

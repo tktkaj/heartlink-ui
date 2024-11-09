@@ -7,10 +7,10 @@ export const getMyPage = async (userId) => {
   try {
     const [profileResult, feedResult, likesResult, bookmarksResult] =
       await Promise.all([
-        authAxios.get(`http://localhost:9090/user/profile/${userId}`),
-        authAxios.get(`http://localhost:9090/feed/couple/${userId}`),
-        authAxios.get("http://localhost:9090/feed/like"),
-        authAxios.get("http://localhost:9090/feed/bookmark"),
+        authAxios.get(`/user/profile/${userId}`),
+        authAxios.get(`/feed/couple/${userId}`),
+        authAxios.get("/feed/like"),
+        authAxios.get("/feed/bookmark"),
       ]);
 
     console.log("프로필 데이터:", profileResult);

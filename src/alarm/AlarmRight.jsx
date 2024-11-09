@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import axios from "axios";
+import { getAuthAxios } from "../api/authAxios";
 
 const ToastWrapper = styled.div`
   display: flex;
@@ -50,59 +50,60 @@ export default function AlarmRight() {
   const [notifications, setNotifications] = useState([]);
 
   // 내 userId를 가져오는 axios
-  useEffect(()=>{
-    const token = localStorage.getItem('access');
-
-    axios.get("http://localhost:9090/notifications/check-userid"
-      ,{
-        headers:{
-          Authorization: `${token}`
-        }
-      }
-    ).then((response)=>{
-       // eventSource에 SSE를 통해 넘어온 데이터가 저장!
-    // http://localhost:9090/notifications/subscribe 실제로도 사용할 경로!
-    console.log("sse는 ", response.data);
-    const eventSource = new EventSource(
-      `http://localhost:9090/notifications/subscribe/${response.data}`
-    );
-
-    // 'sse'는 내가 넘길 이벤트명이라 수정x, 이벤트명 체크하기 때문에!
-    eventSource.addEventListener("sse", (event) => {
+  useEffect(() => {
+    const fetchUserId = async () => {
       try {
-        // JSON 형식으로 파싱
-        const parsedData = JSON.parse(event.data);
-        console.log("알림데이터", parsedData);
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const response = await authAxios.get("/notifications/check-userid");
 
-        // Toastify로 message 표시 및 클릭 시 페이지 이동
-        if (parsedData.message && parsedData.url) {
-          toast(
-            <CustomToast title="새로운 알림" message={parsedData.message} />,
-            {
-              position: "top-right",
-              // autoClose: 5000,
-              style: {
-                marginTop: "topOffset",
-                width: "400px",
-                top: "20vh",
-                right: "12.9vw",
-              },
-              onClick: () => (window.location.href = parsedData.url),
+        // eventSource에 SSE를 통해 넘어온 데이터가 저장!
+        console.log("sse는 ", response.data);
+        const eventSource = new EventSource(
+          `/notifications/subscribe/${response.data}`
+        );
+
+        // 'sse'는 내가 넘길 이벤트명이라 수정x, 이벤트명 체크하기 때문에!
+        eventSource.addEventListener("sse", (event) => {
+          try {
+            // JSON 형식으로 파싱
+            const parsedData = JSON.parse(event.data);
+            console.log("알림데이터", parsedData);
+
+            // Toastify로 message 표시 및 클릭 시 페이지 이동
+            if (parsedData.message && parsedData.url) {
+              toast(
+                <CustomToast
+                  title="새로운 알림"
+                  message={parsedData.message}
+                />,
+                {
+                  position: "top-right",
+                  // autoClose: 5000,
+                  style: {
+                    marginTop: "topOffset",
+                    width: "400px",
+                    top: "20vh",
+                    right: "12.9vw",
+                  },
+                  onClick: () => (window.location.href = parsedData.url),
+                }
+              );
             }
-          );
-        }
+          } catch (error) {
+            console.error("Error parsing event data:", error);
+          }
+        });
+        return () => {
+          eventSource.close();
+        };
       } catch (error) {
-        console.error("Error parsing event data:", error);
+        console.error("알림 연결 실패:", error);
       }
-    });
-    return () => {
-      eventSource.close();
     };
-    })
-    .catch((error)=>{
-      console.log(error);
-    })
-  },[]);
+
+    fetchUserId();
+  }, []);
 
   return (
     <div>
