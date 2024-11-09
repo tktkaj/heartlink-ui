@@ -5,6 +5,7 @@ import downArrow from "../image/couple/arrow.png";
 import { getAuthAxios } from "../api/authAxios";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { getNewRefreshToken } from "../api/refresh";
 
 const SignUpBox = styled.form`
   background-color: white;
@@ -84,9 +85,7 @@ export default function CoupleConnect2() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/user/couple"
-        );
+        const response = await authAxios.get("/user/couple");
         setPartnerInfo(response.data);
         console.log("파트너 정보:", response.data);
       } catch (error) {
@@ -117,7 +116,15 @@ export default function CoupleConnect2() {
         "0"
       )}-${selectedDay.padStart(2, "0")}`;
 
-      await authAxios.post(`http://localhost:9090/couple/dday?date=${date}`);
+      await authAxios.post(`/couple/dday?date=${date}`);
+
+      const { accessToken, refreshToken } = await getNewRefreshToken();
+      localStorage.setItem("access", accessToken);
+      localStorage.setItem("refresh", refreshToken);
+
+      console.log("커플 해지 취소 후 토큰", localStorage.getItem("access"));
+      console.log("커플 해지 취소 후 토큰", localStorage.getItem("refresh"));
+
       toast.success("D-day 설정에 성공했습니다!");
       navigate("/home");
     } catch (error) {

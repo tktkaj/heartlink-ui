@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-// import { FiMessageCircle } from 'react-icons/fi'; // FiMessageCircle 추가
 import defaultImg from "../image/logo/fav.png";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdShare } from "react-icons/io";
@@ -15,8 +13,7 @@ import { LuSend } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoPencil } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -28,7 +25,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index:2001;
+  z-index: 2001;
 `;
 
 const ModalContainer = styled.div`
@@ -52,7 +49,6 @@ const CloseButton = styled.button`
   font-size: 24px;
   color: #fff;
 `;
-
 
 const PreviewModalContainer = styled(ModalContainer)`
   width: 1000px;
@@ -101,7 +97,7 @@ const RightHeader = styled.div`
 `;
 
 const Profile = styled.div`
-  width : 40px;
+  width: 40px;
   height: 40px;
   overflow: hidden;
   border-radius: 100%;
@@ -119,7 +115,6 @@ const LoginId = styled.span`
 const ContentBox = styled.div`
   width: 100%;
   margin: 10px 0px;
-  
 `;
 
 const ContentText = styled.span`
@@ -143,9 +138,9 @@ const IconBox = styled.div`
     margin-right: 5px;
 
     &:hover {
-    color: #706ef4;
-    opacity: 0.8;
-  }
+      color: #706ef4;
+      opacity: 0.8;
+    }
   }
 `;
 
@@ -154,9 +149,7 @@ const LikeCountBox = styled.div`
   margin: 10px 0px;
 `;
 
-const LikeCount = styled.span`
-  
-`;
+const LikeCount = styled.span``;
 
 const CommentsBox = styled.div`
   width: 100%;
@@ -166,16 +159,14 @@ const CommentsBox = styled.div`
   scrollbar-width: none;
 `;
 
-const CommentUl = styled.ul`
-  
-`
+const CommentUl = styled.ul``;
 const CommentLi = styled.li`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   margin-bottom: 5px;
   width: 100%;
-`
+`;
 
 const CommentProfile = styled.div`
   width: 40px;
@@ -184,25 +175,24 @@ const CommentProfile = styled.div`
   border-radius: 100%;
   margin-right: 5px;
   cursor: pointer;
-`
+`;
 
 const CommentTextBox = styled.div`
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
-  
-`
+`;
 
 const CommentWriter = styled.span`
   font-weight: bold;
   font-size: 15px;
   margin-right: 3px;
   cursor: pointer;
-`
+`;
 
 const CommentText = styled.span`
   font-size: 13px;
-`
+`;
 
 const CommentTextBoxWrapper = styled.div`
   display: flex;
@@ -213,7 +203,6 @@ const CommentTextBoxWrapper = styled.div`
 const DayandReplyBox = styled.div`
   display: flex;
   flex-direction: row;
-  
 `;
 
 const Day = styled.span`
@@ -275,7 +264,6 @@ const CommentSend = styled(LuSend)`
     color: #706ef4;
     opacity: 0.8;
   }
-
 `;
 
 const ReplyLookBox = styled.div`
@@ -288,28 +276,25 @@ const ReplyLine = styled.div`
   margin-right: 16px;
   width: 24px;
   margin-bottom: 8px;
-`
+`;
 
 const ReplyLook = styled.button`
   color: #595959;
   font-size: 12px;
   cursor: pointer;
-
 `;
 
 const Edit = styled(IoPencil)`
   font-size: 25px;
   margin-left: auto;
-`
+`;
 
-
-
-export default function FeedDetail({ isOpen, onClose, post}) {
+export default function FeedDetail({ isOpen, onClose, post }) {
   const [postDetails, setPostDetails] = useState(null);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [postData, setPostData] = useState(post);
-  const [commentText, setCommentText] = useState("") 
+  const [commentText, setCommentText] = useState("");
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
@@ -319,15 +304,18 @@ export default function FeedDetail({ isOpen, onClose, post}) {
     const now = new Date();
     const postTime = new Date(createdAt);
     const timeDiff = now - postTime; // 밀리초 단위 차이
-  
+
     const seconds = Math.floor(timeDiff / 1000); // 초
     const minutes = Math.floor(seconds / 60); // 분
     const hours = Math.floor(minutes / 60); // 시간
     const days = Math.floor(hours / 24); // 일
-    const months = now.getMonth() - postTime.getMonth() + (now.getFullYear() - postTime.getFullYear()) * 12; // 월 차이
-  
+    const months =
+      now.getMonth() -
+      postTime.getMonth() +
+      (now.getFullYear() - postTime.getFullYear()) * 12; // 월 차이
+
     if (seconds < 60) {
-      return '방금 전'; // 1분 이내
+      return "방금 전"; // 1분 이내
     } else if (minutes < 60) {
       return `${minutes}분 전`; // 1시간 이내
     } else if (hours < 24) {
@@ -339,113 +327,109 @@ export default function FeedDetail({ isOpen, onClose, post}) {
     } else {
       // 1년 이상 차이가 날 경우 yyyy-MM-dd 형식
       const year = postTime.getFullYear();
-      const month = String(postTime.getMonth() + 1).padStart(2, '0');
-      const day = String(postTime.getDate()).padStart(2, '0');
+      const month = String(postTime.getMonth() + 1).padStart(2, "0");
+      const day = String(postTime.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     }
   }
 
   // 링크태그 이동 함수
-  const handleTagClick = (text) => {    navigate(`/search`, { state: { searchText: text } });  };
+  const handleTagClick = (text) => {
+    navigate(`/search`, { state: { searchText: text } });
+  };
 
   // 유저태그 이동 함수
-const handleUserClick = (userId) => {
-  // 예시: 로그인한 유저의 ID를 서버에서 받아오고, 그에 해당하는 `userId`를 처리
-  // const currentUserId = loggedInUserId;  // 로그인된 사용자 ID를 가져옴
+  const handleUserClick = (userId) => {
+    // 예시: 로그인한 유저의 ID를 서버에서 받아오고, 그에 해당하는 `userId`를 처리
+    // const currentUserId = loggedInUserId;  // 로그인된 사용자 ID를 가져옴
 
-  // if (currentUserId === taggedUserId) {
-  //   console.log("자기 자신에게 태그됨");
-  // } else {
-  //   console.log("다른 사용자에게 태그됨");
-  //   // 이 부분에서 서버로 해당 사용자의 프로필 페이지로 이동
-  // }
-  if (userId) {
-    navigate(`/user/profile/${userId}`);
-  } else {
-    console.log("User ID is not found");
-  }
-};
-
-// TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
-const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
-  const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
-
-  const parts = content.split(regex);
-
-  return parts.map((part, index) => {
-    if (part && part.startsWith('&')) {
-      return (
-        <span
-          key={index}
-          style={{
-            color: '#706ef4',
-            cursor: 'pointer',
-            fontSize: "12px"
-          }}
-          onClick={() => handleTagClick(part.substring(1))}
-        >
-          {part}
-        </span>
-      );
+    // if (currentUserId === taggedUserId) {
+    //   console.log("자기 자신에게 태그됨");
+    // } else {
+    //   console.log("다른 사용자에게 태그됨");
+    //   // 이 부분에서 서버로 해당 사용자의 프로필 페이지로 이동
+    // }
+    if (userId) {
+      navigate(`/user/profile/${userId}`);
+    } else {
+      console.log("User ID is not found");
     }
+  };
 
-    if (part && part.startsWith('@')) {
-      const taggedUserLoginId  = part.substring(1);  // '@' 이후의 사용자 ID 추출
+  // TagLink 함수: content와 유저 정보 (reply, postDetails, comment 등) 처리
+  const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
+    const regex = /(&[\w가-힣_]+|@[a-zA-Z0-9_]+)/g;
 
+    const parts = content.split(regex);
 
+    return parts.map((part, index) => {
+      if (part && part.startsWith("&")) {
+        return (
+          <span
+            key={index}
+            style={{
+              color: "#706ef4",
+              cursor: "pointer",
+              fontSize: "12px",
+            }}
+            onClick={() => handleTagClick(part.substring(1))}
+          >
+            {part}
+          </span>
+        );
+      }
 
-      // '@' 태그된 사용자가 mentionedLoginIds에 포함되는지 확인
-      const userIndex = mentionedLoginIds.indexOf(taggedUserLoginId);
+      if (part && part.startsWith("@")) {
+        const taggedUserLoginId = part.substring(1); // '@' 이후의 사용자 ID 추출
 
-      // 만약 찾았다면 userId 추출, 못 찾으면 null
-      const userId = userIndex !== -1 ? mentionedUserIds[userIndex] : null;
+        // '@' 태그된 사용자가 mentionedLoginIds에 포함되는지 확인
+        const userIndex = mentionedLoginIds.indexOf(taggedUserLoginId);
 
-      console.log("taggedUserLoginId:", taggedUserLoginId);
-      console.log("matchedUserId:", userId);
+        // 만약 찾았다면 userId 추출, 못 찾으면 null
+        const userId = userIndex !== -1 ? mentionedUserIds[userIndex] : null;
 
-      return (
-        <span
-          key={index}
-          style={{
-            color: '#706ef4',
-            cursor: 'pointer',
-            fontSize: "12px"
-          }}
-          onClick={() => handleUserClick(userId)}
-        >
-          {part}
-        </span>
-      );
-    }
+        console.log("taggedUserLoginId:", taggedUserLoginId);
+        console.log("matchedUserId:", userId);
 
-    return part;
-  });
-};
-  
+        return (
+          <span
+            key={index}
+            style={{
+              color: "#706ef4",
+              cursor: "pointer",
+              fontSize: "12px",
+            }}
+            onClick={() => handleUserClick(userId)}
+          >
+            {part}
+          </span>
+        );
+      }
+
+      return part;
+    });
+  };
 
   const handleCommentChange = (e) => {
-    setCommentText(e.target.value);  // 댓글 내용 업데이트
+    setCommentText(e.target.value); // 댓글 내용 업데이트
   };
 
   // 댓글 작성
   const handleCommentSubmit = async () => {
-    if (commentText.trim()) {  // 공백만 입력되는 것을 방지
-      try{
+    if (commentText.trim()) {
+      // 공백만 입력되는 것을 방지
+      try {
         const access = localStorage.getItem("access");
         const axios = getAuthAxios(access);
-        const response = await axios.post(
-          
-          `http://localhost:9090/comment/${postData}/reply`,
-          {
-            content: commentText,  // 댓글 내용
-            parentId: parentCommentId  // 부모 댓글 ID
-          }
-        );
+        const response = await axios.post(`/comment/${postData}/reply`, {
+          content: commentText, // 댓글 내용
+          parentId: parentCommentId, // 부모 댓글 ID
+        });
         console.log("댓글 작성 성공 : ", commentText);
         setCommentText("");
         setParentCommentId(null);
         setIsReplying(false);
-      } catch(error){
+      } catch (error) {
         console.error("댓글 작성 실패 :", error);
       }
     }
@@ -454,9 +438,9 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
   // 대댓글 작성
   const handleReplyClick = (commentId, loginId) => {
     setParentCommentId(commentId);
-    setCommentText(`@${loginId} `)
+    setCommentText(`@${loginId} `);
     setIsReplying(true);
-  }
+  };
 
   const handleToggleReplies = (commentId) => {
     setVisibleReplies((prev) => ({
@@ -473,10 +457,10 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
 
     const params = {};
     if (post) params.postId = postId;
-    if (commentId) params.commentId = commentId
+    if (commentId) params.commentId = commentId;
 
     axios
-      .post("http://localhost:9090/like/toggle", null, {
+      .post("/like/toggle", null, {
         params: params,
         headers: {
           Authorization: `${access}`,
@@ -524,7 +508,7 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
     // post, header에 토큰 값
     axios
       .post(
-        `http://localhost:9090/follow/${userId}`,
+        `/follow/${userId}`,
         {},
         {
           headers: {
@@ -582,7 +566,7 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
     const axios = getAuthAxios(access);
     // delete, header에 토큰 값
     axios
-      .post(`http://localhost:9090/bookmark/${postId}`, null, {
+      .post(`/bookmark/${postId}`, null, {
         headers: {
           Authorization: `${access}`,
         },
@@ -660,44 +644,42 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
       });
   };
 
-
   // 게시글 상세보기
   useEffect(() => {
     if (isOpen) {
-      
-        const access = localStorage.getItem("access");
-        const axios = getAuthAxios(access);
-    
-          const response = axios
-            .get(`http://localhost:9090/feed/details/${postData}`)
-            .then((response) => {
-              setPostDetails(response.data);
-              setLoading(false);
-            })
-            .catch((err) => {
-              console.error(err);
-              setError("데이터를 불러오는 중 오류가 발생했습니다.");
-              setLoading(false);
-            });
-        }
-    }, [isOpen, postData]);
+      const access = localStorage.getItem("access");
+      const axios = getAuthAxios(access);
 
-    useEffect(() => {
-      if (postDetails) {
-        console.log("Updated post details:", postDetails);
-      }
-    }, [postDetails]);
-
-    if (!isOpen) return null;
-
-    if (loading) {
-      return <div>Loading...</div>;
+      const response = axios
+        .get(`/feed/details/${postData}`)
+        .then((response) => {
+          setPostDetails(response.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setError("데이터를 불러오는 중 오류가 발생했습니다.");
+          setLoading(false);
+        });
     }
-  
-    // postDetails가 null일 경우 처리
-    if (!postDetails) {
-      return <div>포스트 데이터를 불러오는 중 문제가 발생했습니다.</div>;
+  }, [isOpen, postData]);
+
+  useEffect(() => {
+    if (postDetails) {
+      console.log("Updated post details:", postDetails);
     }
+  }, [postDetails]);
+
+  if (!isOpen) return null;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // postDetails가 null일 경우 처리
+  if (!postDetails) {
+    return <div>포스트 데이터를 불러오는 중 문제가 발생했습니다.</div>;
+  }
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
@@ -705,10 +687,9 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
     }
   };
 
-
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       <ModalOverlay onClick={handleOverlayClick}>
         <CloseButton onClick={onClose}>
           <IoClose />
@@ -716,73 +697,90 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
         <PreviewModalContainer>
           <PreviewContent>
             <LeftSection>
-            <Carousel showThumbs={false}>
-              {postDetails.files && postDetails.files.length > 0 ? (
-                postDetails.files.map((file, index) => (
-                  <div key={index}>
-                    {file.fileType && file.fileType.startsWith('IMAGE') ? (
-                      <PreviewImage src={file.fileUrl} alt={`Preview ${index + 1}`} />
-                    ) : file.fileType && file.fileType.startsWith('VIDEO') ? (
-                      <PreviewVideo controls>
-                        <source src={file.fileUrl} type={file.fileType} />
-                        
-                      </PreviewVideo>
-                    ) : (
-                      <div>미리보기가 지원되지 않는 파일입니다.</div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div>선택된 파일이 없습니다.</div>
-              )}
-            </Carousel>
+              <Carousel showThumbs={false}>
+                {postDetails.files && postDetails.files.length > 0 ? (
+                  postDetails.files.map((file, index) => (
+                    <div key={index}>
+                      {file.fileType && file.fileType.startsWith("IMAGE") ? (
+                        <PreviewImage
+                          src={file.fileUrl}
+                          alt={`Preview ${index + 1}`}
+                        />
+                      ) : file.fileType && file.fileType.startsWith("VIDEO") ? (
+                        <PreviewVideo controls>
+                          <source src={file.fileUrl} type={file.fileType} />
+                        </PreviewVideo>
+                      ) : (
+                        <div>미리보기가 지원되지 않는 파일입니다.</div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div>선택된 파일이 없습니다.</div>
+                )}
+              </Carousel>
             </LeftSection>
             <RightSection>
               <RightHeader>
-                <Profile onClick={() => handleUserClick(postDetails.userId)}><img style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",  // 이미지를 영역에 맞게 크롭
-                        }}
-                  src={postDetails.profileImg || defaultImg}
-                />
+                <Profile onClick={() => handleUserClick(postDetails.userId)}>
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover", // 이미지를 영역에 맞게 크롭
+                    }}
+                    src={postDetails.profileImg || defaultImg}
+                  />
                 </Profile>
                 <LoginId onClick={() => handleUserClick(postDetails.userId)}>
                   {postDetails.loginId}
                 </LoginId>
-                  <h3 style={{color: "#706ef4", margin: "0px 5px", fontSize: "20px"}}>&</h3>
-                  <p
-                    style={{
-                      fontSize: "17px",
-                      color: "gray",
-                      
-                    }}
-                  >
-                    {postDetails.partnerId}
-                  </p>
-                
-                <Edit/>
+                <h3
+                  style={{
+                    color: "#706ef4",
+                    margin: "0px 5px",
+                    fontSize: "20px",
+                  }}
+                >
+                  &
+                </h3>
+                <p
+                  style={{
+                    fontSize: "17px",
+                    color: "gray",
+                  }}
+                >
+                  {postDetails.partnerId}
+                </p>
+
+                <Edit />
                 <button
-                    style={{
-                      backgroundColor: "#706EF4",
-                      width: "70px",
-                      height: "30px",
-                      paddingTop: "3px",
-                      margin: "0px 0px 0px 13px",
-                    }}
-                    className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
-                    onClick={(e) => handleFollow(postDetails.userId, e)}
-                  >
-                    팔로우
-                  </button>
+                  style={{
+                    backgroundColor: "#706EF4",
+                    width: "70px",
+                    height: "30px",
+                    paddingTop: "3px",
+                    margin: "0px 0px 0px 13px",
+                  }}
+                  className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
+                  onClick={(e) => handleFollow(postDetails.userId, e)}
+                >
+                  팔로우
+                </button>
               </RightHeader>
               <ContentBox>
-                <ContentText>{TagLink(postDetails.content, postDetails.mentionedLoginIds, postDetails.mentionedUserIds)}</ContentText>
-                <Line/>
+                <ContentText>
+                  {TagLink(
+                    postDetails.content,
+                    postDetails.mentionedLoginIds,
+                    postDetails.mentionedUserIds
+                  )}
+                </ContentText>
+                <Line />
                 <IconBox>
                   <IoIosHeartEmpty
                     className="feedIcon"
-                    style={{ cursor: "pointer", marginRight: "8px"}}
+                    style={{ cursor: "pointer", marginRight: "8px" }}
                     onClick={() => handlePostLike(postDetails.postId, null)}
                   />
                   <IoMdShare
@@ -790,11 +788,11 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
                     style={{ cursor: "pointer" }}
                     onClick={handlePostShare}
                   />
-                <FaRegBookmark
-                  className="feedIcon"
-                  style={{ cursor: "pointer", margin: "0px 0px 0px auto"}}
-                  onClick={(e) => handlePostBookmark(postDetails.postId, e)}
-                />
+                  <FaRegBookmark
+                    className="feedIcon"
+                    style={{ cursor: "pointer", margin: "0px 0px 0px auto" }}
+                    onClick={(e) => handlePostBookmark(postDetails.postId, e)}
+                  />
                 </IconBox>
               </ContentBox>
               <LikeCountBox>
@@ -812,31 +810,64 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
                       if (!comment.parentId) {
                         return (
                           <CommentLi key={index}>
-                            <CommentProfile  onClick={() => handleUserClick(comment.userId)}>
-                              <img 
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",  // 이미지를 영역에 맞게 크롭
-                              }}
-                              src={comment.profileImg || defaultImg} alt="Profile" />
+                            <CommentProfile
+                              onClick={() => handleUserClick(comment.userId)}
+                            >
+                              <img
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover", // 이미지를 영역에 맞게 크롭
+                                }}
+                                src={comment.profileImg || defaultImg}
+                                alt="Profile"
+                              />
                             </CommentProfile>
                             <CommentTextBoxWrapper>
                               <CommentTextBox>
-                                <CommentWriter  onClick={() => handleUserClick(comment.userId)}>{comment.loginId}</CommentWriter>
-                                <CommentText>{TagLink(comment.content, comment.mentionedLoginIds, comment.mentionedUserIds)}</CommentText>
+                                <CommentWriter
+                                  onClick={() =>
+                                    handleUserClick(comment.userId)
+                                  }
+                                >
+                                  {comment.loginId}
+                                </CommentWriter>
+                                <CommentText>
+                                  {TagLink(
+                                    comment.content,
+                                    comment.mentionedLoginIds,
+                                    comment.mentionedUserIds
+                                  )}
+                                </CommentText>
                               </CommentTextBox>
                               <DayandReplyBox>
-                                <Day>{formatTimeDifference(comment.createdAt)}</Day>
-                                <ReplyButton onClick={() => handleReplyClick(comment.commentId, comment.loginId)}>
+                                <Day>
+                                  {formatTimeDifference(comment.createdAt)}
+                                </Day>
+                                <ReplyButton
+                                  onClick={() =>
+                                    handleReplyClick(
+                                      comment.commentId,
+                                      comment.loginId
+                                    )
+                                  }
+                                >
                                   답글 달기
                                 </ReplyButton>
                               </DayandReplyBox>
 
                               {hasReplies && (
-                                <ReplyLookBox> <ReplyLine/>
-                                  <ReplyLook onClick={() => handleToggleReplies(comment.commentId)}>
-                                    {visibleReplies[comment.commentId] ? '답글 숨기기' : '답글 보기'}
+                                <ReplyLookBox>
+                                  {" "}
+                                  <ReplyLine />
+                                  <ReplyLook
+                                    onClick={() =>
+                                      handleToggleReplies(comment.commentId)
+                                    }
+                                  >
+                                    {visibleReplies[comment.commentId]
+                                      ? "답글 숨기기"
+                                      : "답글 보기"}
                                   </ReplyLook>
                                 </ReplyLookBox>
                               )}
@@ -845,26 +876,54 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
                               {visibleReplies[comment.commentId] && (
                                 <div>
                                   {postDetails.comments
-                                    .filter((reply) => reply.parentId === comment.commentId)
+                                    .filter(
+                                      (reply) =>
+                                        reply.parentId === comment.commentId
+                                    )
                                     .map((reply, idx) => (
                                       <CommentLi key={idx}>
-                                        <CommentProfile  onClick={() => handleUserClick(reply.userId)}>
-                                          <img 
-                                           style={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",  // 이미지를 영역에 맞게 크롭
-                                          }}
-                                          src={reply.profileImg || defaultImg} alt="Profile" />
-                                        </CommentProfile >
+                                        <CommentProfile
+                                          onClick={() =>
+                                            handleUserClick(reply.userId)
+                                          }
+                                        >
+                                          <img
+                                            style={{
+                                              width: "100%",
+                                              height: "100%",
+                                              objectFit: "cover", // 이미지를 영역에 맞게 크롭
+                                            }}
+                                            src={reply.profileImg || defaultImg}
+                                            alt="Profile"
+                                          />
+                                        </CommentProfile>
                                         <CommentTextBoxWrapper>
                                           <CommentTextBox>
-                                            <CommentWriter onClick={() => handleUserClick(reply.userId)}>{reply.loginId}</CommentWriter>
-                                            <CommentText>{TagLink(reply.content, reply.mentionedLoginIds, reply.mentionedUserIds)}</CommentText>
+                                            <CommentWriter
+                                              onClick={() =>
+                                                handleUserClick(reply.userId)
+                                              }
+                                            >
+                                              {reply.loginId}
+                                            </CommentWriter>
+                                            <CommentText>
+                                              {TagLink(
+                                                reply.content,
+                                                reply.mentionedLoginIds,
+                                                reply.mentionedUserIds
+                                              )}
+                                            </CommentText>
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
-                                          <HeartIcon onClick={() => handlePostLike(null, reply.commentId)}/>
+                                          <HeartIcon
+                                            onClick={() =>
+                                              handlePostLike(
+                                                null,
+                                                reply.commentId
+                                              )
+                                            }
+                                          />
                                         </HeartBox>
                                       </CommentLi>
                                     ))}
@@ -872,7 +931,11 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
                               )}
                             </CommentTextBoxWrapper>
                             <HeartBox>
-                              <HeartIcon onClick={() => handlePostLike(null, comment.commentId)}/>
+                              <HeartIcon
+                                onClick={() =>
+                                  handlePostLike(null, comment.commentId)
+                                }
+                              />
                             </HeartBox>
                           </CommentLi>
                         );
@@ -882,20 +945,20 @@ const TagLink = (content, mentionedLoginIds, mentionedUserIds) => {
                   ) : (
                     <div>댓글이 없습니다.</div>
                   )}
-              </CommentUl>
-            </CommentsBox>
-            <CommentWriteBox>
-              <CommentInput
-                placeholder="댓글 달기..."
-                value={commentText}
-                onChange={handleCommentChange}
-              />
-              <CommentSend onClick={handleCommentSubmit} />
-            </CommentWriteBox>
-          </RightSection>
-        </PreviewContent>
-      </PreviewModalContainer>
-    </ModalOverlay>
-  </div>
-);
+                </CommentUl>
+              </CommentsBox>
+              <CommentWriteBox>
+                <CommentInput
+                  placeholder="댓글 달기..."
+                  value={commentText}
+                  onChange={handleCommentChange}
+                />
+                <CommentSend onClick={handleCommentSubmit} />
+              </CommentWriteBox>
+            </RightSection>
+          </PreviewContent>
+        </PreviewModalContainer>
+      </ModalOverlay>
+    </div>
+  );
 }

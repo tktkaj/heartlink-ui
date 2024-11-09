@@ -113,22 +113,10 @@ export default function CoupleConnect() {
           return;
         }
 
-        // // ROLE_USER일 경우에만 여기에 도달
-        // const authAxios = getAuthAxios(accessToken);
-        // const response = await authAxios.get(
-        //   "http://localhost:9090/user/couple"
-        // );
-        // if (response.data) {
-        //   navigate("/home");
-        //   return;
-        // }
-
         // 여전히 ROLE_USER라면, 여기에 맞는 로직 실행
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const mycode = await authAxios.get(
-          "http://localhost:9090/couple/match/code"
-        );
+        const mycode = await authAxios.get("/couple/match/code");
         console.log("내 코드:", mycode);
         setCode(mycode.data);
       } catch (err) {
@@ -145,12 +133,8 @@ export default function CoupleConnect() {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const response = await authAxios.post(
-        `http://localhost:9090/couple/match/code/link?code=${inputCode}`
+        `/couple/match/code/link?code=${inputCode}`
       );
-      console.log("응답:", response);
-      console.log("응답데이터:", response.data);
-      console.log("응답상태:", response.status);
-      console.log("응답상태메시지:", response.statusText);
 
       // 201 응답을 처리할 때
       if (response.status === 201) {
