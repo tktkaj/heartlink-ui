@@ -162,6 +162,7 @@ export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
         onSave({ ...post, content: text });
         setText("");  // 텍스트 초기화
         onClose();  // 모달 닫기
+        window.location.href = `http://localhost:3000/user/profile/${post?.userId}`;
       } else {
         throw new Error("업로드에 실패했습니다.");
       }
