@@ -10,7 +10,7 @@ const SnsLogin = () => {
   const reissueToken = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:9090/reissue",
+        process.env.REACT_APP_API_URL + "/reissue",
         {},
         {
           withCredentials: true, // 쿠키를 자동으로 보내도록 설정
@@ -40,7 +40,7 @@ const SnsLogin = () => {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
         const partnerResponse = await authAxios.get(
-          "http://localhost:9090/user/couple"
+          process.env.REACT_APP_API_URL + "/user/couple"
         );
         if (partnerResponse.status == 200) {
           navigate("/home");

@@ -185,10 +185,13 @@ export default function Login() {
 
     try {
       // 로그인 요청 보내기
-      const response = await axios.post("http://localhost:9090/login", {
-        loginId,
-        password,
-      });
+      const response = await axios.post(
+        process.env.REACT_APP_API_URL + "/login",
+        {
+          loginId,
+          password,
+        }
+      );
       console.log(response);
 
       // 헤더에서 토큰 추출
@@ -286,7 +289,7 @@ export default function Login() {
               href="javascript:void(0);"
               onClick={() =>
                 (window.location.href =
-                  "http://localhost:9090/oauth2/authorization/kakao")
+                  process.env.REACT_APP_API_URL + "/oauth2/authorization/kakao")
               }
             >
               <img src={logs.kakaoLogo} alt="카카오 로그인" />
@@ -297,7 +300,7 @@ export default function Login() {
               href="javascript:void(0);"
               onClick={() =>
                 (window.location.href =
-                  "http://localhost:9090/oauth2/authorization/naver")
+                  process.env.REACT_APP_API_URL + "/oauth2/authorization/naver")
               }
             >
               <img src={logs.naverLogo} alt="네이버 로그인" />
@@ -308,7 +311,8 @@ export default function Login() {
               href="javascript:void(0);"
               onClick={() =>
                 (window.location.href =
-                  "http://localhost:9090/oauth2/authorization/google")
+                  process.env.REACT_APP_API_URL +
+                  "/oauth2/authorization/google")
               }
             >
               <img src={logs.googleLogo} alt="구글 로그인" />

@@ -62,7 +62,7 @@ export default function FeedModal({
     // 삭제 확인 알림창
     console.log("post는? ", post);
     const isConfirmed = window.confirm("정말 게시글을 삭제하시겠습니까?");
-    
+
     if (!isConfirmed) {
       return; // 사용자가 취소한 경우, 아무 동작하지 않음
     }
@@ -82,7 +82,8 @@ export default function FeedModal({
           pauseOnHover: true,
         });
         closeModal();
-        window.location.href = `http://localhost:3000/user/profile/${post?.userId}`;
+        window.location.href =
+          process.env.REACT_APP_API_URL + `/user/profile/${post?.userId}`;
       }
     } catch (e) {
       if (e.response) {
