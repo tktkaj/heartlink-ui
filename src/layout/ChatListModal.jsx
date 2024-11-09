@@ -19,7 +19,7 @@ export default function ChatListModal({
     const authAxios = getAuthAxios(access);
 
     authAxios
-      .get("http://localhost:9090/dm/friends")
+      .get(process.env.REACT_APP_API_URL + "/dm/friends")
       .then((response) => {
         if (response.status == 200) setSearchlist(response.data);
       })

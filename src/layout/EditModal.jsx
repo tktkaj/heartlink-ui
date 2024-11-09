@@ -147,31 +147,35 @@ export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
   };
 
   const handleSave = async () => {
-    setLoading(true);  // 수정 시작
+    setLoading(true); // 수정 시작
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const requestBody = {
         content: text,
       };
-  
-      const response = await authAxios.put(`/feed/${post?.postId}/update`, requestBody);
-  
+
+      const response = await authAxios.put(
+        `/feed/${post?.postId}/update`,
+        requestBody
+      );
+
       if (response.status === 200) {
         alert("게시글이 수정되었습니다.");
         onSave({ ...post, content: text });
-        setText("");  // 텍스트 초기화
-        onClose();  // 모달 닫기
-        window.location.href = `http://localhost:3000/user/profile/${post?.userId}`;
+        setText(""); // 텍스트 초기화
+        onClose(); // 모달 닫기
+        window.location.href =
+          process.env.REACT_APP_API_URL + `/user/profile/${post?.userId}`;
       } else {
         throw new Error("업로드에 실패했습니다.");
       }
     } catch (error) {
       console.error("업로드 중 오류 발생:", error.message);
       alert("내 게시글만 수정할 수 있습니다.");
-      onClose();  // 모달 닫기
+      onClose(); // 모달 닫기
     } finally {
-      setLoading(false);  // 로딩 종료
+      setLoading(false); // 로딩 종료
     }
   };
 

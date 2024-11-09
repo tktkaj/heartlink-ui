@@ -75,9 +75,12 @@ const Modal2 = ({ providerId, onSubmit }) => {
 
   const checkDuplicateId = async () => {
     try {
-      const response = await axios.post("http://localhost:9090/user/idcheck", {
-        loginId: loginId,
-      });
+      const response = await axios.post(
+        process.env.REACT_APP_API_URL + "/user/idcheck",
+        {
+          loginId: loginId,
+        }
+      );
       if (response.status === 200) {
         toast.success("사용 가능한 아이디입니다.");
         setIsIdChecked(true);
@@ -136,7 +139,8 @@ const Modal2 = ({ providerId, onSubmit }) => {
 
   const handleLoginRedirect = (providerId) => {
     const provider = providerId.split(" ")[0];
-    const redirectUrl = `http://localhost:9090/oauth2/authorization/${provider}`;
+    const redirectUrl =
+      process.env.REACT_APP_API_URL + `/oauth2/authorization/${provider}`;
     window.location.href = redirectUrl;
   };
 

@@ -120,14 +120,14 @@ const HeartPost = styled(IoIosHeartEmpty)`
   height: 25px;
   cursor: pointer;
   color: ${(props) => (props.liked ? "red" : "black")};
-`
+`;
 
 const BookmarkPost = styled(FaRegBookmark)`
   width: 25px;
   height: 25px;
   cursor: pointer;
   color: ${(props) => (props.bookmarked ? "#706EF4" : "black")};
-`
+`;
 
 export default function Feed() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
