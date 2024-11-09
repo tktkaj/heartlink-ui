@@ -513,6 +513,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
           }
   
            // 댓글 좋아요 처리
+
            if (commentId) {
             setPostDetails((prevState) => {
                 const updatedComments = prevState.comments.map((comment) =>
@@ -647,22 +648,35 @@ export default function FeedDetail({ isOpen, onClose, post }) {
       .then((res) => {
         switch (res.status) {
           case 200:
-            if (res.data == "북마크 추가됨")
+            if (res.data === "북마크 추가됨") {
               toast.success("내 북마크 목록에 추가했습니다.", {
-                position: "top-right", // 위치 설정
-                autoClose: 2000, // 자동 닫힘 시간
-                hideProgressBar: true, // 진행 바 숨김 여부
-                closeOnClick: true, // 클릭 시 닫힘 여부
-                pauseOnHover: true, // 호버 시 일시 정지
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
               });
-            else if (res.data == "북마크 삭제됨")
+  
+              // 클라이언트 상태 업데이트: 북마크가 추가되었으므로 bookmarked 상태 true로 변경
+              setPostDetails((prevState) => ({
+                ...prevState,
+                bookmarked: true,
+              }));
+            } else if (res.data === "북마크 삭제됨") {
               toast.error("내 북마크 목록에서 제거했습니다.", {
-                position: "top-right", // 위치 설정
-                autoClose: 2000, // 자동 닫힘 시간
-                hideProgressBar: true, // 진행 바 숨김 여부
-                closeOnClick: true, // 클릭 시 닫힘 여부
-                pauseOnHover: true, // 호버 시 일시 정지
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
               });
+  
+              // 클라이언트 상태 업데이트: 북마크가 삭제되었으므로 bookmarked 상태 false로 변경
+              setPostDetails((prevState) => ({
+                ...prevState,
+                bookmarked: false,
+              }));
+            }
             break;
         }
       })
@@ -670,26 +684,26 @@ export default function FeedDetail({ isOpen, onClose, post }) {
         switch (e.status) {
           case 404:
             toast.warn("권한이 존재하지않아요ㅠㅜ", {
-              position: "top-right", // 위치 설정
-              autoClose: 2000, // 자동 닫힘 시간
-              hideProgressBar: true, // 진행 바 숨김 여부
-              closeOnClick: true, // 클릭 시 닫힘 여부
-              pauseOnHover: true, // 호버 시 일시 정지
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
             });
             break;
           case 500:
             toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
-              position: "top-right", // 위치 설정
-              autoClose: 2000, // 자동 닫힘 시간
-              hideProgressBar: true, // 진행 바 숨김 여부
-              closeOnClick: true, // 클릭 시 닫힘 여부
-              pauseOnHover: true, // 호버 시 일시 정지
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
             });
             break;
         }
       });
   };
-
+  
   // 게시글 공유
   const handlePostShare = () => {
     const token = localStorage.getItem("access");
@@ -863,7 +877,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                   />
                   <FaRegBookmark
                     className="feedIcon"
-                    style={{ cursor: "pointer", margin: "0px 0px 0px auto" }}
+                    style={{ cursor: "pointer", margin: "0px 0px 0px auto", color: postDetails.bookmarked ? "#706ef4" : "black" }}
                     onClick={(e) => handlePostBookmark(postDetails.postId, e)}
                   />
                 </IconBox>
