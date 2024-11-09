@@ -266,7 +266,7 @@ export default function Couple() {
 
     try {
       const access = localStorage.getItem("access");
-      const response = await axios.post(
+      const response = await authAxios.post(
         "/couple/missionmatch/questions/choose",
         matchAnswer,
         {
@@ -287,7 +287,7 @@ export default function Couple() {
   const fetchMissionTags = async (year, month) => {
     try {
       const access = localStorage.getItem("access");
-      const response = await axios.get(
+      const response = await authAxios.get(
         "/couple/missionslink",
         { params: { year, month } },
         {
@@ -306,7 +306,7 @@ export default function Couple() {
   const checkMyAnswer = async () => {
     try {
       const access = localStorage.getItem("access");
-      const response = await axios.get("/couple/checkMyAnswer", {
+      const response = await authAxios.get("/couple/checkMyAnswer", {
         headers: {
           Authorization: access,
         },

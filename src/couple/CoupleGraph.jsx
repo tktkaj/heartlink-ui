@@ -84,7 +84,9 @@ export default function CoupleGraph() {
 
     const fetchData2 = async () => {
       try {
-        const res2 = await axios.get("/couple/missionmatch/questions");
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const res2 = await authAxios.get("/couple/missionmatch/questions");
         console.log("API 응답:", res2);
         const { match1, match2 } = res2.data;
         setMatch1(match1);
