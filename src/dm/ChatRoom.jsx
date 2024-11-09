@@ -38,7 +38,9 @@ export default function ChatRoom() {
   // 웹 소켓 연결
   useEffect(() => {
     // WebSocket 연결을 설정
-    const webSocket = new WebSocket("ws://localhost:9090/message");
+    const webSocket = new WebSocket(
+      "ws://" + process.env.REACT_APP_API_URL + "/message"
+    );
 
     // 연결이 열렸을 때 실행
     webSocket.onopen = () => {};
