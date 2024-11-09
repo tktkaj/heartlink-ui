@@ -36,14 +36,19 @@ const FeedBox = styled.div`
   flex-direction: column;
   align-items: center;
 `;
-const Advert = styled.div`
+const Advert = styled.a`
+  display: block;
   width: 300px;
   height: 649px;
-  // background-color: white;
   background-image: url(${ads});
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 20px;
   margin-top: 60px;
+  cursor: pointer;
+  text-decoration: none;
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const LoveHeader = styled.div`
@@ -202,6 +207,26 @@ export default function Couple() {
 
   const [dday, setDday] = useState(null);
   const [isMatchSelected, setIsMatchSelected] = useState(""); // 매치 선택여부 확인
+
+  const [adUrl, setAdUrl] = useState("");
+
+  useEffect(() => {
+    const fetchAdUrl = async () => {
+      try {
+    const access = localStorage.getItem("access");
+    const authAxios = getAuthAxios(access);
+    const response = await authAxios.get("/ads/lostayAd");
+    setAdUrl(response.data); 
+    console.log("광고오오오오", response);
+
+    console.log("광고오오오오", response.data);
+        console.log("광고오오오오ㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇ", adUrl);
+      } catch (error) {
+        console.error("광고 가져오는 중 오류 발생:", error);
+      }
+    };
+    fetchAdUrl();
+  }, []);
 
   useEffect(() => {
     const fetchYearMonth = async () => {
@@ -604,8 +629,8 @@ export default function Couple() {
               <CoupleGraph></CoupleGraph>
             </div>
           </FeedBox>
-          <Advert>
-            {/* <p>광고입니다</p> */}
+          <Advert href={adUrl} rel="lostay ads">
+            {/* 로스테이 광고 */}
           </Advert>
         </Container>
         <Upload />
