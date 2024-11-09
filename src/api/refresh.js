@@ -15,7 +15,7 @@ export const getNewRefreshToken = async () => {
   try {
     // 리프레시 토큰을 헤더에 담아 서버에 전달해서 새로운 액세스 토큰을 발급받음
     const result = await axios.post(
-      "http://localhost:9090/reissue",
+      process.env.REACT_APP_API_URL + "/reissue",
       {},
       {
         headers: {

@@ -3,7 +3,7 @@ import { getNewRefreshToken } from "./refresh";
 
 export const getAuthAxios = (token) => {
   const authAxios = axios.create({
-    baseURL: "http://localhost:9090",
+    baseURL: process.env.REACT_APP_API_URL,
     headers: {
       Authorization: token,
     },

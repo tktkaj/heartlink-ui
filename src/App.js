@@ -16,6 +16,7 @@ function App() {
     try {
       const decodedToken = jwtDecode(accessToken);
       console.log(decodedToken); // 디코딩된 토큰 정보
+      console.log(process.env.REACT_APP_API_URL);
     } catch (error) {
       console.error("토큰 디코딩 오류:", error);
     }
