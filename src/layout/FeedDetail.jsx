@@ -513,6 +513,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
           }
   
            // 댓글 좋아요 처리
+
            if (commentId) {
             setPostDetails((prevState) => {
                 const updatedComments = prevState.comments.map((comment) =>
@@ -863,7 +864,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                   />
                   <FaRegBookmark
                     className="feedIcon"
-                    style={{ cursor: "pointer", margin: "0px 0px 0px auto" }}
+                    style={{ cursor: "pointer", margin: "0px 0px 0px auto", color: postDetails.bookmarked ? "#706ef4" : "black" }}
                     onClick={(e) => handlePostBookmark(postDetails.postId, e)}
                   />
                 </IconBox>
