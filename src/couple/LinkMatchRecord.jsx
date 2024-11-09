@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
 
 const Backdrop = styled.div`

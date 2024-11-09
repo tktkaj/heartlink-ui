@@ -174,6 +174,11 @@ const BingoCell = styled.div`
   justify-content: center;
   border-radius: 15px;
   font-size: 18px;
+  color: black;
+  text-shadow: -2px -2px 2px rgba(255,255,255,0.8),  
+               2px -2px 2px rgba(255,255,255,0.8),
+               -2px 2px 2px rgba(255,255,255,0.8),
+               2px 2px 2px rgba(255,255,255,0.8);
   background-image: url(${(props) => props.image});
   background-size: cover;
   background-position: center;
@@ -217,10 +222,6 @@ export default function Couple() {
     const authAxios = getAuthAxios(access);
     const response = await authAxios.get("/ads/lostayAd");
     setAdUrl(response.data); 
-    console.log("광고오오오오", response);
-
-    console.log("광고오오오오", response.data);
-        console.log("광고오오오오ㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇ", adUrl);
       } catch (error) {
         console.error("광고 가져오는 중 오류 발생:", error);
       }
@@ -338,26 +339,10 @@ export default function Couple() {
       });
       console.log(response.data);
       setIsMatchSelected(response.data);
-      console.log("내 매치 선택지지지ㅣ지지 : ", isMatchSelected);
     } catch (error) {
       console.error("미션 태그 가져오는 중 오류 발생:", error);
     }
   };
-
-  // const fetchMyMissionTags = async (year, month) => {
-  //   try {
-  //     const access = localStorage.getItem("access");
-  //     const response = await axios.get("http://localhost:9090/couple/missionStatus", { params: { year, month } }, {
-  //       headers: {
-  //         Authorization: access,
-  //       },
-  //     });
-  //     console.log("내가 완료한 미션 리스트"+response.data);
-  //     setMyMission(response.data);
-  //   } catch (error) {
-  //     console.error("내가 완료한 미션 리스트 가져오는 중 오류 발생:", error);
-  //   }
-  // }
 
   const getImageForTheme = (theme) => {
     // 현재 테마의 missionId와 일치하는 완료된 미션 찾기
@@ -413,10 +398,10 @@ export default function Couple() {
             ? { ...mission, ...completedMission }
             : mission;
         });
+
         setThemes(updatedMissions);
         setMyMission(completedMissions);
-        console.log(myMission[0].postImgUrl);
-        console.log(completedMissions);
+
       } catch (error) {
         console.error(
           "미션 또는 완료된 미션 데이터를 가져오는 중 오류 발생:",
@@ -604,7 +589,9 @@ export default function Couple() {
                     themes.map((theme) => {
                       const matchedMission = myMission.find(
                         (mission) => mission.missionId === theme.missionId
+                        
                       );
+                      // console.log("matchedMissionnnnnn : ", matchedMission);
                       return (
                         <BingoCell
                           key={theme.missionId}
@@ -616,8 +603,8 @@ export default function Couple() {
                             cursor: matchedMission ? "pointer" : "default",
                             backgroundImage:
                               getImageForTheme(theme) === ""
-                                ? ""
-                                : `url(${defaultImage})`,
+                                ? ``
+                                : `url(${matchedMission.postImgUrl})`,
                           }}
                         >
                           &{theme.linkTag}

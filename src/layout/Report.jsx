@@ -105,10 +105,17 @@ const Report = ({ closeModal, position, userId, commentId, postId }) => {
       const authAxios = getAuthAxios();
       await authAxios.post("/report", {
         userId: userId,
-        commentId: commentId,
+        commentId: null,
         postId: postId,
         reason: selectedReason === "기타" ? customReason : selectedReason,
       });
+      console.log(
+        "userId, commentId, postId, selectedReason : ",
+        userId,
+        commentId,
+        postId,
+        selectedReason
+      );
       alert("신고가 접수되었습니다.");
       closeModal();
     } catch (error) {
