@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import styled from "styled-components";
+import { getAuthAxios } from "../api/authAxios";
 
 const PopupOverlay = styled.div`
   position: fixed;
@@ -69,14 +70,35 @@ const ErrorText = styled.p`
 const Modal2 = ({ providerId, onSubmit }) => {
   const [loginId, setLoginId] = useState("");
   const [error, setError] = useState("");
+  const [isIdChecked, setIsIdChecked] = useState(false);
 
-  const handleSubmit = async() => {
+  const checkDuplicateId = async () => {
+    try {
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+      const response = await authAxios.post("/user/idcheck", {
+        loginId,
+      });
+      if (response.data) {
+        alert("사용 가능한 아이디입니다.");
+        setIsIdChecked(true);
+      } else {
+        alert("이미 사용중인 아이디입니다.");
+        setIsIdChecked(false);
+      }
+    } catch (err) {
+      console.error("아이디 중복 체크 중 오류 발생:", err);
+      setError("아이디 중복 체크 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!loginId) {
       alert("아이디를 입력해주세요");
       return;
     }
 
-    if (loginId.length < 5 || loginId.length>15) {
+    if (loginId.length < 5 || loginId.length > 15) {
       alert("아이디는 5자 이상 15자 이내어야 합니다");
       return;
     }
@@ -84,12 +106,25 @@ const Modal2 = ({ providerId, onSubmit }) => {
       alert("아이디는 영문과 숫자만 포함할 수 있습니다.");
       return;
     }
+
+    if (!isIdChecked) {
+      alert("아이디 중복 체크를 먼저 해주세요.");
+      return;
+    }
+
     try {
-      // 서버에 loginId와 providerId를 전송
-      await axios.post(
-        "http://localhost:9090/user/auth/loginId",
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
+
+      await authAxios.post(
+        "/user/auth/loginId",
         { loginId },
-        { params: { providerId } }
+        {
+          params: { providerId },
+          headers: {
+            Authorization: access,
+          },
+        }
       );
       setError("");
       alert("아이디가 성공적으로 등록되었습니다!");
@@ -101,11 +136,10 @@ const Modal2 = ({ providerId, onSubmit }) => {
   };
 
   const handleLoginRedirect = (providerId) => {
-    const provider = providerId.split(' ')[0];
+    const provider = providerId.split(" ")[0];
     const redirectUrl = `http://localhost:9090/oauth2/authorization/${provider}`;
     window.location.href = redirectUrl;
   };
-
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -122,9 +156,15 @@ const Modal2 = ({ providerId, onSubmit }) => {
             type="text"
             placeholder="사용하실 아이디를 입력해주세요"
             value={loginId}
-            onChange={(e) => setLoginId(e.target.value)}
+            onChange={(e) => {
+              setLoginId(e.target.value);
+              setIsIdChecked(false);
+            }}
             maxLength="20"
           />
+          <SubmitButton onClick={checkDuplicateId} style={{ width: "auto" }}>
+            중복확인
+          </SubmitButton>
         </InputWrapper>
         {error && <ErrorText>{error}</ErrorText>}
         <SubmitButton onClick={handleSubmit}>확인</SubmitButton>
