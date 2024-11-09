@@ -10,7 +10,6 @@ import { getAuthAxios } from "../api/authAxios";
 import BlockUser from "./BlockUser";
 import Follow from "./Follow";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
-import FeedDetail from "../layout/FeedDetail";
 
 let Content = styled.div`
   background-color: #f8f8fa;
@@ -263,13 +262,12 @@ let Post = styled.div`
   }
 `;
 
-// let PostLink = styled.a`
-//   width: 100%;
-//   height: 100%;
-//   display: block;
-//   z-index: 1;
-//   cursor: pointer;
-// `;
+let PostLink = styled.a`
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+`;
 
 function MyPage() {
   const [profile, setProfile] = useState(null);
@@ -297,19 +295,11 @@ function MyPage() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [isBlocker, setIsBlocker] = useState();
   const [isBlocked, setIsBlocked] = useState();
-  const [isFeedDetail, setIsFeedDetail] = useState(false);
-  const [postDetails, setPostDetails] = useState("null");
+
   const [coupleId, setCoupleId] = useState(null);
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
-
-  const handleMessageClick = (post) => {
-    console.log("Selected PostId: ", post);
-    setPostDetails(post);
-    setIsFeedDetail(true);
-    console.log("isFeedDetail : ", isFeedDetail);
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -777,14 +767,12 @@ function MyPage() {
             <div>차단당한 상대의 피드는 볼 수 없습니다.</div>
           ) : shouldShowPosts ? (
             posts.length > 0 ? (
-              posts.map((post) => (
-                <Post key={post.PostId}>
+              posts.map((post, index) => (
+                <Post key={index}>
                   {post.fileType === "IMAGE" && (
-                    <img style={{cursor:"pointer"}} src={post.fileUrl} onClick={() => handleMessageClick(post)} alt="썸네일" />
+                    <img src={post.fileUrl} alt="썸네일" />
                   )}
-                  {/* <PostLink
-                  onClick={() => handleMessageClick(post)}
-                  /> */}
+                  <PostLink></PostLink>
                 </Post>
               ))
             ) : (
@@ -795,13 +783,6 @@ function MyPage() {
           )}
         </PostList>
       </Content>
-      {isFeedDetail && (
-        <FeedDetail
-          isOpen={isFeedDetail}
-          onClose={() => setIsFeedDetail(false)}
-          post={postDetails} // 선택된 포스트 전달
-        />
-      )}
     </div>
   );
 }
