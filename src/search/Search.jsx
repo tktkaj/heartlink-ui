@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import SideMenu from "../sideMenu/SideMenu";
 import MiniSide from "../sideMenu/MiniSide";
 import SearchMenu from "../sideMenu/SearchMenu";
 import { getAuthAxios } from "../api/authAxios";

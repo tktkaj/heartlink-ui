@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import ProfileImg from "../image/sidebar/test.png";
 import styled from "styled-components";
-import axios from "axios";
 import { format } from "date-fns";
+import { getAuthAxios } from "../api/authAxios";
 
 const Container = styled.div`
   width: 450px;

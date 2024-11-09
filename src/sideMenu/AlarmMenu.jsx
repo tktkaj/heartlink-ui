@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProfileImg from "../image/sidebar/test.png";
-import axios from "axios";
 import { format } from "date-fns";
 import { getAuthAxios } from "../api/authAxios";
 

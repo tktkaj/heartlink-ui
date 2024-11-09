@@ -1,9 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import profilethum from "../image/sidebar/test.png";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useLocation } from "react";
-import axios from "axios";
 import { getAuthAxios } from "../api/authAxios";
 import { BiSearch } from "react-icons/bi";
 import { MdManageSearch } from "react-icons/md";
