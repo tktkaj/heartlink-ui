@@ -168,7 +168,8 @@ export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
       }
     } catch (error) {
       console.error("업로드 중 오류 발생:", error.message);
-      alert("업로드 중 오류가 발생했습니다.");
+      alert("내 게시글만 수정할 수 있습니다.");
+      onClose();  // 모달 닫기
     } finally {
       setLoading(false);  // 로딩 종료
     }
