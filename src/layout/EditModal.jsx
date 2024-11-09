@@ -167,7 +167,7 @@ export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
     } catch (error) {
       if (error.response) {
         console.error("서버 오류:", error.response.data);
-        alert("서버 오류: " + error.response.data);
+        alert("내 게시글만 수정할 수 있습니다.");
       } else {
         console.error("업로드 중 오류 발생:", error.message);
         alert("업로드 중 오류가 발생했습니다.");
