@@ -14,6 +14,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoPencil } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { GoKebabHorizontal } from "react-icons/go";
+import FeedModal from "../layout/FeedModal";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -94,6 +96,7 @@ const RightHeader = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
+  justify-content: space-around;
 `;
 
 const Profile = styled.div`
@@ -302,10 +305,6 @@ const ReplyLook = styled.button`
   cursor: pointer;
 `;
 
-const Edit = styled(IoPencil)`
-  font-size: 25px;
-  margin-left: auto;
-`;
 
 export default function FeedDetail({ isOpen, onClose, post }) {
   const [postDetails, setPostDetails] = useState(null);
@@ -317,6 +316,18 @@ export default function FeedDetail({ isOpen, onClose, post }) {
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
   const navigate = useNavigate();
+  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeModal = () => setIsModalOpen(false);
+
+  const openModal = (event) => {
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    setModalPosition({
+      top: buttonRect.bottom + 10, // 버튼의 아래쪽 위치
+      left: buttonRect.left - 50, // 버튼의 왼쪽 위치
+    });
+    setIsModalOpen(true);
+  };
 
   function formatTimeDifference(createdAt) {
     const now = new Date();
@@ -800,6 +811,13 @@ export default function FeedDetail({ isOpen, onClose, post }) {
           <IoClose />
         </CloseButton>
         <PreviewModalContainer>
+        {isModalOpen && (
+                <FeedModal
+                  closeModal={closeModal}
+                  position={modalPosition}
+                  post={postDetails}
+                />
+              )}
           <PreviewContent>
             <LeftSection>
               <Carousel showThumbs={false}>
@@ -857,8 +875,6 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 >
                   {postDetails.partnerId}
                 </p>
-
-                <Edit />
                 <button
                   style={{
                     backgroundColor: "#706EF4",
@@ -872,6 +888,15 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 >
                   팔로우
                 </button>
+                <GoKebabHorizontal
+                    style={{
+                      width: "25px",
+                      height: "25px",
+                      cursor: "pointer",
+
+                    }}
+                    onClick={openModal}
+                    />
               </RightHeader>
               <ContentBox>
                 <ContentText>
