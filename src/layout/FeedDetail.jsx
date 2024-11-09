@@ -310,7 +310,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [postData, setPostData] = useState(post);
+  const [postData, setPostData] = useState(post.postId);
   const [commentText, setCommentText] = useState("");
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
@@ -319,6 +319,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const closeModal = () => setIsModalOpen(false);
+  const currentUserId = localStorage.getItem("userId");
 
   const openModal = (event) => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
