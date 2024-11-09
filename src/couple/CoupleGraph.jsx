@@ -73,8 +73,10 @@ export default function CoupleGraph() {
         setM1(gender_m_1_rate);
         setF0(gender_f_0_rate);
         setF1(gender_f_1_rate);
+        setMatch1(res1.data.match1);
+        setMatch2(res1.data.match2);
 
-        console.log("API 응답12121212:", res1);
+        console.log("API 응답12121212:", res1.data);
       } catch (err) {
         console.log(err);
       }
@@ -87,6 +89,9 @@ export default function CoupleGraph() {
         const { match1, match2 } = res2.data;
         setMatch1(match1);
         setMatch2(match2);
+console.log("match1 : "+match1);
+console.log("match2 : "+match2);
+
         setFemaleData([
           { name: match1, value: f0rate }, // 기본값 설정
           { name: match2, value: f1rate },
