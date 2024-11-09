@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { GoKebabHorizontal } from "react-icons/go";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdShare } from "react-icons/io";
 import { FaRegBookmark } from "react-icons/fa";
@@ -9,13 +8,12 @@ import defaultImg from "../image/logo/fav.png";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import FeedModal from "../layout/FeedModal";
 import { getAuthAxios } from "../api/authAxios";
-import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FeedDetail from "../layout/FeedDetail";
-
+import { PiSirenDuotone } from "react-icons/pi";
+import Report from "../layout/Report";
 const FeedBox = styled.div`
   width: 37vw;
   height: 84vh;
@@ -470,7 +468,7 @@ export default function Feed() {
             // 피드 렌더링
             <FeedBox>
               {isModalOpen && (
-                <FeedModal
+                <Report
                   closeModal={closeModal}
                   position={modalPosition}
                   post={item.content}
@@ -507,7 +505,7 @@ export default function Feed() {
                     {item.content.partnerId}
                   </p>
                 </ProfileTxt>
-                <div style={{ display: "flex", gap: "15px" }}>
+                <div style={{ display: "flex", gap: "10px" }}>
                   <button
                     style={{
                       backgroundColor: "#706EF4",
@@ -520,11 +518,12 @@ export default function Feed() {
                   >
                     팔로우
                   </button>
-                  <GoKebabHorizontal
+                  <PiSirenDuotone
                     style={{
-                      width: "30px",
-                      height: "30px",
+                      width: "25px",
+                      height: "25px",
                       cursor: "pointer",
+                      marginTop: "5px",
                     }}
                     onClick={openModal}
                   />
