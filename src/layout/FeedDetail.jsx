@@ -137,12 +137,28 @@ const IconBox = styled.div`
     height: 25px;
     margin-right: 5px;
 
+    
+
     &:hover {
       color: #706ef4;
       opacity: 0.8;
     }
   }
 `;
+
+const HeartPost = styled(IoIosHeartEmpty)`
+  width: 25px;
+  height: 25px;
+  margin-right: 8px;  
+
+  cursor: pointer;
+  color: ${(props) => (props.liked ? "red" : "black")};
+
+  &:hover {
+        color: #706ef4;
+        opacity: 0.8;
+      }
+`
 
 const LikeCountBox = styled.div`
   width: 100%;
@@ -222,7 +238,9 @@ const HeartBox = styled.div`
 
 const HeartIcon = styled(TiHeartOutline)`
   cursor: pointer;
-  transition: color;
+  transition: color 0.3s;
+
+  color: ${(props) => (props.liked ? "red" : "black")};
 
   &:hover {
     color: #706ef4;
@@ -865,10 +883,9 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 </ContentText>
                 <Line />
                 <IconBox>
-                  <IoIosHeartEmpty
-                    className="feedIcon"
-                    style={{ cursor: "pointer", marginRight: "8px", color: postDetails.liked ? "red" : "black"}}
+                  <HeartPost
                     onClick={() => handlePostLike(postDetails.postId, null)}
+                    liked = {postDetails.liked}
                   />
                   <IoMdShare
                     className="feedIcon"
@@ -1005,9 +1022,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                                         <HeartBox>
                                         <HeartIcon
                                           onClick={() => handlePostLike(null, reply.commentId)}
-                                          style={{
-                                            color: reply.liked ? "red" : "black", // liked 상태에 따라 색 변경
-                                          }}
+                                          liked={reply.liked}
                                         />
                                         </HeartBox>
                                       </CommentLi>
@@ -1018,9 +1033,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                             <HeartBox>
                             <HeartIcon
                               onClick={() => handlePostLike(null, comment.commentId)}
-                              style={{
-                                color: comment.liked ? "red" : "black", // liked 상태에 따라 색 변경
-                              }}
+                              liked={comment.liked}
                             />
                             </HeartBox>
                           </CommentLi>
