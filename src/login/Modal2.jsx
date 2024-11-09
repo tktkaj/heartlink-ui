@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { getAuthAxios } from "../api/authAxios";
+import { toast, ToastContainer } from "react-toastify";
 
 const PopupOverlay = styled.div`
   position: fixed;
@@ -74,21 +75,19 @@ const Modal2 = ({ providerId, onSubmit }) => {
 
   const checkDuplicateId = async () => {
     try {
-      const access = localStorage.getItem("access");
-      const authAxios = getAuthAxios(access);
-      const response = await authAxios.post("/user/idcheck", {
-        loginId,
+      const response = await axios.post("http://localhost:9090/user/idcheck", {
+        loginId: loginId,
       });
-      if (response.data) {
-        alert("사용 가능한 아이디입니다.");
+      if (response.status === 200) {
+        toast.success("사용 가능한 아이디입니다.");
         setIsIdChecked(true);
-      } else {
-        alert("이미 사용중인 아이디입니다.");
+      } else if (response.status === 400) {
+        toast.error("이미 가입된 회원이 있습니다.");
         setIsIdChecked(false);
       }
-    } catch (err) {
-      console.error("아이디 중복 체크 중 오류 발생:", err);
-      setError("아이디 중복 체크 중 오류가 발생했습니다.");
+    } catch (error) {
+      toast.error("이미 가입된 회원이 있습니다.");
+      console.error(error);
     }
   };
 
@@ -150,11 +149,18 @@ const Modal2 = ({ providerId, onSubmit }) => {
   return (
     <PopupOverlay onClick={handleOverlayClick}>
       <PopupContainer>
+        <ToastContainer
+          position="top-center"
+          limit={1}
+          closeButton={true}
+          autoClose={1500}
+          hideProgressBar
+        />
         <Title>아이디 입력</Title>
         <InputWrapper>
           <Input
             type="text"
-            placeholder="사용하실 아이디를 입력해주세요"
+            placeholder="아이디를 입력해주세요"
             value={loginId}
             onChange={(e) => {
               setLoginId(e.target.value);
