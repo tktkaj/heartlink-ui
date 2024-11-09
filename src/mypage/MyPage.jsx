@@ -296,6 +296,8 @@ function MyPage() {
   const [isBlocker, setIsBlocker] = useState();
   const [isBlocked, setIsBlocked] = useState();
 
+  const [coupleId, setCoupleId] = useState(null);
+
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
 
@@ -339,8 +341,17 @@ function MyPage() {
         } else {
           setPosts([]); // 빈 배열로 설정
         }
+
+        // 커플 정보 조회
+        const coupleResponse = await authAxios.get("/user/couple");
+        console.log(
+          "접속한 아이디의 커플아이디:",
+          coupleResponse.data.coupleUserId
+        );
+        setCoupleId(coupleResponse.data.coupleUserId);
       } catch (err) {
         setError(err);
+        console.error("데이터 조회 실패:", err);
       } finally {
         setLoading(false);
       }
@@ -651,9 +662,11 @@ function MyPage() {
                     ? "팔로잉"
                     : "팔로우"}
                 </FollowButton>
-                <BlockButton onClick={handleBlock}>
-                  {isBlocked ? "차단해제" : "차단하기"}
-                </BlockButton>
+                {userId !== String(coupleId) && (
+                  <BlockButton onClick={handleBlock}>
+                    {isBlocked ? "차단해제" : "차단하기"}
+                  </BlockButton>
+                )}
               </ButtonWrap>
             )}
             {Iding && userId && String(Iding) === userId && (

@@ -8,8 +8,9 @@ import LinkMatchRecord from "./LinkMatchRecord";
 import { useAuth } from "../api/AuthContext";
 import CoupleGraph from "./CoupleGraph";
 import Dday from "./Dday";
-import defaultImage from "../image/mypage/bono.jpg";
+import defaultImage from "../image/couple/3dheart.jpg";
 import FeedDetail from "../layout/FeedDetail";
+import ads from "../image/couple/로스테이_테스트.png";
 
 const MainContainer = styled.div`
   background-color: #f8f8fa;
@@ -36,9 +37,10 @@ const FeedBox = styled.div`
   align-items: center;
 `;
 const Advert = styled.div`
-  width: 15vw;
-  height: 60vh;
-  background-color: white;
+  width: 300px;
+  height: 649px;
+  // background-color: white;
+  background-image: url(${ads});
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 20px;
   margin-top: 60px;
@@ -603,7 +605,7 @@ export default function Couple() {
             </div>
           </FeedBox>
           <Advert>
-            <p>광고입니다</p>
+            {/* <p>광고입니다</p> */}
           </Advert>
         </Container>
         <Upload />
