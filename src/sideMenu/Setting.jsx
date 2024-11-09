@@ -64,9 +64,7 @@ export default function Setting({ closeSetting }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const res = await authAxios.get(
-          "http://localhost:9090/couple/checkSoonBreak"
-        );
+        const res = await authAxios.get("/couple/checkSoonBreak");
         setIsSoonBreak(res.data);
         console.log("커플유예?", res.data);
       } catch (error) {
@@ -84,7 +82,7 @@ export default function Setting({ closeSetting }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        await authAxios.put("http://localhost:9090/couple/unlink/cancel");
+        await authAxios.put("/couple/unlink/cancel");
 
         // 커플 해지 취소 후 새로운 토큰 받아오기
         const { accessToken, refreshToken } = await getNewRefreshToken();
@@ -111,7 +109,7 @@ export default function Setting({ closeSetting }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        await authAxios.delete("http://localhost:9090/couple/finalNowUnlink");
+        await authAxios.delete("/couple/finalNowUnlink");
 
         // 커플 즉시 해지 후 새로운 토큰 받아오기
         const { accessToken, refreshToken } = await getNewRefreshToken();

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import ProfileImg from '../image/sidebar/test.png'
-import styled from 'styled-components'
-import axios from 'axios'
-import {format} from 'date-fns'
+import React, { useEffect, useState } from "react";
+import ProfileImg from "../image/sidebar/test.png";
+import styled from "styled-components";
+import axios from "axios";
+import { format } from "date-fns";
 
 const Container = styled.div`
   width: 450px;
-  background-color: #F8F8FA;
+  background-color: #f8f8fa;
   padding-left: 30px;
   height: 100vh;
 `;
@@ -54,7 +54,7 @@ const ButtonContainer = styled.div`
 `;
 
 const AcceptButton = styled.button`
-  background-color: #706EF4;
+  background-color: #706ef4;
   padding: 5px 30px;
   border-radius: 5px;
   color: #ffffff;
@@ -63,7 +63,7 @@ const AcceptButton = styled.button`
 `;
 
 const DeclineButton = styled.button`
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   padding: 5px 30px;
   border-radius: 5px;
   color: #333;
@@ -71,62 +71,62 @@ const DeclineButton = styled.button`
 `;
 
 export default function AlarmList() {
-
   // 받아온 notifications를 저장할 state
   const [notifications, setNotificactions] = useState();
   //  axios 연결
 
   useEffect(() => {
-    const token = localStorage.getItem("access");
-
-    axios.get("http://localhost:9090/notifications"
-      , {
-        headers: {
-          Authorization: `${token}`
-        }
+    const fetchNotifications = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const authAxios = getAuthAxios(access);
+        const response = await authAxios.get("/notifications");
+        setNotificactions(response.data);
+      } catch (error) {
+        console.error("알림 조회 실패:", error);
       }
-    ).then((response) => {
-      setNotificactions(response.data);
-    })
-      .catch()
-  }, [])
+    };
+
+    fetchNotifications();
+  }, []);
 
   return (
     <Container>
+      <Title>알림</Title>
 
-      <Title>알림</Title>          
+      {notifications &&
+        notifications.map((notification, index) => {
+          //  오늘로부터 얼마나 지난 메세지인지 일자를 보여주기 위한 날짜 계산
 
-      {notifications && notifications.map((notification, index) => {
+          //  날짜 포맷팅
+          let today = format(new Date(), "yyyy-MM-dd");
+          let createDate = format(notification.createdAt, "yyyy-MM-dd");
 
-        //  오늘로부터 얼마나 지난 메세지인지 일자를 보여주기 위한 날짜 계산
+          const oldDate = new Date(today);
+          const newDate = new Date(createDate);
 
-        //  날짜 포맷팅
-        let today = format(new Date(), 'yyyy-MM-dd');
-        let createDate = format(notification.createdAt, 'yyyy-MM-dd');
+          // 실질적인 날짜 계산
+          let diff = Math.abs(newDate.getTime() - oldDate.getTime());
+          diff = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-        const oldDate = new Date(today);
-        const newDate = new Date(createDate);
-
-        // 실질적인 날짜 계산
-        let diff = Math.abs(newDate.getTime() - oldDate.getTime());
-        diff = Math.ceil(diff / (1000 * 60 * 60 * 24));
-
-        return (
-          <AlarmItem key={index}>
-            <ProfileImage src={notification.otherUserImg} />
-            <AlarmTextContainer>
-              <AlarmText>{notification.message}</AlarmText>
-              {notification.type == 'PRIVATE_FOLLOW_REQUEST' && <ButtonContainer>
-                <AcceptButton>수락</AcceptButton>
-                <DeclineButton>거절</DeclineButton>
-              </ButtonContainer>}
-              {notification.type !== 'PRIVATE_FOLLOW_REQUEST' && <AlarmTime>{diff == 0 ? '오늘' : `${diff}일전`}</AlarmTime>}
-            </AlarmTextContainer>
-          </AlarmItem>
-        )
-      })}
-
-
+          return (
+            <AlarmItem key={index}>
+              <ProfileImage src={notification.otherUserImg} />
+              <AlarmTextContainer>
+                <AlarmText>{notification.message}</AlarmText>
+                {notification.type == "PRIVATE_FOLLOW_REQUEST" && (
+                  <ButtonContainer>
+                    <AcceptButton>수락</AcceptButton>
+                    <DeclineButton>거절</DeclineButton>
+                  </ButtonContainer>
+                )}
+                {notification.type !== "PRIVATE_FOLLOW_REQUEST" && (
+                  <AlarmTime>{diff == 0 ? "오늘" : `${diff}일전`}</AlarmTime>
+                )}
+              </AlarmTextContainer>
+            </AlarmItem>
+          );
+        })}
     </Container>
-  )
+  );
 }

@@ -102,9 +102,7 @@ function LinkMatchRecord({ closeRecord }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/couple/missionmatch/answerList"
-        );
+        const response = await authAxios.get("/couple/missionmatch/answerList");
         setMissions(response.data);
         console.log("매치답변들", response.data);
       } catch (error) {
@@ -114,7 +112,6 @@ function LinkMatchRecord({ closeRecord }) {
 
     fetchMissions();
   }, []);
-  
 
   return (
     <>
@@ -138,10 +135,20 @@ function LinkMatchRecord({ closeRecord }) {
                 </QuestionTitle>
                 <AnswerWrapper>
                   <Answer>
-                    내 답변 : {mission.myChoice==-1? "미답변":(mission.myChoice==0?mission.match1:mission.match2)}
+                    내 답변 :{" "}
+                    {mission.myChoice == -1
+                      ? "미답변"
+                      : mission.myChoice == 0
+                      ? mission.match1
+                      : mission.match2}
                   </Answer>
                   <Answer>
-                    짝꿍 답변 : {mission.partnerChoice==-1? "미답변":(mission.partnerChoice==0?mission.match1:mission.match2)}
+                    짝꿍 답변 :{" "}
+                    {mission.partnerChoice == -1
+                      ? "미답변"
+                      : mission.partnerChoice == 0
+                      ? mission.match1
+                      : mission.match2}
                   </Answer>
                 </AnswerWrapper>
               </QuestionWrapper>
