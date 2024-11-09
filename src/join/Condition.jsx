@@ -94,7 +94,7 @@ export default function Condition() {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 5px 10px;
+    padding: 20px 10px;
     width: 250px;
     height: 30px;
     color: white;
@@ -104,7 +104,7 @@ export default function Condition() {
     cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
     font-size: 1rem;
     font-weight: bold;
-    box-shadow: 0px 4px 0px rgba(0, 0, 0, 5);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
   `;
 
   let str = ` 
