@@ -54,9 +54,13 @@ export default function FeedModal({
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const files = post?.files || [];
+
   const handleEditClick = () => {
     setIsEditModalOpen(true);
   };
+
+
   return (
     <>
       <SettingBox position={position}>
@@ -76,6 +80,7 @@ export default function FeedModal({
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         post={post} // 수정할 게시글 정보 전달
+        files={files}
         onSave={(updatedPost) => {
           console.log("Updated Post: ", updatedPost);
           setIsEditModalOpen(false);
