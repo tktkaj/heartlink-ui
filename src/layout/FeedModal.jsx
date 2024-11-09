@@ -73,7 +73,7 @@ export default function FeedModal({
 
       const res = await axios.delete(`/feed/${postId}/delete`);
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         toast.success(res.data, {
           position: "top-right",
           autoClose: 2000,
@@ -81,6 +81,7 @@ export default function FeedModal({
           closeOnClick: true,
           pauseOnHover: true,
         });
+        closeModal();
       }
     } catch (e) {
       if (e.response) {
