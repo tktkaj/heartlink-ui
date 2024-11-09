@@ -115,6 +115,20 @@ const FeedImages = styled.div`
   }
 `;
 
+const HeartPost = styled(IoIosHeartEmpty)`
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  color: ${(props) => (props.liked ? "red" : "black")};
+`
+
+const BookmarkPost = styled(FaRegBookmark)`
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  color: ${(props) => (props.bookmarked ? "#706EF4" : "black")};
+`
+
 export default function Feed() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [isFeedDetail, setIsFeedDetail] = useState(false);
@@ -452,7 +466,7 @@ export default function Feed() {
 
   const handleMessageClick = (post) => {
     console.log("Selected PostId: ", post.postId); // 로그 추가
-    setSelectedPost(post.postId); // 선택한 포스트 데이터 저장
+    setSelectedPost(post); // 선택한 포스트 데이터 저장
     setIsFeedDetail(true); // FeedDetail 모달 열기
   };
 
@@ -543,10 +557,9 @@ export default function Feed() {
               </SliderContainer>
               <FeedIcons>
                 <div style={{ display: "flex", gap: "20px" }}>
-                  <IoIosHeartEmpty
-                    className="feedIcon"
-                    style={{ cursor: "pointer" }}
+                  <HeartPost
                     onClick={(e) => handlePostLike(item.content.postId, e)}
+                    liked={item.content.liked}
                   />
                   <FiMessageCircle
                     className="feedIcon"
@@ -559,10 +572,9 @@ export default function Feed() {
                     onClick={handlePostShare}
                   />
                 </div>
-                <FaRegBookmark
-                  className="feedIcon"
-                  style={{ cursor: "pointer" }}
+                <BookmarkPost
                   onClick={(e) => handlePostBookmark(item.content.postId, e)}
+                  bookmarked={item.content.bookmarked}
                 />
               </FeedIcons>
               <FeedInfo>
