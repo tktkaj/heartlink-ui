@@ -62,9 +62,7 @@ export default function CoupleGraph() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const res1 = await authAxios.get(
-          "http://localhost:9090/couple/statistics/dailyMatch"
-        );
+        const res1 = await authAxios.get("/couple/statistics/dailyMatch");
         const {
           gender_m_0_rate,
           gender_m_1_rate,
@@ -86,10 +84,8 @@ export default function CoupleGraph() {
 
     const fetchData2 = async () => {
       try {
-        const res2 = await axios.get(
-          "http://localhost:9090/couple/missionmatch/questions"
-        );
-        console.log("API 응답ddddddddddd:", res2);
+        const res2 = await axios.get("/couple/missionmatch/questions");
+        console.log("API 응답:", res2);
         const { match1, match2 } = res2.data;
         setMatch1(match1);
         setMatch2(match2);

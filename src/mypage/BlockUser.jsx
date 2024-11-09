@@ -93,9 +93,7 @@ function BlockUser({ onClose }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/user/block/list"
-        );
+        const response = await authAxios.get("/user/block/list");
         setBlockedUsers(response.data.content);
 
         console.log("차단 유저 목록", response.data);
@@ -111,7 +109,7 @@ function BlockUser({ onClose }) {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const response = await authAxios.delete(
-        `http://localhost:9090/user/block/cancel/${blockedUserId}`
+        `/user/block/cancel/${blockedUserId}`
       );
 
       if (response.status >= 200 && response.status < 300) {

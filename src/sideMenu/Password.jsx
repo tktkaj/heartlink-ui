@@ -60,9 +60,7 @@ function Password({ onClose }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/user/profile"
-        );
+        const response = await authAxios.get("/user/profile");
         setUserId(response.data);
       } catch (error) {
         console.error("사용자 정보 가져오기 실패:", error);
@@ -84,7 +82,7 @@ function Password({ onClose }) {
       const authAxios = getAuthAxios(access);
 
       const response = await authAxios.patch(
-        `http://localhost:9090/user/profile/${userId}/update/password`,
+        `/user/profile/${userId}/update/password`,
         {
           beforePassword,
           afterPassword,
