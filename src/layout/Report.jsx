@@ -11,8 +11,8 @@ const ReportModal = styled.div`
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  top: ${(props) => props.position.y}px;
-  left: ${(props) => props.position.x}px;
+  top: ${(props) => props.position.top}px;
+  left: ${(props) => props.position.left}px;
 `;
 
 const CloseButton = styled.button`
@@ -78,7 +78,7 @@ const CustomInput = styled.input`
   display: ${(props) => (props.show ? "block" : "none")};
 `;
 
-const Report = ({ closeModal, position, userId, commentId, postId }) => {
+const Report = ({ closeModal, position, post }) => {
   const [selectedReason, setSelectedReason] = useState("");
   const [customReason, setCustomReason] = useState("");
 
@@ -102,25 +102,27 @@ const Report = ({ closeModal, position, userId, commentId, postId }) => {
     }
 
     try {
-      const authAxios = getAuthAxios();
-      await authAxios.post("/report", {
-        userId: userId,
+      const access = localStorage.getItem("access"); // access token 가져오기
+      const authAxios = getAuthAxios(access); // access token으로 axios 인스턴스 생성
+
+      const response = await authAxios.post("/report", {
+        userId: post.userId,
         commentId: null,
-        postId: postId,
+        postId: post.postId,
         reason: selectedReason === "기타" ? customReason : selectedReason,
       });
-      console.log(
-        "userId, commentId, postId, selectedReason : ",
-        userId,
-        commentId,
-        postId,
-        selectedReason
-      );
-      alert("신고가 접수되었습니다.");
-      closeModal();
+
+      if (response.status === 201) {
+        alert("신고가 성공적으로 접수되었습니다.");
+        closeModal();
+      } else {
+        throw new Error("신고 접수에 실패했습니다.");
+      }
     } catch (error) {
-      alert("신고 접수 중 오류가 발생했습니다.");
-      console.error(error);
+      console.error("신고 접수 중 오류:", error);
+      alert(
+        error.response?.data?.message || "신고 접수 중 오류가 발생했습니다."
+      );
     }
   };
 
