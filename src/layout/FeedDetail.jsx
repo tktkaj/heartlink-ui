@@ -459,47 +459,120 @@ export default function FeedDetail({ isOpen, onClose, post }) {
     if (post) params.postId = postId;
     if (commentId) params.commentId = commentId;
 
-    axios
-      .post("/like/toggle", null, {
+    try {
+      const res = await axios.post("/like/toggle", null, {
         params: params,
         headers: {
           Authorization: `${access}`,
         },
-      })
-      .then((res) => {
-        if (res.status == 200) {
-          toast.success(res.data, {
-            position: "top-right", // 위치 설정
-            autoClose: 2000, // 자동 닫힘 시간
-            hideProgressBar: true, // 진행 바 숨김 여부
-            closeOnClick: true, // 클릭 시 닫힘 여부
-            pauseOnHover: true, // 호버 시 일시 정지
+      });
+  
+      if (res.status === 200) {
+        // 좋아요 추가 또는 삭제 후 상태 업데이트
+        if (res.data === "좋아요 추가") {
+          // 게시글 좋아요
+          if (postId) {
+            setPostDetails((prevState) => ({
+              ...prevState,
+              liked: true, // 게시글 좋아요 상태 업데이트
+              likeCount: prevState.likeCount + 1, // 좋아요 개수 증가
+            }));
+          }
+          
+          // 댓글 좋아요
+          if (commentId) {
+            setPostDetails((prevState) => {
+              // 댓글 좋아요 상태 업데이트
+              const updatedComments = prevState.comments.map((comment) =>
+                  comment.commentId === commentId
+                      ? { ...comment, liked: true, likeCount: comment.likeCount + 1 }
+                      : comment
+              );
+              return {
+                  ...prevState,
+                  comments: updatedComments, // 댓글 좋아요 상태 반영
+              };
+          });
+      }
+  
+          toast.success("좋아요 추가!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+        } else if (res.data === "좋아요 삭제") {
+          // 게시글 좋아요
+          if (postId) {
+            setPostDetails((prevState) => ({
+              ...prevState,
+              liked: false, // 게시글 좋아요 상태 업데이트
+              likeCount: prevState.likeCount - 1, // 좋아요 개수 감소
+            }));
+          }
+  
+           // 댓글 좋아요 처리
+           if (commentId) {
+            setPostDetails((prevState) => {
+                const updatedComments = prevState.comments.map((comment) =>
+                    comment.commentId === commentId
+                        ? { ...comment, liked: false, likeCount: comment.likeCount - 1 }
+                        : comment
+                );
+                return {
+                    ...prevState,
+                    comments: updatedComments, // 댓글 좋아요 상태 반영
+                };
+            });
+        }
+  
+          toast.success("좋아요 삭제!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
           });
         }
-      })
-      .catch((e) => {
-        switch (e.status) {
-          case 404:
-            toast.warn("권한이 존재하지않아요ㅠㅜ", {
-              position: "top-right", // 위치 설정
-              autoClose: 2000, // 자동 닫힘 시간
-              hideProgressBar: true, // 진행 바 숨김 여부
-              closeOnClick: true, // 클릭 시 닫힘 여부
-              pauseOnHover: true, // 호버 시 일시 정지
-            });
-            break;
-          case 500:
-            toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
-              position: "top-right", // 위치 설정
-              autoClose: 2000, // 자동 닫힘 시간
-              hideProgressBar: true, // 진행 바 숨김 여부
-              closeOnClick: true, // 클릭 시 닫힘 여부
-              pauseOnHover: true, // 호버 시 일시 정지
-            });
-            break;
-        }
-      });
+        console.log(res.data);
+      }
+    } catch (e) {
+      switch (e.response?.status) {
+        case 404:
+          toast.warn("권한이 존재하지 않아요ㅠㅜ", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+          break;
+        case 500:
+          toast.warn("서버에 오류가 생겼습니다ㅜㅠ", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+          break;
+        default:
+          toast.error("오류가 발생했습니다.", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+          break;
+      }
+    }
   };
+
+  useEffect(() => {
+    console.log('Post details updated:', postDetails);
+  }, [postDetails]);
 
   // 유저 팔로우
   const handleFollow = (userId, e) => {
@@ -780,7 +853,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 <IconBox>
                   <IoIosHeartEmpty
                     className="feedIcon"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
+                    style={{ cursor: "pointer", marginRight: "8px", color: postDetails.liked ? "red" : "black"}}
                     onClick={() => handlePostLike(postDetails.postId, null)}
                   />
                   <IoMdShare
@@ -916,14 +989,12 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                                           </CommentTextBox>
                                         </CommentTextBoxWrapper>
                                         <HeartBox>
-                                          <HeartIcon
-                                            onClick={() =>
-                                              handlePostLike(
-                                                null,
-                                                reply.commentId
-                                              )
-                                            }
-                                          />
+                                        <HeartIcon
+                                          onClick={() => handlePostLike(null, reply.commentId)}
+                                          style={{
+                                            color: reply.liked ? "red" : "black", // liked 상태에 따라 색 변경
+                                          }}
+                                        />
                                         </HeartBox>
                                       </CommentLi>
                                     ))}
@@ -931,11 +1002,12 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                               )}
                             </CommentTextBoxWrapper>
                             <HeartBox>
-                              <HeartIcon
-                                onClick={() =>
-                                  handlePostLike(null, comment.commentId)
-                                }
-                              />
+                            <HeartIcon
+                              onClick={() => handlePostLike(null, comment.commentId)}
+                              style={{
+                                color: comment.liked ? "red" : "black", // liked 상태에 따라 색 변경
+                              }}
+                            />
                             </HeartBox>
                           </CommentLi>
                         );

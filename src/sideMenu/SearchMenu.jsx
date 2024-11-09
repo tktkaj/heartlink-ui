@@ -154,7 +154,8 @@ export default function SearchMenu({
     const getSearchHistory = async () => {
       try {
         const access = localStorage.getItem("access");
-        const response = await axios.get(`/search/history`, {
+        const authAxios = getAuthAxios(access);
+        const response = await authAxios.get(`/search/history`, {
           headers: {
             Authorization: access,
           },
@@ -292,7 +293,7 @@ export default function SearchMenu({
       const response = await authAxios
         .get(`/es/idAuto?searchId=${value.slice(1)}`, {
           headers: {
-            Authorization: `Bearer ${access}`,
+            Authorization: access,
           },
         })
         .then((response) => setIdAutocompleteList(response.data))
@@ -306,7 +307,7 @@ export default function SearchMenu({
       const response = await authAxios
         .get(`/es/tagAuto?searchTag=${value.slice(1)}`, {
           headers: {
-            Authorization: `Bearer ${access}`,
+            Authorization: access,
           },
         })
         .then((response) => setTagAutocompleteList(response.data))
