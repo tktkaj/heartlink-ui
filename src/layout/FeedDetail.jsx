@@ -14,6 +14,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IoPencil } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { GoKebabHorizontal } from "react-icons/go";
+import FeedModal from "../layout/FeedModal";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -94,6 +96,7 @@ const RightHeader = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
+  justify-content: space-around;
 `;
 
 const Profile = styled.div`
@@ -137,12 +140,28 @@ const IconBox = styled.div`
     height: 25px;
     margin-right: 5px;
 
+    
+
     &:hover {
       color: #706ef4;
       opacity: 0.8;
     }
   }
 `;
+
+const HeartPost = styled(IoIosHeartEmpty)`
+  width: 25px;
+  height: 25px;
+  margin-right: 8px;  
+
+  cursor: pointer;
+  color: ${(props) => (props.liked ? "red" : "black")};
+
+  &:hover {
+        color: #706ef4;
+        opacity: 0.8;
+      }
+`
 
 const LikeCountBox = styled.div`
   width: 100%;
@@ -222,7 +241,9 @@ const HeartBox = styled.div`
 
 const HeartIcon = styled(TiHeartOutline)`
   cursor: pointer;
-  transition: color;
+  transition: color 0.3s;
+
+  color: ${(props) => (props.liked ? "red" : "black")};
 
   &:hover {
     color: #706ef4;
@@ -284,21 +305,30 @@ const ReplyLook = styled.button`
   cursor: pointer;
 `;
 
-const Edit = styled(IoPencil)`
-  font-size: 25px;
-  margin-left: auto;
-`;
 
 export default function FeedDetail({ isOpen, onClose, post }) {
   const [postDetails, setPostDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [postData, setPostData] = useState(post);
+  const [postData, setPostData] = useState(post.postId);
   const [commentText, setCommentText] = useState("");
   const [parentCommentId, setParentCommentId] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
   const navigate = useNavigate();
+  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeModal = () => setIsModalOpen(false);
+  const currentUserId = localStorage.getItem("userId");
+
+  const openModal = (event) => {
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    setModalPosition({
+      top: buttonRect.bottom + 10, // 버튼의 아래쪽 위치
+      left: buttonRect.left - 50, // 버튼의 왼쪽 위치
+    });
+    setIsModalOpen(true);
+  };
 
   function formatTimeDifference(createdAt) {
     const now = new Date();
@@ -782,6 +812,13 @@ export default function FeedDetail({ isOpen, onClose, post }) {
           <IoClose />
         </CloseButton>
         <PreviewModalContainer>
+        {isModalOpen && (
+                <FeedModal
+                  closeModal={closeModal}
+                  position={modalPosition}
+                  post={postDetails}
+                />
+              )}
           <PreviewContent>
             <LeftSection>
               <Carousel showThumbs={false}>
@@ -839,8 +876,6 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 >
                   {postDetails.partnerId}
                 </p>
-
-                <Edit />
                 <button
                   style={{
                     backgroundColor: "#706EF4",
@@ -854,6 +889,15 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 >
                   팔로우
                 </button>
+                <GoKebabHorizontal
+                    style={{
+                      width: "25px",
+                      height: "25px",
+                      cursor: "pointer",
+
+                    }}
+                    onClick={openModal}
+                    />
               </RightHeader>
               <ContentBox>
                 <ContentText>
@@ -865,10 +909,9 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 </ContentText>
                 <Line />
                 <IconBox>
-                  <IoIosHeartEmpty
-                    className="feedIcon"
-                    style={{ cursor: "pointer", marginRight: "8px", color: postDetails.liked ? "red" : "black"}}
+                  <HeartPost
                     onClick={() => handlePostLike(postDetails.postId, null)}
+                    liked = {postDetails.liked}
                   />
                   <IoMdShare
                     className="feedIcon"
@@ -1005,9 +1048,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                                         <HeartBox>
                                         <HeartIcon
                                           onClick={() => handlePostLike(null, reply.commentId)}
-                                          style={{
-                                            color: reply.liked ? "red" : "black", // liked 상태에 따라 색 변경
-                                          }}
+                                          liked={reply.liked}
                                         />
                                         </HeartBox>
                                       </CommentLi>
@@ -1018,9 +1059,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                             <HeartBox>
                             <HeartIcon
                               onClick={() => handlePostLike(null, comment.commentId)}
-                              style={{
-                                color: comment.liked ? "red" : "black", // liked 상태에 따라 색 변경
-                              }}
+                              liked={comment.liked}
                             />
                             </HeartBox>
                           </CommentLi>
