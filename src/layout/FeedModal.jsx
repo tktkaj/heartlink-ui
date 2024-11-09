@@ -58,9 +58,9 @@ export default function FeedModal({
   };
 
   /*************** 게시물 삭제 ***************/
-  const handlePostDelete = async (postId) => {
+  const handlePostDelete = async (post) => {
     // 삭제 확인 알림창
-    console.log("postId는?", postId);
+    console.log("post는? ", post);
     const isConfirmed = window.confirm("정말 게시글을 삭제하시겠습니까?");
     
     if (!isConfirmed) {
@@ -71,9 +71,9 @@ export default function FeedModal({
       const access = localStorage.getItem("access");
       const axios = getAuthAxios(access);
 
-      const res = await axios.delete(`/feed/${postId}/delete`);
+      const res = await axios.delete(`/feed/${post.postId}/delete`);
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         toast.success(res.data, {
           position: "top-right",
           autoClose: 2000,
@@ -81,6 +81,8 @@ export default function FeedModal({
           closeOnClick: true,
           pauseOnHover: true,
         });
+        closeModal();
+        window.location.href = `http://localhost:3000/user/profile/${post?.userId}`;
       }
     } catch (e) {
       if (e.response) {
@@ -100,7 +102,7 @@ export default function FeedModal({
           <SettingList onClick={handleEditClick}>
             <p>게시글 수정</p>
           </SettingList>
-          <SettingList onClick={() => handlePostDelete(post.postId)}>
+          <SettingList onClick={() => handlePostDelete(post)}>
             <p>게시글 삭제</p>
           </SettingList>
         </ul>

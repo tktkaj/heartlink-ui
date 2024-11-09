@@ -129,6 +129,7 @@ export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
   console.log("EditPostModal 실행!");
   console.log("나야 포스트", JSON.stringify(post, null, 2));
 
+  const [loading, setLoading] = useState(false);
   const [text, setText] = useState(post?.content || "");
 
   useEffect(() => {
@@ -146,34 +147,31 @@ export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
   };
 
   const handleSave = async () => {
+    setLoading(true);  // 수정 시작
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const requestBody = {
         content: text,
       };
-      const response = await authAxios.put(
-        `/feed/${post?.postId}/update`,
-        requestBody
-      );
-
-      if (response.status === 201) {
-        alert("업로드 하였습니다.");
-        setText("");
-        onClose();
+  
+      const response = await authAxios.put(`/feed/${post?.postId}/update`, requestBody);
+  
+      if (response.status === 200) {
+        alert("게시글이 수정되었습니다.");
+        onSave({ ...post, content: text });
+        setText("");  // 텍스트 초기화
+        onClose();  // 모달 닫기
+        window.location.href = `http://localhost:3000/user/profile/${post?.userId}`;
       } else {
         throw new Error("업로드에 실패했습니다.");
       }
     } catch (error) {
-      if (error.response) {
-        console.error("서버 오류:", error.response.data);
-        alert("내 게시글만 수정할 수 있습니다.");
-      } else {
-        console.error("업로드 중 오류 발생:", error.message);
-        alert("업로드 중 오류가 발생했습니다.");
-      }
+      console.error("업로드 중 오류 발생:", error.message);
+      alert("업로드 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);  // 로딩 종료
     }
-    onClose();
   };
 
   return (
