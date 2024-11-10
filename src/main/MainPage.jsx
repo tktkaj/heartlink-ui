@@ -82,15 +82,23 @@ export default function MainPage() {
   const [partnerInfo, setPartnerInfo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSoonBreak, setIsSoonBreak] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const coupleCheck = async () => {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
+        const userRes = await authAxios.get("/user/profile");
+        setUserId(userRes.data);
+
         const res = await authAxios.get("/couple/checkSoonBreak");
         setIsSoonBreak(res.data);
         console.log("커플유예?", res.data);
+
+        if (res.data) {
+          navigate(`/user/profile/${userRes.data}`);
+        }
       } catch (error) {
         console.error("Error breaking couple:", error);
       }
