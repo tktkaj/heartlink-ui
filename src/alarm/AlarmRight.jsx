@@ -46,6 +46,7 @@ export const CustomToast = ({ title, message }) => (
 
 export default function AlarmRight() {
   const navigate = useNavigate();
+  const token = localStorage.getItem('access');
 
   const [notifications, setNotifications] = useState([]);
 
@@ -59,8 +60,9 @@ export default function AlarmRight() {
 
         // eventSource에 SSE를 통해 넘어온 데이터가 저장!
         console.log("sse는 ", response.data);
+        console.log(`${process.env.REACT_APP_API_URL}/notifications/subscribe/${response.data}`);
         const eventSource = new EventSource(
-          `/notifications/subscribe/${response.data}`
+          `${process.env.REACT_APP_API_URL}/notifications/subscribe/${response.data}`,
         );
 
         // 'sse'는 내가 넘길 이벤트명이라 수정x, 이벤트명 체크하기 때문에!
