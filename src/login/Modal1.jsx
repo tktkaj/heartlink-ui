@@ -114,7 +114,7 @@ const Modal1 = ({ providerId }) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:9090/user/sms/send?phoneNumber=${phone}`
+        process.env.REACT_APP_API_URL + `/user/sms/send?phoneNumber=${phone}`
       );
       console.log("인증번호 전송", response.data);
       setResult(response.data);
@@ -137,7 +137,7 @@ const Modal1 = ({ providerId }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:9090/user/sms/validate",
+        process.env.REACT_APP_API_URL + "/user/sms/validate",
         {
           phone: phone,
           code: verificationCode,
@@ -147,9 +147,9 @@ const Modal1 = ({ providerId }) => {
       console.log("인증번호 확인", response);
       setError("");
       await axios.post(
-        "http://localhost:9090/user/auth/phone",
-        { phone }, 
-        { params: { providerId } } 
+        process.env.REACT_APP_API_URL + "/user/auth/phone",
+        { phone },
+        { params: { providerId } }
       );
       handleLoginRedirect(providerId);
     } catch (err) {
@@ -160,8 +160,9 @@ const Modal1 = ({ providerId }) => {
   };
 
   const handleLoginRedirect = (providerId) => {
-    const provider = providerId.split(' ')[0];
-    const redirectUrl = `http://localhost:9090/oauth2/authorization/${provider}`;
+    const provider = providerId.split(" ")[0];
+    const redirectUrl =
+      process.env.REACT_APP_API_URL + `/oauth2/authorization/${provider}`;
     window.location.href = redirectUrl;
   };
 
@@ -170,8 +171,6 @@ const Modal1 = ({ providerId }) => {
       window.location.href = "/login";
     }
   };
-
-  
 
   return (
     <PopupOverlay onClick={handleOverlayClick}>

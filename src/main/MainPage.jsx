@@ -8,7 +8,6 @@ import AlarmRight from "../alarm/AlarmRight";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
-import axios from "axios";
 
 const Container = styled.div`
   width: 100vw;
@@ -89,9 +88,7 @@ export default function MainPage() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const res = await authAxios.get(
-          "http://localhost:9090/couple/checkSoonBreak"
-        );
+        const res = await authAxios.get("/couple/checkSoonBreak");
         setIsSoonBreak(res.data);
         console.log("커플유예?", res.data);
       } catch (error) {
@@ -106,9 +103,8 @@ export default function MainPage() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const partnerResponse = await authAxios.get(
-          "http://localhost:9090/user/couple"
-        );
+        const partnerResponse = await authAxios.get("/user/couple");
+        console.log("짝꿍정보 응답", partnerResponse);
         if (!partnerResponse.data) {
           navigate("/coupleConnect");
           return;

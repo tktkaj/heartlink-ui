@@ -302,9 +302,12 @@ const SignUp = () => {
 
     try {
       console.log(loginId);
-      const response = await axios.post("http://localhost:9090/user/idcheck", {
-        loginId: loginId,
-      });
+      const response = await axios.post(
+        process.env.REACT_APP_API_URL + "/user/idcheck",
+        {
+          loginId: loginId,
+        }
+      );
       console.log("response", response);
 
       if (response.status === 200) {
@@ -352,7 +355,7 @@ const SignUp = () => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:9090/user/sms/send?phoneNumber=${phone}`
+        process.env.REACT_APP_API_URL + `/user/sms/send?phoneNumber=${phone}`
       );
       console.log("인증번호 전송", response.data);
       if (response.status === 200) {
@@ -369,7 +372,7 @@ const SignUp = () => {
   const validateVerificationCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:9090/user/sms/validate",
+        process.env.REACT_APP_API_URL + "/user/sms/validate",
         {
           phone: phone,
           code: verificationCode,
@@ -449,7 +452,7 @@ const SignUp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:9090/user/join",
+        process.env.REACT_APP_API_URL + "/user/join",
         data
       );
       if (response.status === 201) {
@@ -462,8 +465,32 @@ const SignUp = () => {
       }
     } catch (error) {
       if (error.response) {
-        console.error("에러 응답:", error.response.data);
-        alert("회원가입 실패: " + error.response.data);
+        const errorMessage = error.response.data;
+        console.error("에러 응답:", errorMessage);
+        if (errorMessage.includes("소셜")) {
+          alert("이미 소셜로 가입된 회원입니다. 계정을 연동하시겠습니까?");
+          const linkingData = {
+            phone: phone,
+            password: password,
+          };
+          try {
+            const linkingResponse = await axios.patch(
+              process.env.REACT_APP_API_URL + "/user/account/linking",
+              linkingData
+            );
+            if (linkingResponse.status === 200) {
+              alert("계정 연동 성공. 로그인 해주세요.");
+              window.location.href = "/login";
+            } else {
+              alert("계정 연동 실패: " + linkingResponse.data);
+            }
+          } catch (linkingError) {
+            console.error("계정 연동 실패:", linkingError.message);
+            alert("계정 연동 중 오류가 발생했습니다.");
+          }
+        } else {
+          alert("회원가입 실패: " + errorMessage);
+        }
       } else {
         console.error("에러 메시지:", error.message);
       }

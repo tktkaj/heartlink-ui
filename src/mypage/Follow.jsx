@@ -94,9 +94,7 @@ function Follow({ onClose, type, userId }) {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/user/profile"
-        );
+        const response = await authAxios.get("/user/profile");
         setLoggedInUserId(response.data);
       } catch (error) {
         console.error("로그인 유저 정보 불러오기 실패:", error);
@@ -112,8 +110,8 @@ function Follow({ onClose, type, userId }) {
         const authAxios = getAuthAxios(access);
         const endpoint =
           type === "follower"
-            ? `http://localhost:9090/follow/follower/${userId}`
-            : `http://localhost:9090/follow/following/${userId}`;
+            ? `/follow/follower/${userId}`
+            : `/follow/following/${userId}`;
 
         const response = await authAxios.get(endpoint);
         console.log("팔로워팔로잉", response.data.content);
@@ -132,8 +130,8 @@ function Follow({ onClose, type, userId }) {
 
       const endpoint =
         type === "follower"
-          ? `http://localhost:9090/follow/delete/${targetUserId}`
-          : `http://localhost:9090/follow/cancel/${targetUserId}`;
+          ? `/follow/delete/${targetUserId}`
+          : `/follow/cancel/${targetUserId}`;
 
       const response = await authAxios.delete(endpoint);
 

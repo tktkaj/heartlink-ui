@@ -4,8 +4,8 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { FiMessageCircle } from 'react-icons/fi'; // FiMessageCircle 추가
-import { getAuthAxios } from '../api/authAxios';
+import { FiMessageCircle } from "react-icons/fi"; // FiMessageCircle 추가
+import { getAuthAxios } from "../api/authAxios";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -17,7 +17,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index:2001;
+  z-index: 2001;
 `;
 
 const ModalContainer = styled.div`
@@ -125,16 +125,16 @@ const FiMessageCircleButton = styled(FiMessageCircle)`
   cursor: pointer;
 `;
 
-export default function FeedDetail({ isOpen, onClose, post, onSave }) {
+export default function FeedDetail({ isOpen, onClose, post, files, onSave }) {
   console.log("EditPostModal 실행!");
-  console.log(`나야 포스트 ${post?.postId}`); // null 체크 추가
-  const [files, setFiles] = useState(post?.files || []);
-  const [text, setText] = useState(post?.content || '');
+  console.log("나야 포스트", JSON.stringify(post, null, 2));
+
+  const [loading, setLoading] = useState(false);
+  const [text, setText] = useState(post?.content || "");
 
   useEffect(() => {
     if (isOpen) {
-      setFiles(post?.files || []);
-      setText(post?.content || '');
+      setText(post?.content || "");
     }
   }, [isOpen, post]);
 
@@ -146,49 +146,41 @@ export default function FeedDetail({ isOpen, onClose, post, onSave }) {
     }
   };
 
-  const handleFileChange = (postId, e) => {
-    const selectedFiles = Array.from(e.target.files);
-    const fileURLs = selectedFiles.map((file) => ({
-      url: URL.createObjectURL(file),
-      type: file.type,
-    }));
-    setFiles((prevFiles) => [...prevFiles, ...fileURLs]);
-  };
-
   const handleSave = async () => {
+    setLoading(true); // 수정 시작
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const requestBody = {
         content: text,
       };
-      const response = await authAxios.put(`http://localhost:9090/feed/${post?.postId}/update`,requestBody);
-  
-      if (response.status === 201) {
-        alert('업로드 하였습니다.');
-        setText(''); 
-        onClose();  
+
+      const response = await authAxios.put(
+        `/feed/${post?.postId}/update`,
+        requestBody
+      );
+
+      if (response.status === 200) {
+        alert("게시글이 수정되었습니다.");
+        onSave({ ...post, content: text });
+        setText(""); // 텍스트 초기화
+        onClose(); // 모달 닫기
+        window.location.href =
+          process.env.REACT_APP_API_URL + `/user/profile/${post?.userId}`;
       } else {
-        throw new Error('업로드에 실패했습니다.');
+        throw new Error("업로드에 실패했습니다.");
       }
     } catch (error) {
-
-      if (error.response) {
-        console.error('서버 오류:', error.response.data);
-        alert('서버 오류: ' + error.response.data);
-      } else {
-        console.error('업로드 중 오류 발생:', error.message); 
-        alert('업로드 중 오류가 발생했습니다.');
-      }
+      console.error("업로드 중 오류 발생:", error.message);
+      alert("내 게시글만 수정할 수 있습니다.");
+      onClose(); // 모달 닫기
+    } finally {
+      setLoading(false); // 로딩 종료
     }
-    onClose(); 
   };
-
 
   return (
     <div>
-      {/* FiMessageCircle 클릭 시 모달 열기 */}
-
       <ModalOverlay onClick={handleOverlayClick}>
         <CloseButton onClick={onClose}>
           <IoClose />
@@ -200,19 +192,24 @@ export default function FeedDetail({ isOpen, onClose, post, onSave }) {
                 {files.length === 0 ? (
                   <div>선택된 파일이 없습니다.</div>
                 ) : (
-                  files.map((file, index) => (
-                    <div key={index}>
-                      {file.type && file.type.startsWith('image/') ? (
-                        <PreviewImage src={file.url} alt={`Preview ${index + 1}`} />
-                      ) : file.type && file.type.startsWith('video/') ? (
-                        <PreviewVideo controls>
-                          <source src={file.url} type={file.type} />
-                        </PreviewVideo>
-                      ) : (
-                        <div>미리보기가 지원되지 않는 파일입니다.</div>
-                      )}
-                    </div>
-                  ))
+                  files.map((file, index) => {
+                    return (
+                      <div key={index}>
+                        {file.fileType && file.fileType === "IMAGE" ? (
+                          <PreviewImage
+                            src={file.fileUrl}
+                            alt={`Preview ${index + 1}`}
+                          />
+                        ) : file.fileType && file.fileType === "VIDEO" ? (
+                          <PreviewVideo controls>
+                            <source src={file.fileUrl} type="video/mp4" />
+                          </PreviewVideo>
+                        ) : (
+                          <div>미리보기가 지원되지 않는 파일입니다.</div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </Carousel>
             </LeftSection>
@@ -230,4 +227,3 @@ export default function FeedDetail({ isOpen, onClose, post, onSave }) {
     </div>
   );
 }
-

@@ -8,6 +8,7 @@ import {
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import { getAuthAxios } from "../api/authAxios";
+import { getNewRefreshToken } from "../api/refresh";
 
 export default function CoupleAlert() {
   const [open, setOpen] = useState(true);
@@ -17,12 +18,17 @@ export default function CoupleAlert() {
     setOpen(false);
     window.history.back();
   };
-
   const handleBroken = async () => {
     try {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
-      const res = await authAxios.put("http://localhost:9090/couple/unlink");
+      const res = await authAxios.put("/couple/unlink");
+
+      // 커플 해지 후 새로운 토큰 받아오기
+      const { accessToken, refreshToken } = await getNewRefreshToken();
+      localStorage.setItem("access", accessToken);
+      localStorage.setItem("refresh", refreshToken);
+
       console.log("커플 해지 성공", res);
       alert("커플 해지가 완료되었습니다.");
       setOpen(false);

@@ -57,57 +57,59 @@ export default function CoupleGraph() {
   const [match2, setMatch2] = useState(null);
 
   useEffect(() => {
-    console.log("커플그래프의 useEffect 실행");
     const fetchData = async () => {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const res1 = await authAxios.get(
-          "http://localhost:9090/couple/statistics/dailyMatch"
-        );
+        
+        // 첫 번째 API 호출
+        const res1 = await authAxios.get("/couple/statistics/dailyMatch");
         const {
           gender_m_0_rate,
           gender_m_1_rate,
           gender_f_0_rate,
           gender_f_1_rate,
+          match1,
+          match2
         } = res1.data;
+
+        // 두 번째 API 호출
+        const res2 = await authAxios.get("/couple/missionmatch/questions");
+
+        // 상태 업데이트
         setM0(gender_m_0_rate);
         setM1(gender_m_1_rate);
         setF0(gender_f_0_rate);
         setF1(gender_f_1_rate);
-
-        console.log("API 응답12121212:", res1);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    const fetchData2 = async () => {
-      try {
-        const res2 = await axios.get(
-          "http://localhost:9090/couple/missionmatch/questions"
-        );
-        console.log("API 응답:", res2);
-        const { match1, match2 } = res2.data;
         setMatch1(match1);
         setMatch2(match2);
-        setFemaleData([
-          { name: match1, value: f0rate }, // 기본값 설정
-          { name: match2, value: f1rate },
-        ]);
 
-        setMaleData([
-          { name: match1, value: m0rate }, // 기본값 설정
-          { name: match2, value: m1rate },
-        ]);
+        // 그래프 데이터 직접 설정
+        const newFemaleData = [
+          { name: match1, value: gender_f_0_rate },
+          { name: match2, value: gender_f_1_rate }
+        ];
+
+        const newMaleData = [
+          { name: match1, value: gender_m_0_rate },
+          { name: match2, value: gender_m_1_rate }
+        ];
+
+        setFemaleData(newFemaleData);
+        setMaleData(newMaleData);
+
+        console.log("설정된 그래프 데이터:", {
+          여성: newFemaleData,
+          남성: newMaleData
+        });
+
       } catch (err) {
-        console.log(err);
+        console.log("데이터 가져오기 오류:", err);
       }
     };
 
     fetchData();
-    fetchData2();
-  }, [match1, match2, f0rate, f1rate, m0rate, m1rate]);
+  }, []);
 
   return (
     <GraphStyle>

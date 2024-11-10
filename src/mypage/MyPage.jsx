@@ -9,7 +9,8 @@ import { RiUserSettingsLine } from "react-icons/ri";
 import { getAuthAxios } from "../api/authAxios";
 import BlockUser from "./BlockUser";
 import Follow from "./Follow";
-import { IoMdHeartEmpty,IoMdHeart  } from "react-icons/io";
+import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
+import FeedDetail from "../layout/FeedDetail";
 
 let Content = styled.div`
   background-color: #f8f8fa;
@@ -179,7 +180,7 @@ let StatusMessage = styled.span`
 `;
 
 let ButtonWrap = styled.div`
-  margin-top:3px;
+  margin-top: 3px;
   display: flex;
   gap: 10px;
   height: 4vh;
@@ -262,12 +263,13 @@ let Post = styled.div`
   }
 `;
 
-let PostLink = styled.a`
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 1;
-`;
+// let PostLink = styled.a`
+//   width: 100%;
+//   height: 100%;
+//   display: block;
+//   z-index: 1;
+//   cursor: pointer;
+// `;
 
 function MyPage() {
   const [profile, setProfile] = useState(null);
@@ -295,9 +297,19 @@ function MyPage() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [isBlocker, setIsBlocker] = useState();
   const [isBlocked, setIsBlocked] = useState();
+  const [isFeedDetail, setIsFeedDetail] = useState(false);
+  const [postDetails, setPostDetails] = useState("null");
+  const [coupleId, setCoupleId] = useState(null);
 
   const { userId } = useParams();
   console.log("Retrieved userId:", userId);
+
+  const handleMessageClick = (post) => {
+    console.log("Selected PostId: ", post);
+    setPostDetails(post);
+    setIsFeedDetail(true);
+    console.log("isFeedDetail : ", isFeedDetail);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -317,9 +329,7 @@ function MyPage() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const userIdRes = await authAxios.get(
-          "http://localhost:9090/user/profile"
-        );
+        const userIdRes = await authAxios.get("/user/profile");
         console.log("접속중인 아이디는:", userIdRes.data);
         setIding(userIdRes.data);
 
@@ -341,8 +351,17 @@ function MyPage() {
         } else {
           setPosts([]); // 빈 배열로 설정
         }
+
+        // 커플 정보 조회
+        const coupleResponse = await authAxios.get("/user/couple");
+        console.log(
+          "접속한 아이디의 커플아이디:",
+          coupleResponse.data.coupleUserId
+        );
+        setCoupleId(coupleResponse.data.coupleUserId);
       } catch (err) {
         setError(err);
+        console.error("데이터 조회 실패:", err);
       } finally {
         setLoading(false);
       }
@@ -357,12 +376,10 @@ function MyPage() {
       const authAxios = getAuthAxios(access);
 
       if (isBlocked) {
-        await authAxios.delete(
-          `http://localhost:9090/user/block/cancel/${userId}`
-        );
+        await authAxios.delete(`/user/block/cancel/${userId}`);
         setIsBlocked(false);
       } else {
-        await authAxios.post(`http://localhost:9090/user/block/${userId}`);
+        await authAxios.post(`/user/block/${userId}`);
         setIsBlocked(true);
       }
     } catch (error) {
@@ -383,12 +400,9 @@ function MyPage() {
       if (editNickname !== profile.nickname) {
         console.log("닉네임 변경 요청:", editNickname);
         try {
-          await authAxios.patch(
-            `http://localhost:9090/user/profile/${userId}/update/nickname`,
-            {
-              nickName: editNickname,
-            }
-          );
+          await authAxios.patch(`/user/profile/${userId}/update/nickname`, {
+            nickName: editNickname,
+          });
         } catch (error) {
           console.error("닉네임 변경 실패:", error);
           isSuccess = false;
@@ -399,12 +413,9 @@ function MyPage() {
       if (editBio !== profile.bio) {
         console.log("상태 메시지 변경 요청:", editBio);
         try {
-          await authAxios.patch(
-            `http://localhost:9090/user/profile/${userId}/update/bio`,
-            {
-              bio: editBio,
-            }
-          );
+          await authAxios.patch(`/user/profile/${userId}/update/bio`, {
+            bio: editBio,
+          });
         } catch (error) {
           console.error("상태 메시지 변경 실패:", error);
           isSuccess = false;
@@ -419,7 +430,7 @@ function MyPage() {
 
         try {
           await authAxios.patch(
-            `http://localhost:9090/user/profile/${userId}/update/img`,
+            `/user/profile/${userId}/update/img`,
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
@@ -504,7 +515,7 @@ function MyPage() {
 
       console.log("팔로우상태:", isFollowing);
       if (isFollowing) {
-        await authAxios.delete(`http://localhost:9090/follow/cancel/${userId}`);
+        await authAxios.delete(`/follow/cancel/${userId}`);
         setIsFollowing(false);
         setProfile((prev) => ({
           ...prev,
@@ -512,7 +523,7 @@ function MyPage() {
           followerCount: prev.followerCount - 1,
         }));
       } else {
-        await authAxios.post(`http://localhost:9090/follow/${userId}`);
+        await authAxios.post(`/follow/${userId}`);
         setIsFollowing(true);
         setProfile((prev) => ({
           ...prev,
@@ -531,9 +542,7 @@ function MyPage() {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
       const response = await authAxios.patch(
-        `http://localhost:9090/user/profile/${userId}/update/${
-          isPrivate ? "public" : "private"
-        }`
+        `/user/profile/${userId}/update/${isPrivate ? "public" : "private"}`
       );
       if (response.status === 200) {
         setIsPrivate(!isPrivate);
@@ -654,47 +663,49 @@ function MyPage() {
             </EditPopup>
           )}
           <FollowWrap>
-          {Iding && userId && String(Iding) !== userId && (
-                <ButtonWrap>
-                  <FollowButton onClick={handleFollow}>
-                    {profile.followStatus
-                      ? "요청중"
-                      : profile.followed
-                      ? "팔로잉"
-                      : "팔로우"}
-                  </FollowButton>
+            {Iding && userId && String(Iding) !== userId && (
+              <ButtonWrap>
+                <FollowButton onClick={handleFollow}>
+                  {profile.followStatus
+                    ? "요청중"
+                    : profile.followed
+                    ? "팔로잉"
+                    : "팔로우"}
+                </FollowButton>
+                {userId !== String(coupleId) && (
                   <BlockButton onClick={handleBlock}>
                     {isBlocked ? "차단해제" : "차단하기"}
                   </BlockButton>
-                </ButtonWrap>
-              )}
-          {Iding && userId && String(Iding) === userId && (
-                <SettingWrap ref={settingRef}>
-                  <FaRegPenToSquare
-                    className="icon"
-                    onClick={() => setShowEditPopup(true)}
-                  />
-                  <RiUserSettingsLine
-                    className="icon"
-                    onClick={() => setShowSettingPopup(!showSettingPopup)}
-                  />
-                  {showSettingPopup && (
-                    <SettingPopup>
-                      <SettingOption
-                        onClick={() => {
-                          setShowBlockUser(true);
-                          setShowSettingPopup(false);
-                        }}
-                      >
-                        차단유저 관리
-                      </SettingOption>
-                      <SettingOption onClick={handlePrivacyToggle}>
-                        {isPrivate ? "계정 공개" : "계정 비공개"}
-                      </SettingOption>
-                    </SettingPopup>
-                  )}
-                </SettingWrap>
-              )}
+                )}
+              </ButtonWrap>
+            )}
+            {Iding && userId && String(Iding) === userId && (
+              <SettingWrap ref={settingRef}>
+                <FaRegPenToSquare
+                  className="icon"
+                  onClick={() => setShowEditPopup(true)}
+                />
+                <RiUserSettingsLine
+                  className="icon"
+                  onClick={() => setShowSettingPopup(!showSettingPopup)}
+                />
+                {showSettingPopup && (
+                  <SettingPopup>
+                    <SettingOption
+                      onClick={() => {
+                        setShowBlockUser(true);
+                        setShowSettingPopup(false);
+                      }}
+                    >
+                      차단유저 관리
+                    </SettingOption>
+                    <SettingOption onClick={handlePrivacyToggle}>
+                      {isPrivate ? "계정 공개" : "계정 비공개"}
+                    </SettingOption>
+                  </SettingPopup>
+                )}
+              </SettingWrap>
+            )}
             <FollowUl>
               <FollowLi
                 onClick={() => {
@@ -702,8 +713,12 @@ function MyPage() {
                   setShowFollow(true);
                 }}
               >
-                <Nickname style={{ paddingRight: "8px",fontSize:"18px"}}>팔로워</Nickname>
-                <Nickname style={{fontSize:"18px"}}>{profile.followerCount}</Nickname>
+                <Nickname style={{ paddingRight: "8px", fontSize: "18px" }}>
+                  팔로워
+                </Nickname>
+                <Nickname style={{ fontSize: "18px" }}>
+                  {profile.followerCount}
+                </Nickname>
               </FollowLi>
               <FollowLi
                 onClick={() => {
@@ -711,27 +726,35 @@ function MyPage() {
                   setShowFollow(true);
                 }}
               >
-                <Nickname style={{ paddingLeft: "20px", paddingRight: "10px", fontSize:"18px"}}>
+                <Nickname
+                  style={{
+                    paddingLeft: "20px",
+                    paddingRight: "10px",
+                    fontSize: "18px",
+                  }}
+                >
                   팔로잉
                 </Nickname>
-                <Nickname style={{fontSize:"18px"}}>{profile.followingCount}</Nickname>
+                <Nickname style={{ fontSize: "18px" }}>
+                  {profile.followingCount}
+                </Nickname>
               </FollowLi>
             </FollowUl>
           </FollowWrap>
         </Header>
         <MenuWrap>
           <Menu onClick={() => handleTabClick("feed")}>
-          {activeTab === "feed" ? (
-                  <IoGrid style={{ width: "100%", height: "100%" }} />
-                ) : (
-                  <IoGridOutline style={{ width: "100%", height: "100%" }} />
-                )}
+            {activeTab === "feed" ? (
+              <IoGrid style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <IoGridOutline style={{ width: "100%", height: "100%" }} />
+            )}
           </Menu>
           {String(Iding) === userId && (
             <>
               <Menu onClick={() => handleTabClick("like")}>
                 {activeTab === "like" ? (
-                  <IoMdHeart style={{ width: "100%", height: "100%"}} />
+                  <IoMdHeart style={{ width: "100%", height: "100%" }} />
                 ) : (
                   <IoMdHeartEmpty style={{ width: "100%", height: "100%" }} />
                 )}
@@ -754,12 +777,14 @@ function MyPage() {
             <div>차단당한 상대의 피드는 볼 수 없습니다.</div>
           ) : shouldShowPosts ? (
             posts.length > 0 ? (
-              posts.map((post, index) => (
-                <Post key={index}>
+              posts.map((post) => (
+                <Post key={post.PostId}>
                   {post.fileType === "IMAGE" && (
-                    <img src={post.fileUrl} alt="썸네일" />
+                    <img style={{cursor:"pointer"}} src={post.fileUrl} onClick={() => handleMessageClick(post)} alt="썸네일" />
                   )}
-                  <PostLink></PostLink>
+                  {/* <PostLink
+                  onClick={() => handleMessageClick(post)}
+                  /> */}
                 </Post>
               ))
             ) : (
@@ -770,6 +795,13 @@ function MyPage() {
           )}
         </PostList>
       </Content>
+      {isFeedDetail && (
+        <FeedDetail
+          isOpen={isFeedDetail}
+          onClose={() => setIsFeedDetail(false)}
+          post={postDetails} // 선택된 포스트 전달
+        />
+      )}
     </div>
   );
 }

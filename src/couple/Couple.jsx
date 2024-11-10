@@ -8,9 +8,9 @@ import LinkMatchRecord from "./LinkMatchRecord";
 import { useAuth } from "../api/AuthContext";
 import CoupleGraph from "./CoupleGraph";
 import Dday from "./Dday";
-import defaultImage from "../image/mypage/bono.jpg";
+import defaultImage from "../image/couple/3dheart.jpg";
 import FeedDetail from "../layout/FeedDetail";
-
+import ads from "../image/couple/로스테이_테스트.png";
 
 const MainContainer = styled.div`
   background-color: #f8f8fa;
@@ -36,13 +36,19 @@ const FeedBox = styled.div`
   flex-direction: column;
   align-items: center;
 `;
-const Advert = styled.div`
-  width: 15vw;
-  height: 60vh;
-  background-color: white;
+const Advert = styled.a`
+  display: block;
+  width: 300px;
+  height: 649px;
+  background-image: url(${ads});
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 20px;
   margin-top: 60px;
+  cursor: pointer;
+  text-decoration: none;
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const LoveHeader = styled.div`
@@ -61,7 +67,6 @@ const LinkMatch = styled.div`
   font-family: "SANGJUGyeongcheonIsland";
   position: relative;
   display: inline-block;
-  
 
   &::after {
     content: "";
@@ -139,7 +144,6 @@ const LinkMission = styled.div`
   width: 67%;
   margin-right: 60px;
   // margin-top: 100px;
-
 `;
 const MissionHeader = styled.div`
   width: 100%;
@@ -170,6 +174,11 @@ const BingoCell = styled.div`
   justify-content: center;
   border-radius: 15px;
   font-size: 18px;
+  color: black;
+  text-shadow: -2px -2px 2px rgba(255,255,255,0.8),  
+               2px -2px 2px rgba(255,255,255,0.8),
+               -2px 2px 2px rgba(255,255,255,0.8),
+               2px 2px 2px rgba(255,255,255,0.8);
   background-image: url(${(props) => props.image});
   background-size: cover;
   background-position: center;
@@ -202,24 +211,36 @@ export default function Couple() {
   const [selectedMatch, setSelectedMatch] = useState(null);
 
   const [dday, setDday] = useState(null);
-  const [isMatchSelected, setIsMatchSelected] = useState(''); // 매치 선택여부 확인
+  const [isMatchSelected, setIsMatchSelected] = useState(""); // 매치 선택여부 확인
+
+  const [adUrl, setAdUrl] = useState("");
+
+  useEffect(() => {
+    const fetchAdUrl = async () => {
+      try {
+    const access = localStorage.getItem("access");
+    const authAxios = getAuthAxios(access);
+    const response = await authAxios.get("/ads/lostayAd");
+    setAdUrl(response.data); 
+      } catch (error) {
+        console.error("광고 가져오는 중 오류 발생:", error);
+      }
+    };
+    fetchAdUrl();
+  }, []);
 
   useEffect(() => {
     const fetchYearMonth = async () => {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        const response = await authAxios.get(
-          "http://localhost:9090/couple/missionAllList"
-        );
+        const response = await authAxios.get("/couple/missionAllList");
         const { years, months } = response.data;
         setYears(years);
         setMonths(months.map((month) => month.toString()));
 
         // D-day 조회
-        const ddayResponse = await authAxios.get(
-          "http://localhost:9090/couple/dday"
-        );
+        const ddayResponse = await authAxios.get("/couple/dday");
         setDday(ddayResponse.data);
         console.log("dday", ddayResponse.data);
       } catch (error) {
@@ -244,9 +265,7 @@ export default function Couple() {
       setLoading(true);
       try {
         await fetchMissionTags(selectedYear, selectedMonth);
-        const match = await authAxios.get(
-          "http://localhost:9090/couple/missionmatch/questions"
-        );
+        const match = await authAxios.get("/couple/missionmatch/questions");
         console.log(match);
         setMission(match.data);
       } catch (err) {
@@ -258,7 +277,6 @@ export default function Couple() {
     fetchData();
     checkMyAnswer();
   }, [selectedYear, selectedMonth]);
-
 
   const handleMatchSelect = async (couple) => {
     const questionId = mission.linkMatchId;
@@ -274,8 +292,8 @@ export default function Couple() {
 
     try {
       const access = localStorage.getItem("access");
-      const response = await axios.post(
-        "http://localhost:9090/couple/missionmatch/questions/choose",
+      const response = await authAxios.post(
+        "/couple/missionmatch/questions/choose",
         matchAnswer,
         {
           headers: {
@@ -295,8 +313,8 @@ export default function Couple() {
   const fetchMissionTags = async (year, month) => {
     try {
       const access = localStorage.getItem("access");
-      const response = await axios.get(
-        "http://localhost:9090/couple/missionslink",
+      const response = await authAxios.get(
+        "/couple/missionslink",
         { params: { year, month } },
         {
           headers: {
@@ -314,45 +332,26 @@ export default function Couple() {
   const checkMyAnswer = async () => {
     try {
       const access = localStorage.getItem("access");
-      const response = await axios.get(
-        "http://localhost:9090/couple/checkMyAnswer",
-        {
-          headers: {
-            Authorization: access
-          }
-        }
-      );
+      const response = await authAxios.get("/couple/checkMyAnswer", {
+        headers: {
+          Authorization: access,
+        },
+      });
       console.log(response.data);
       setIsMatchSelected(response.data);
-      console.log("내 매치 선택지지지ㅣ지지 : ", isMatchSelected);
-
     } catch (error) {
       console.error("미션 태그 가져오는 중 오류 발생:", error);
     }
   };
 
-  // const fetchMyMissionTags = async (year, month) => {
-  //   try {
-  //     const access = localStorage.getItem("access");
-  //     const response = await axios.get("http://localhost:9090/couple/missionStatus", { params: { year, month } }, {
-  //       headers: {
-  //         Authorization: access,
-  //       },
-  //     });
-  //     console.log("내가 완료한 미션 리스트"+response.data);
-  //     setMyMission(response.data);
-  //   } catch (error) {
-  //     console.error("내가 완료한 미션 리스트 가져오는 중 오류 발생:", error);
-  //   }
-  // }
-
-
   const getImageForTheme = (theme) => {
     // 현재 테마의 missionId와 일치하는 완료된 미션 찾기
-    const completedMission = myMission.find(mission => mission.missionId === theme.missionId);
+    const completedMission = myMission.find(
+      (mission) => mission.missionId === theme.missionId
+    );
     console.log("completedMission : ", completedMission);
     // 완료된 미션이 있으면 해당 이미지 URL 반환, 없으면 빈 문자열 반환
-    return completedMission ? completedMission.postImgUrl : '';
+    return completedMission ? completedMission.postImgUrl : "";
   };
 
   const handleYearSelect = (year) => {
@@ -368,55 +367,60 @@ export default function Couple() {
   const [isLinkMatchOpen, setIsLinkMatchOpen] = useState(false);
   const openRecord = () => setIsLinkMatchOpen(true);
   const closeRecord = () => setIsLinkMatchOpen(false);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const access = localStorage.getItem("access");
       const authAxios = getAuthAxios(access);
-  
+
       try {
         // 전체 미션 가져오기
-        const missionResponse = await authAxios.get("http://localhost:9090/couple/missionslink", {
+        const missionResponse = await authAxios.get("/couple/missionslink", {
           params: { year: selectedYear, month: selectedMonth },
           headers: { Authorization: access },
         });
         console.log("해야하는 미션 리스트", missionResponse.data);
         let allMissions = missionResponse.data;
-  
+
         // 내가 완료한 미션 가져오기
-        const myMissionResponse = await authAxios.get("http://localhost:9090/couple/missionStatus", {
+        const myMissionResponse = await authAxios.get("/couple/missionStatus", {
           params: { year: selectedYear, month: selectedMonth },
           headers: { Authorization: access },
         });
         console.log("내가 완료한 미션 리스트", myMissionResponse.data);
         const completedMissions = myMissionResponse.data;
-        
-        const updatedMissions = allMissions.map(mission=>{
+
+        const updatedMissions = allMissions.map((mission) => {
           const completedMission = completedMissions.find(
-            completed=>completed.postId === mission.missionId);
-            return completedMission ? { ...mission, ...completedMission } : mission;
+            (completed) => completed.postId === mission.missionId
+          );
+          return completedMission
+            ? { ...mission, ...completedMission }
+            : mission;
         });
+
         setThemes(updatedMissions);
         setMyMission(completedMissions);
-        console.log(myMission[0].postImgUrl);
-        console.log(completedMissions);
 
       } catch (error) {
-        console.error("미션 또는 완료된 미션 데이터를 가져오는 중 오류 발생:", error);
+        console.error(
+          "미션 또는 완료된 미션 데이터를 가져오는 중 오류 발생:",
+          error
+        );
       }
     };
-  
+
     fetchData();
   }, [selectedYear, selectedMonth]);
 
-  const [postDetails, setPostDetails] = useState('null');
-const [isFeedDetail, setIsFeedDetail] = useState(false);
-const handleMessageClick = (post) => {
-  console.log("Selected PostId: ", post);
-  setPostDetails(post);
-  setIsFeedDetail(true);
-  console.log('isFeedDetail : ', isFeedDetail)
-};
+  const [postDetails, setPostDetails] = useState("null");
+  const [isFeedDetail, setIsFeedDetail] = useState(false);
+  const handleMessageClick = (post) => {
+    console.log("Selected PostId: ", post);
+    setPostDetails(post);
+    setIsFeedDetail(true);
+    console.log("isFeedDetail : ", isFeedDetail);
+  };
 
   return (
     <>
@@ -461,9 +465,14 @@ const handleMessageClick = (post) => {
               <Match
                 onClick={() => handleMatchSelect(0)}
                 style={{
-                  border: isMatchSelected !== '' ? 
-                    (isMatchSelected === 0 ? "5px dotted pink" : "none") :
-                    (selectedMatch === 0 ? "5px dotted pink" : "none")
+                  border:
+                    isMatchSelected !== ""
+                      ? isMatchSelected === 0
+                        ? "5px dotted pink"
+                        : "none"
+                      : selectedMatch === 0
+                      ? "5px dotted pink"
+                      : "none",
                 }}
               >
                 <MatchTxt>
@@ -474,9 +483,14 @@ const handleMessageClick = (post) => {
               <Match
                 onClick={() => handleMatchSelect(1)}
                 style={{
-                  border: isMatchSelected !== '' ?
-                    (isMatchSelected === 1 ? "5px dotted pink" : "none") :
-                    (selectedMatch === 1 ? "5px dotted pink" : "none")
+                  border:
+                    isMatchSelected !== ""
+                      ? isMatchSelected === 1
+                        ? "5px dotted pink"
+                        : "none"
+                      : selectedMatch === 1
+                      ? "5px dotted pink"
+                      : "none",
                 }}
               >
                 <MatchTxt>
@@ -484,7 +498,14 @@ const handleMessageClick = (post) => {
                 </MatchTxt>
               </Match>
             </LinkMatchContent>
-            <div style={{ display: "flex", margin: "auto", width: "35vw", position: "relative" }}>
+            <div
+              style={{
+                display: "flex",
+                margin: "auto",
+                width: "35vw",
+                position: "relative",
+              }}
+            >
               <LinkMission>
                 <MissionHeader>
                   <LinkMatch>Link Mission</LinkMatch>
@@ -564,40 +585,51 @@ const handleMessageClick = (post) => {
                   </LinkMatchDrop>
                 </MissionHeader>
                 <BingoBoard>
-                {Array.isArray(themes) && themes.map((theme) => {
-                  const matchedMission = myMission.find(mission => mission.missionId === theme.missionId);
-                  return (
-                    <BingoCell
-                      key={theme.missionId}
-                      {...(matchedMission && { onClick: (e) => handleMessageClick(matchedMission.postId) })}
-                      style={{ 
-                        cursor: matchedMission ? 'pointer' : 'default',
-                        backgroundImage: getImageForTheme(theme)==='' ? '' : `url(${defaultImage})`
-                      }}
-                    >
-                      &{theme.linkTag}
-                    </BingoCell>
-                  );
-                })}
+                  {Array.isArray(themes) &&
+                    themes.map((theme) => {
+                      const matchedMission = myMission.find(
+                        (mission) => mission.missionId === theme.missionId
+                        
+                      );
+                      // console.log("matchedMissionnnnnn : ", matchedMission);
+                      return (
+                        <BingoCell
+                          key={theme.missionId}
+                          {...(matchedMission && {
+                            onClick: (e) =>
+                              handleMessageClick(matchedMission.postId),
+                          })}
+                          style={{
+                            cursor: matchedMission ? "pointer" : "default",
+                            backgroundImage:
+                              getImageForTheme(theme) === ""
+                                ? ``
+                                : `url(${matchedMission.postImgUrl})`,
+                          }}
+                        >
+                          &{theme.linkTag}
+                        </BingoCell>
+                      );
+                    })}
                 </BingoBoard>
               </LinkMission>
               <CoupleGraph></CoupleGraph>
             </div>
           </FeedBox>
-          <Advert>
-            <p>광고입니다</p>
+          <Advert href={adUrl} rel="lostay ads">
+            {/* 로스테이 광고 */}
           </Advert>
         </Container>
         <Upload />
         {isLinkMatchOpen && <LinkMatchRecord closeRecord={closeRecord} />}
         {isFeedDetail && (
-                <FeedDetail
-                    isOpen={isFeedDetail}
-                    onClose={() => setIsFeedDetail(false)}
-                    post={postDetails} // 선택된 포스트 전달
-                />
-            )}
+          <FeedDetail
+            isOpen={isFeedDetail}
+            onClose={() => setIsFeedDetail(false)}
+            post={{postId: postDetails}} // 선택된 포스트 전달
+          />
+        )}
       </MainContainer>
-  </>
+    </>
   );
 }

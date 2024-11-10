@@ -22,7 +22,7 @@ export default function Example() {
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:9090/logout");
+      await axios.get(process.env.REACT_APP_API_URL + "/logout");
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
       localStorage.removeItem("RefreshToken");

@@ -153,7 +153,7 @@ export default function FindId({ onClose }) {
 
     try {
       const response = await axios.post(
-        `http://localhost:9090/user/sms/send?phoneNumber=${phone}`
+        process.env.REACT_APP_API_URL + `/user/sms/send?phoneNumber=${phone}`
       );
       console.log("인증번호 전송", response.data);
       setResult(response.data);
@@ -176,7 +176,7 @@ export default function FindId({ onClose }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:9090/user/sms/validate",
+        process.env.REACT_APP_API_URL + "/user/sms/validate",
         {
           phone: phone,
           code: verificationCode,
@@ -188,7 +188,7 @@ export default function FindId({ onClose }) {
 
       if (response.data === "인증번호가 확인되었습니다.") {
         const findIdResponse = await axios.post(
-          "http://localhost:9090/user/find/loginId",
+          process.env.REACT_APP_API_URL + "/user/find/loginId",
           {
             phone: phone,
           }
@@ -204,11 +204,14 @@ export default function FindId({ onClose }) {
   const handlePasswordChange = async () => {
     try {
       console.log(phone, foundId, newPassword);
-      await axios.patch("http://localhost:9090/user/update/password", {
-        phone: phone,
-        loginId: foundId,
-        password: newPassword,
-      });
+      await axios.patch(
+        process.env.REACT_APP_API_URL + "/user/update/password",
+        {
+          phone: phone,
+          loginId: foundId,
+          password: newPassword,
+        }
+      );
       setPasswordResult("비밀번호가 성공적으로 변경되었습니다.");
       setPasswordError("");
       setShowLoginButton(true);
