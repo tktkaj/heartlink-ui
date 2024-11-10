@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { format } from "date-fns";
-import { getAuthAxios } from "../api/authAxios";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const MenuContainer = styled.div`
   width: 400px;
@@ -53,14 +54,14 @@ const AlarmTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 18px;
-  width: 350px;
+  width: 250px;
   justify-content: center;
   height: 60px;
   gap: 5px;
 `;
 
 const AlarmText = styled.div`
-  width: 240px;
+  width: 230px;
   color: #333;
   font-size: 0.9rem;
 `;
@@ -92,75 +93,107 @@ const DeclineButton = styled.button`
 `;
 
 export default function AlarmMenu() {
-  // 받아온 notifications를 저장할 state
-  const [notifications, setNotificactions] = useState();
-  //  axios 연결
+    const token = localStorage.getItem("access");
+    const navigate = useNavigate();
+    const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    const access = localStorage.getItem("access");
-    const authAxios = getAuthAxios(access);
+    useEffect(() => {
+        axios.get("http://localhost:9090/notifications", {
+            headers: {
+                Authorization: `${token}`
+            }
+        }).then((response) => {
+            setNotifications(response.data);
+        }).catch((error) => console.error(error));
+    }, []);
 
-    authAxios
-      .get("/notifications")
-      .then((response) => {
-        setNotificactions(response.data);
-      })
-      .catch();
-  }, []);
+    const handleConfirmFollow = async (notificationId, senderId) => {
+        axios.post(`http://localhost:9090/notifications/confirm/${notificationId}`, null, {
+            headers: {
+                Authorization: `${token}`
+            },
+            params: {
+                senderId: senderId
+            }
+        }).then(() => {
+            axios.get("http://localhost:9090/notifications", {
+                headers: {
+                    Authorization: `${token}`
+                }
+            }).then((response) => {
+                setNotifications(response.data);
+            }).catch((error) => console.error(error));
+        }).catch((err) => {
+            if (err.response) {
+                switch (err.response.status) {
+                    case 500:
+                        alert(err.response.data);
+                        break;
+                    case 404:
+                        navigate("/notfound");
+                        break;
+                    default:
+                        console.error(err);
+                }
+            }
+        });
+    }
 
-  return (
-    <>
-      <MenuContainer>
-        <div
-          style={{
-            fontSize: "1.5rem",
-            marginBottom: "10px",
-            paddingLeft: "2vw",
-          }}
-        >
-          <h1>알림</h1>
-        </div>
-        <Alarms>
-          {notifications &&
-            notifications.map((notification, index) => {
-              //  오늘로부터 얼마나 지난 메세지인지 일자를 보여주기 위한 날짜 계산
+    const handleDenyFollow = async (notificationId) => {
+        axios.post(`http://localhost:9090/notifications/deny/${notificationId}`, null, {
+            headers: {
+                Authorization: `${token}`
+            }
+        }).then(() => {
+            axios.get("http://localhost:9090/notifications", {
+                headers: {
+                    Authorization: `${token}`
+                }
+            }).then((response) => {
+                setNotifications(response.data);
+            }).catch((error) => console.error(error));
+        }).catch((err) => {
+            if (err.response) {
+                switch (err.response.status) {
+                    case 500:
+                        alert(err.response.data);
+                        break;
+                    case 404:
+                        navigate("/notfound");
+                        break;
+                    default:
+                        console.error(err);
+                }
+            }
+        });
+    }
 
-              //  날짜 포맷팅
-              let today = format(new Date(), "yyyy-MM-dd");
-              let createDate = format(notification.createdAt, "yyyy-MM-dd");
+    return (
+        <MenuContainer>
+            <Alarms>
+                {notifications.map((notification, index) => {
+                    const today = format(new Date(), 'yyyy-MM-dd');
+                    const createDate = format(new Date(notification.createdAt), 'yyyy-MM-dd');
+                    const diff = Math.ceil((new Date(today) - new Date(createDate)) / (1000 * 60 * 60 * 24));
 
-              const oldDate = new Date(today);
-              const newDate = new Date(createDate);
-
-              // 실질적인 날짜 계산
-              let diff = Math.abs(newDate.getTime() - oldDate.getTime());
-              diff = Math.ceil(diff / (1000 * 60 * 60 * 24));
-              console.log(notification.otherUserImg);
-              return (
-                <AlarmItem
-                  key={index}
-                  onClick={() => (window.location.href = notification.link)}
-                >
-                  <ProfileImage src={notification.otherUserImg} />
-                  <AlarmTextContainer>
-                    <AlarmText>{notification.message}</AlarmText>
-                    {notification.type == "PRIVATE_FOLLOW_REQUEST" && (
-                      <ButtonContainer>
-                        <AcceptButton>수락</AcceptButton>
-                        <DeclineButton>거절</DeclineButton>
-                      </ButtonContainer>
-                    )}
-                    {notification.type !== "PRIVATE_FOLLOW_REQUEST" && (
-                      <AlarmTime>
-                        {diff == 0 ? "오늘" : `${diff}일전`}
-                      </AlarmTime>
-                    )}
-                  </AlarmTextContainer>
-                </AlarmItem>
-              );
-            })}
-        </Alarms>
-      </MenuContainer>
-    </>
-  );
+                    return (
+                        <AlarmItem key={index}>
+                            <ProfileImage src={notification.otherUserImg} onClick={() => (window.location.href = notification.link)} />
+                            <AlarmTextContainer>
+                                <AlarmText onClick={() => (window.location.href = notification.link)}>{notification.message}</AlarmText>
+                                {notification.type === 'PRIVATE_FOLLOW_REQUEST' ? (
+                                    <ButtonContainer>
+                                        <AcceptButton onClick={() => handleConfirmFollow(notification.id, notification.senderId)}>수락</AcceptButton>
+                                        <DeclineButton onClick={() => handleDenyFollow(notification.id)}>거절</DeclineButton>
+                                    </ButtonContainer>
+                                ) : (
+                                    <AlarmTime>{diff === 0 ? '오늘' : `${diff}일전`}</AlarmTime>
+                                )}
+                            </AlarmTextContainer>
+                        </AlarmItem>
+                    );
+                })}
+            </Alarms>
+        </MenuContainer>
+    );
 }
