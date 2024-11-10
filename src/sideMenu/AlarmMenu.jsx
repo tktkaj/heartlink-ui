@@ -98,7 +98,7 @@ export default function AlarmMenu() {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:9090/notifications", {
+        axios.get(`${process.env.REACT_APP_API_URL}/notifications`, {
             headers: {
                 Authorization: `${token}`
             }
@@ -108,7 +108,7 @@ export default function AlarmMenu() {
     }, []);
 
     const handleConfirmFollow = async (notificationId, senderId) => {
-        axios.post(`http://localhost:9090/notifications/confirm/${notificationId}`, null, {
+        axios.post(`${process.env.REACT_APP_API_URL}/notifications/confirm/${notificationId}`, null, {
             headers: {
                 Authorization: `${token}`
             },
@@ -116,7 +116,7 @@ export default function AlarmMenu() {
                 senderId: senderId
             }
         }).then(() => {
-            axios.get("http://localhost:9090/notifications", {
+            axios.get(`${process.env.REACT_APP_API_URL}/notifications`, {
                 headers: {
                     Authorization: `${token}`
                 }
@@ -139,13 +139,16 @@ export default function AlarmMenu() {
         });
     }
 
-    const handleDenyFollow = async (notificationId) => {
-        axios.post(`http://localhost:9090/notifications/deny/${notificationId}`, null, {
+    const handleDenyFollow = async (notificationId, senderId) => {
+        axios.post(`${process.env.REACT_APP_API_URL}/notifications/deny/${notificationId}`, null, {
             headers: {
                 Authorization: `${token}`
+            },
+            params: {
+                senderId: senderId
             }
         }).then(() => {
-            axios.get("http://localhost:9090/notifications", {
+            axios.get(`${process.env.REACT_APP_API_URL}/notifications`, {
                 headers: {
                     Authorization: `${token}`
                 }
@@ -185,7 +188,7 @@ export default function AlarmMenu() {
                                 {notification.type === 'PRIVATE_FOLLOW_REQUEST' ? (
                                     <ButtonContainer>
                                         <AcceptButton onClick={() => handleConfirmFollow(notification.id, notification.senderId)}>수락</AcceptButton>
-                                        <DeclineButton onClick={() => handleDenyFollow(notification.id)}>거절</DeclineButton>
+                                        <DeclineButton onClick={() => handleDenyFollow(notification.id, notification.senderId)}>거절</DeclineButton>
                                     </ButtonContainer>
                                 ) : (
                                     <AlarmTime>{diff === 0 ? '오늘' : `${diff}일전`}</AlarmTime>
