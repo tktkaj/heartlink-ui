@@ -22,7 +22,7 @@ const MenuContainer = styled.div`
     }
   }
   animation: slideIn 0.4s forwards;
-  padding-top: 5vh;
+  padding-top: 3vh;
 `;
 const Alarms = styled.div`
   height: 100%;
@@ -35,13 +35,13 @@ const Alarms = styled.div`
 
 const AlarmItem = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   transition: background-color 0.4s ease;
   &:hover {
     background-color: #e6e6ff;
   }
-  padding: 10px 0 10px 1.5vw;
+  padding: 10px 0 10px 30px;
 `;
 
 const ProfileImage = styled.img`
@@ -54,14 +54,14 @@ const AlarmTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 18px;
-  width: 250px;
+  width: 270px;
   justify-content: center;
   height: 60px;
   gap: 5px;
 `;
 
 const AlarmText = styled.div`
-  width: 230px;
+  width: 260px;
   color: #333;
   font-size: 0.9rem;
 `;
@@ -170,6 +170,7 @@ export default function AlarmMenu() {
 
     return (
         <MenuContainer>
+            <div style={{fontSize: '2rem', paddingLeft:'30px'}}>알림</div>
             <Alarms>
                 {notifications.map((notification, index) => {
                     const today = format(new Date(), 'yyyy-MM-dd');
