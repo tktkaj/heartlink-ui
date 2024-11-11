@@ -36,7 +36,7 @@ const CoupleContainer = styled.div`
 `;
 
 const LogoImage = styled.div`
-  width: 13vw;
+  width: 14vw;
   height: 12vh;
   img {
     width: 100%;
