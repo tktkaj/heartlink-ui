@@ -61,21 +61,22 @@ export default function CoupleGraph() {
       try {
         const access = localStorage.getItem("access");
         const authAxios = getAuthAxios(access);
-        
+
         // 첫 번째 API 호출
         const res1 = await authAxios.get("/couple/statistics/dailyMatch");
+        console.log("afafafafafres1", res1);
         const {
           gender_m_0_rate,
           gender_m_1_rate,
           gender_f_0_rate,
           gender_f_1_rate,
           match1,
-          match2
+          match2,
         } = res1.data;
 
         // 두 번째 API 호출
         const res2 = await authAxios.get("/couple/missionmatch/questions");
-
+        console.log("afafafafafres2", res2);
         // 상태 업데이트
         setM0(gender_m_0_rate);
         setM1(gender_m_1_rate);
@@ -87,12 +88,12 @@ export default function CoupleGraph() {
         // 그래프 데이터 직접 설정
         const newFemaleData = [
           { name: match1, value: gender_f_0_rate },
-          { name: match2, value: gender_f_1_rate }
+          { name: match2, value: gender_f_1_rate },
         ];
 
         const newMaleData = [
           { name: match1, value: gender_m_0_rate },
-          { name: match2, value: gender_m_1_rate }
+          { name: match2, value: gender_m_1_rate },
         ];
 
         setFemaleData(newFemaleData);
@@ -100,9 +101,8 @@ export default function CoupleGraph() {
 
         console.log("설정된 그래프 데이터:", {
           여성: newFemaleData,
-          남성: newMaleData
+          남성: newMaleData,
         });
-
       } catch (err) {
         console.log("데이터 가져오기 오류:", err);
       }
