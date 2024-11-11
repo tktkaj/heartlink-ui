@@ -108,7 +108,7 @@ const RightSection = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 60px 20px;
 `;
 
 const PreviewImage = styled.img`
@@ -130,6 +130,15 @@ const TextInput = styled.textarea`
   height: 80%;
   padding: 10px;
   border: 1px solid #ccc;
+  position: relative;
+`;
+
+const CharacterCount = styled.div`
+  font-size: 14px;
+  color: #747474;
+  position: absolute;
+  bottom: 160px;
+  right: 30px;
 `;
 
 const CheckboxContainer = styled.div`
@@ -376,6 +385,9 @@ export default function UploadModal({ isOpen, onClose }) {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                   />
+                  <CharacterCount>
+                    {text.length} / 300
+                  </CharacterCount>
                   <CheckboxContainer>
                     <Checkbox
                       type="checkbox"
