@@ -4,7 +4,7 @@ import { getAuthAxios } from "../api/authAxios";
 import { IoClose } from "react-icons/io5";
 
 const ReportModal = styled.div`
-  position: fixed;
+  position: absolute;
   width: 400px;
   background: white;
   border-radius: 10px;
@@ -13,6 +13,7 @@ const ReportModal = styled.div`
   z-index: 1000;
   top: ${(props) => props.position.top}px;
   left: ${(props) => props.position.left}px;
+  transform: translate(-50%, 0);
 `;
 
 const CloseButton = styled.button`
@@ -102,27 +103,31 @@ const Report = ({ closeModal, position, post }) => {
     }
 
     try {
-      const access = localStorage.getItem("access"); // access token 가져오기
-      const authAxios = getAuthAxios(access); // access token으로 axios 인스턴스 생성
+      const access = localStorage.getItem("access");
+      const authAxios = getAuthAxios(access);
 
+      // 현재 접속한 사용자의 userId 가져오기
+      const userIdRes = await authAxios.get("/user/profile");
+      const currentUserId = userIdRes.data;
+
+      // API 엔드포인트 수정
       const response = await authAxios.post("/report", {
-        userId: post.userId,
-        commentId: null,
+        userId: currentUserId,
         postId: post.postId,
         reason: selectedReason === "기타" ? customReason : selectedReason,
       });
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         alert("신고가 성공적으로 접수되었습니다.");
         closeModal();
-      } else {
-        throw new Error("신고 접수에 실패했습니다.");
       }
     } catch (error) {
       console.error("신고 접수 중 오류:", error);
-      alert(
-        error.response?.data?.message || "신고 접수 중 오류가 발생했습니다."
-      );
+      if (error.response?.status === 400) {
+        alert("이미 신고한 게시물입니다.");
+      } else {
+        alert("신고 접수 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
