@@ -26,8 +26,12 @@ export default function CoupleAlert() {
 
       // 커플 해지 후 새로운 토큰 받아오기
       const { accessToken, refreshToken } = await getNewRefreshToken();
+
       localStorage.setItem("access", accessToken);
       localStorage.setItem("refresh", refreshToken);
+
+      // 새로운 토큰을 바로 사용하도록 상태 업데이트
+      authAxios.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
 
       console.log("커플 해지 성공", res);
       alert("커플 해지가 완료되었습니다.");
