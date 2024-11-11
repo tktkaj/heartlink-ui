@@ -617,7 +617,7 @@ export default function Couple() {
               <CoupleGraph></CoupleGraph>
             </div>
           </FeedBox>
-          <Advert href={adUrl} rel="lostay ads">
+          <Advert href={adUrl} target="_blank" rel="lostay ads">
             {/* 로스테이 광고 */}
           </Advert>
         </Container>
