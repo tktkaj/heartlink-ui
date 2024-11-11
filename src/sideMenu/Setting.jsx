@@ -89,6 +89,9 @@ export default function Setting({ closeSetting }) {
         localStorage.setItem("access", accessToken);
         localStorage.setItem("refresh", refreshToken);
 
+        // 새로운 토큰을 바로 사용하도록 상태 업데이트
+        authAxios.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
+
         console.log("커플 해지 취소 후 토큰", localStorage.getItem("access"));
         console.log("커플 해지 취소 후 토큰", localStorage.getItem("refresh"));
 
@@ -116,11 +119,17 @@ export default function Setting({ closeSetting }) {
         localStorage.setItem("access", accessToken);
         localStorage.setItem("refresh", refreshToken);
 
+        // 새로운 토큰을 바로 사용하도록 상태 업데이트
+        authAxios.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
+
         console.log("커플 즉시 해지 후 토큰", localStorage.getItem("access"));
         console.log("커플 즉시 해지 후 토큰", localStorage.getItem("refresh"));
 
         window.location.reload();
         setIsSoonBreak(false);
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        window.location.href = "/login";
       } catch (error) {
         console.error("Error immediate breaking couple:", error);
       }
