@@ -96,7 +96,6 @@ const RightHeader = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
 `;
 
 const Profile = styled.div`
@@ -122,6 +121,10 @@ const ContentBox = styled.div`
 
 const ContentText = styled.span`
   font-size: 14px;
+  line-height: 29px;
+  display: block;
+  margin: 22px 0px;
+  white-space: pre-wrap;
 `;
 
 const Line = styled.hr`
@@ -862,7 +865,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                 <h3
                   style={{
                     color: "#706ef4",
-                    margin: "0px 5px",
+                    margin: "0px 8px",
                     fontSize: "20px",
                   }}
                 >
@@ -882,7 +885,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                     width: "70px",
                     height: "30px",
                     paddingTop: "3px",
-                    margin: "0px 0px 0px 13px",
+                    marginLeft: "auto",
                   }}
                   className="flex w-full justify-center rounded-md text-sm font-semibold leading-6 text-white shadow-sm"
                   onClick={(e) => handleFollow(postDetails.userId, e)}
@@ -894,6 +897,7 @@ export default function FeedDetail({ isOpen, onClose, post }) {
                       width: "25px",
                       height: "25px",
                       cursor: "pointer",
+                      marginLeft: "8px",
 
                     }}
                     onClick={openModal}
