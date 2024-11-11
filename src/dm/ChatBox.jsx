@@ -8,9 +8,10 @@ const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 60vw;
+  width: 72vw;
   margin-left: 28vw;
   background-color: #fff;
+
 `;
 
 const ChatHeader = styled.div`
@@ -56,6 +57,11 @@ const ChatContent = styled.div`
   padding-right: 20px;
   overflow-y: scroll;
   flex-grow: 1;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MessageInputContainer = styled.div`
