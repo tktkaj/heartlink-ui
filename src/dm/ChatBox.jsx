@@ -8,8 +8,8 @@ const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 78vw;
-  margin-left: 425px;
+  width: 60vw;
+  margin-left: 28vw;
   background-color: #fff;
 `;
 
