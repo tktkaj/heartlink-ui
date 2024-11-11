@@ -38,9 +38,10 @@ const FeedBox = styled.div`
 `;
 const Advert = styled.a`
   display: block;
-  width: 300px;
-  height: 649px;
+  width: 190px;
+  height: 400px;
   background-image: url(${ads});
+  background-size: contain;
   border: rgba(160, 160, 160, 0.2) 1px solid;
   border-radius: 20px;
   margin-top: 60px;
@@ -114,7 +115,7 @@ const ButtonShadow = styled.div`
 
 const LinkMatchContent = styled.div`
   width: 100%;
-  height: 22vh;
+  height: 17vh;
   background-color: #fab7cd26;
   display: flex;
   justify-content: center;
@@ -124,7 +125,7 @@ const LinkMatchContent = styled.div`
 
 const Match = styled.div`
   width: 13.8vw;
-  height: 15vh;
+  height: 10vh;
   background: #eaeaff;
   border-radius: 25px;
   display: flex;
@@ -146,7 +147,7 @@ const LinkMission = styled.div`
   // margin-top: 100px;
 `;
 const MissionHeader = styled.div`
-  width: 100%;
+  width: 83%;
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
@@ -160,20 +161,20 @@ const BingoBoard = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5px;
-  width: 100%;
+  width: 80%;
   height: 80%;
-  margin: 0 auto;
+  /* margin: 0 auto; */
 `;
 
 const BingoCell = styled.div`
   background-color: #dcdcdc;
-  height: 130px;
-  // width: 130px;
+  height: 100px;
+  width: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 15px;
-  font-size: 18px;
+  font-size: 15px;
   color: black;
   text-shadow: -2px -2px 2px rgba(255,255,255,0.8),  
                2px -2px 2px rgba(255,255,255,0.8),
@@ -515,7 +516,7 @@ export default function Couple() {
                         <button
                           type="button"
                           onClick={toggleDropdown1}
-                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-lg font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-md font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
                           aria-expanded={isOpen1}
                           aria-haspopup="true"
@@ -551,7 +552,7 @@ export default function Couple() {
                         <button
                           type="button"
                           onClick={toggleDropdown2}
-                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-lg font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="inline-flex w-full justify-space-around rounded-md bg-white px-2 py-1.5 text-md font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                           id="menu-button"
                           aria-expanded={isOpen2}
                           aria-haspopup="true"
