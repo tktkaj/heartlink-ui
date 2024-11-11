@@ -115,7 +115,7 @@ export default function CoupleGraph() {
     <GraphStyle>
       <div className="coupleGraph">
         <StatisticsTitle>Today's Answer</StatisticsTitle>
-        <ResponsiveContainer width="100%" height={230}>
+        <ResponsiveContainer width="100%" height={170}>
           <PieChart>
             <Pie
               data={femaleData}
@@ -148,7 +148,7 @@ export default function CoupleGraph() {
             {/* <Legend /> */}
           </PieChart>
         </ResponsiveContainer>
-        <ResponsiveContainer width="100%" height={230}>
+        <ResponsiveContainer width="100%" height={170}>
           <PieChart>
             <Pie
               data={maleData}
